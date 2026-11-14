@@ -18,7 +18,7 @@ type ProloguePhase =
   | "exiting";
 
 interface StepOp {
-  slot: 0 | 1 | 2;
+  slot: 0 | 1;
   text: string;
   delay: number;
   sound?: KeystrokeKind | "drop";
@@ -71,52 +71,39 @@ function buildSteps(dateLine: string, skipDateTyping: boolean): StepOp[] {
   }
 
   let s1 = "";
-  for (let i = 0; i < t.stanzaOne.length; i++) {
-    const ch = t.stanzaOne[i];
+  for (let i = 0; i < t.messageCutoff.length; i++) {
+    const ch = t.messageCutoff[i];
     s1 += ch;
     ops.push({
       slot: 1,
       text: s1,
-      delay: charDelay(ch, 28, 20, i),
-      sound: soundForChar(ch),
-    });
-  }
-  ops.push({ slot: 2, text: "", delay: 420 });
-
-  let s2 = "";
-  for (let i = 0; i < t.stanzaTwoCutoff.length; i++) {
-    const ch = t.stanzaTwoCutoff[i];
-    s2 += ch;
-    ops.push({
-      slot: 2,
-      text: s2,
       delay: charDelay(ch, 28, 20, i + 20),
       sound: soundForChar(ch),
     });
   }
 
-  ops.push({ slot: 2, text: s2, delay: 140 });
+  ops.push({ slot: 1, text: s1, delay: 140 });
   ops.push({
-    slot: 2,
+    slot: 1,
     text: t.glitchFrames[0],
     delay: 52,
     sound: "drop",
     jitter: 1,
   });
   ops.push({
-    slot: 2,
+    slot: 1,
     text: t.glitchFrames[1],
     delay: 62,
     jitter: -1,
   });
   ops.push({
-    slot: 2,
+    slot: 1,
     text: t.glitchFrames[2],
     delay: 68,
     jitter: 1,
   });
   ops.push({
-    slot: 2,
+    slot: 1,
     text: t.glitchFrames[3],
     delay: 360,
     jitter: 0,
@@ -132,8 +119,8 @@ export function Prologue() {
 
   const [phase, setPhase] = useState<ProloguePhase>("hidden");
   const [dateLine, setDateLine] = useState("// 14. november 2026");
-  const [slots, setSlots] = useState<[string, string, string]>(["", "", ""]);
-  const [activeSlot, setActiveSlot] = useState<0 | 1 | 2>(0);
+  const [slots, setSlots] = useState<[string, string]>(["", ""]);
+  const [activeSlot, setActiveSlot] = useState<0 | 1>(0);
   const [cursorAlive, setCursorAlive] = useState(true);
   const [jitterX, setJitterX] = useState<-1 | 0 | 1>(0);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -151,9 +138,9 @@ export function Prologue() {
     voiceEnabledRef.current = voiceEnabled;
   }, [voiceEnabled]);
 
-  const finalSlots = useMemo<[string, string, string]>(
-    () => [dateLine, t.stanzaOne, t.glitchFrames[3]],
-    [dateLine, t.stanzaOne, t.glitchFrames]
+  const finalSlots = useMemo<[string, string]>(
+    () => [dateLine, t.glitchFrames[3]],
+    [dateLine, t.glitchFrames]
   );
 
   const clearTypingTimer = useCallback(() => {
@@ -185,10 +172,10 @@ export function Prologue() {
       setIsActivelyTyping(false);
 
       if (skipDateTyping) {
-        setSlots([today, "", ""]);
+        setSlots([today, ""]);
         setActiveSlot(1);
       } else {
-        setSlots(["", "", ""]);
+        setSlots(["", ""]);
         setActiveSlot(0);
       }
       setPhase("typing");
@@ -223,7 +210,7 @@ export function Prologue() {
         setIsActivelyTyping(op.delay < 180 && !op.killCursor);
         setActiveSlot(op.slot);
         setSlots((prev) => {
-          const next: [string, string, string] = [...prev];
+          const next: [string, string] = [...prev];
           next[op.slot] = op.text;
           return next;
         });
@@ -281,8 +268,8 @@ export function Prologue() {
       preloadWelcomeAudio();
 
       if (prefersReduced) {
-        setSlots([today, t.stanzaOne, t.glitchFrames[3]]);
-        setActiveSlot(2);
+        setSlots([today, t.glitchFrames[3]]);
+        setActiveSlot(1);
         setCursorAlive(false);
         setJitterX(0);
         setIsActivelyTyping(false);
@@ -297,7 +284,7 @@ export function Prologue() {
 
       // Give the browser 85ms to resolve ctx.resume() (succeeds immediately when MEI allows autoplay);
       // otherwise show the single-click "Åpne melding" gate so sound is guaranteed ON from character 1.
-      setSlots([today, "", ""]);
+      setSlots([today, ""]);
       setActiveSlot(0);
       setCursorAlive(true);
       setJitterX(0);
@@ -316,14 +303,13 @@ export function Prologue() {
       runTypingSequence,
       setVoiceEnabled,
       t.glitchFrames,
-      t.stanzaOne,
     ]
   );
 
   const jumpToDisconnected = useCallback(() => {
     clearTypingTimer();
     setSlots(finalSlots);
-    setActiveSlot(2);
+    setActiveSlot(1);
     setCursorAlive(false);
     setJitterX(0);
     setIsActivelyTyping(false);
@@ -525,7 +511,6 @@ export function Prologue() {
           >
             <p>{finalSlots[0]}</p>
             <p>{finalSlots[1]}</p>
-            <p>{finalSlots[2]}</p>
             <div className="space-y-4 pt-3">
               <p className="text-xs">{t.disconnected}</p>
               <span className="inline-flex rounded-full border px-5 py-2.5 text-sm">
@@ -574,19 +559,6 @@ export function Prologue() {
                 >
                   {slots[1]}
                   {cursorAlive && activeSlot === 1 && (
-                    <span aria-hidden="true" className={cursorClass} />
-                  )}
-                </p>
-
-                <p
-                  className={
-                    cursorAlive
-                      ? "text-[#d8d6d0]"
-                      : "text-zinc-400 transition-colors duration-300"
-                  }
-                >
-                  {slots[2]}
-                  {cursorAlive && activeSlot === 2 && (
                     <span aria-hidden="true" className={cursorClass} />
                   )}
                 </p>

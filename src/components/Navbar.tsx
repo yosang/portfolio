@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "@/components/ThemeProvider";
-import { PROFILE } from "@/data/portfolio";
 import { UI } from "@/data/ui";
 
 export function Navbar() {
@@ -48,23 +47,7 @@ export function Navbar() {
 
   return (
     <header className="sticky top-3 sm:top-4 z-40 mx-auto w-full max-w-5xl px-3 sm:px-6 pointer-events-none">
-      <div className="glass-capsule pointer-events-auto mx-auto flex w-fit items-center justify-center gap-2 rounded-full px-3 py-1.5 sm:w-full sm:justify-between sm:gap-3 sm:px-5 sm:py-2.5">
-        <Link
-          href="/"
-          onClick={(e) => {
-            if (pathname === "/") {
-              e.preventDefault();
-              if (window.location.hash) {
-                window.history.replaceState(null, "", "/");
-              }
-              window.scrollTo({ top: 0, behavior: "smooth" });
-            }
-          }}
-          className="hidden shrink-0 whitespace-nowrap font-display text-[15px] font-semibold tracking-tight text-ink sm:inline-block"
-        >
-          {PROFILE.name}
-        </Link>
-
+      <div className="glass-capsule pointer-events-auto mx-auto flex w-fit items-center justify-center gap-2 rounded-full px-3 py-1.5 sm:px-3.5 sm:py-2">
         <nav className="flex items-center gap-0.5 sm:gap-1.5">
           <ul className="flex items-center gap-0.5 sm:gap-1">
             {links.map((link) => (

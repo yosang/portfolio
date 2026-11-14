@@ -63,8 +63,7 @@ export const UI = {
     fullStudio: "Fullskjerm",
   },
   prologue: {
-    stanzaOne: "Dette skrives fortsatt av et menneske.",
-    stanzaTwoCutoff:
+    messageCutoff:
       "Vi er på vei inn i en tid der det blir umulig å skille menneskeskapt innhold fra resten av nettet, og der maskinen tar ov",
     glitchFrames: [
       "Vi er på vei inn i en tid der det blir umulig å skille menneskeskapt innhold fra resten av nettet, og der maskinen tar ovv",

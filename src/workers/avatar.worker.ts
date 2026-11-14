@@ -13,7 +13,7 @@ const runtimeState: AvatarRuntimeState = {
   viseme: "rest",
   speaking: false,
   idle: false,
-  isHero: false,
+  variant: "widget",
 };
 
 function cancelLoop() {

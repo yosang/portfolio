@@ -6,15 +6,16 @@ import {
   GlbAvatarScene,
   type AvatarMood,
   type AvatarRuntimeState,
+  type AvatarVariant,
 } from "@/lib/avatarEngine";
 
-export type { AvatarMood };
+export type { AvatarMood, AvatarVariant };
 
 const MODEL_URL = "/avatar/yosmel.glb";
 
 interface AvatarStageProps {
   mood?: AvatarMood;
-  variant?: "widget" | "hero";
+  variant?: AvatarVariant;
   className?: string;
   onClick?: () => void;
 }
@@ -32,7 +33,7 @@ export function AvatarStage({
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    postPatchRef.current?.({ mood, isHero: variant === "hero" });
+    postPatchRef.current?.({ mood, variant });
   }, [mood, variant]);
 
   useEffect(() => {
@@ -60,7 +61,7 @@ export function AvatarStage({
       viseme: "rest",
       speaking: false,
       idle: false,
-      isHero: variant === "hero",
+      variant,
     };
 
     const sendPatch = (patch: Partial<AvatarRuntimeState>) => {
@@ -179,16 +180,23 @@ export function AvatarStage({
     const ro = new ResizeObserver((entries) => {
       const entry = entries[0];
       if (!entry) return;
-      const w = Math.max(1, Math.round(entry.contentRect.width));
-      const h = Math.max(1, Math.round(entry.contentRect.height));
+      const w = Math.round(entry.contentRect.width);
+      const h = Math.round(entry.contentRect.height);
+      if (w === 0 || h === 0) {
+        inViewport = false;
+        syncActiveRendering();
+        return;
+      }
       const nextDpr = Math.min(window.devicePixelRatio || 1, 1.5);
       vw = Math.max(1, window.innerWidth);
       vh = Math.max(1, window.innerHeight);
       const r = container.getBoundingClientRect();
       cx = r.left + r.width * 0.5;
       cy = r.top + r.height * 0.4;
+      inViewport = r.bottom > 0 && r.top < vh && r.right > 0 && r.left < vw;
       if (worker) worker.postMessage({ type: "resize", width: w, height: h, dpr: nextDpr });
       else fallbackScene?.resize(w, h, nextDpr);
+      syncActiveRendering();
     });
     ro.observe(container);
 

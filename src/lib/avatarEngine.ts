@@ -1,8 +1,10 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 
 export type AvatarMood = "neutral" | "happy" | "confused" | "thinking";
 export type VisemeHint = "rest" | "aa" | "ee" | "oh";
+export type AvatarVariant = "widget" | "hero" | "bust" | "head";
 
 export interface AvatarRuntimeState {
   pointerX: number;
@@ -12,7 +14,7 @@ export interface AvatarRuntimeState {
   viseme: VisemeHint;
   speaking: boolean;
   idle: boolean;
-  isHero: boolean;
+  variant: AvatarVariant;
 }
 
 interface DrivenBone {
@@ -39,9 +41,11 @@ export class GlbAvatarScene {
   private camera: THREE.PerspectiveCamera;
   private clock = new THREE.Clock();
   private model: THREE.Object3D | null = null;
+  private envRT: THREE.WebGLRenderTarget | null = null;
   private driven: DrivenBone[] = [];
+  private headPos = new THREE.Vector3(0, 1.66, 0);
   private focus = new THREE.Vector3(0, 1.6, 0);
-  private lastIsHero: boolean | null = null;
+  private lastVariant: AvatarVariant | null = null;
 
   private springYaw = { pos: 0, vel: 0 };
   private springPitch = { pos: 0, vel: 0 };
@@ -73,15 +77,24 @@ export class GlbAvatarScene {
     this.renderer.setPixelRatio(Math.min(dpr, 1.5));
     this.renderer.setSize(width, height, false);
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
-    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    this.renderer.toneMapping = THREE.NeutralToneMapping;
     this.renderer.toneMappingExposure = 1.06;
 
-    this.scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8478, 2.0));
-    const key = new THREE.DirectionalLight(0xfff8f0, 2.15);
-    key.position.set(-5, 7, 6);
+    const pmrem = new THREE.PMREMGenerator(this.renderer);
+    const roomEnv = new RoomEnvironment();
+    this.envRT = pmrem.fromScene(roomEnv, 0.04);
+    this.scene.environment = this.envRT.texture;
+    this.scene.environmentIntensity = 0.55;
+    roomEnv.dispose();
+    pmrem.dispose();
+
+    this.scene.add(new THREE.AmbientLight(0xfffaf5, 0.85));
+    this.scene.add(new THREE.HemisphereLight(0xffffff, 0xd8d2ca, 0.6));
+    const key = new THREE.DirectionalLight(0xfff9f2, 1.25);
+    key.position.set(-1.8, 0.8, 7.5);
     this.scene.add(key);
-    const fill = new THREE.DirectionalLight(0xeef6ff, 0.85);
-    fill.position.set(5, 3, 5);
+    const fill = new THREE.DirectionalLight(0xf2f7ff, 0.8);
+    fill.position.set(2.2, 0.3, 7.0);
     this.scene.add(fill);
   }
 
@@ -98,6 +111,10 @@ export class GlbAvatarScene {
         mesh.frustumCulled = false;
         mesh.castShadow = false;
         mesh.receiveShadow = false;
+        const mat = mesh.material as THREE.MeshStandardMaterial;
+        if (mat && /body/i.test(mat.name) && mat.normalScale) {
+          mat.normalScale.set(0.55, 0.55);
+        }
       }
     });
 
@@ -144,18 +161,36 @@ export class GlbAvatarScene {
 
     const head = bones["Head"];
     if (head) {
-      head.getWorldPosition(this.focus);
-      this.focus.y -= 0.06;
+      head.getWorldPosition(this.headPos);
     }
     this.model = root;
-    this.frameCamera(true);
+    this.frameCamera("hero");
   }
 
-  private frameCamera(isHero: boolean) {
-    if (this.lastIsHero === isHero) return;
-    this.lastIsHero = isHero;
-    const dist = isHero ? 1.44 : 1.34;
-    this.camera.position.set(this.focus.x, this.focus.y + 0.04, this.focus.z + dist);
+  private frameCamera(variant: AvatarVariant) {
+    if (this.lastVariant === variant) return;
+    this.lastVariant = variant;
+
+    let focusOffsetY = -0.06;
+    let camLiftY = 0.04;
+    let dist = 1.34;
+
+    if (variant === "hero") {
+      focusOffsetY = -0.06;
+      camLiftY = 0.04;
+      dist = 1.44;
+    } else if (variant === "bust") {
+      focusOffsetY = 0.035;
+      camLiftY = 0.02;
+      dist = 0.86;
+    } else if (variant === "head") {
+      focusOffsetY = 0.08;
+      camLiftY = 0.015;
+      dist = 0.72;
+    }
+
+    this.focus.set(this.headPos.x, this.headPos.y + focusOffsetY, this.headPos.z);
+    this.camera.position.set(this.focus.x, this.focus.y + camLiftY, this.focus.z + dist);
     this.camera.lookAt(this.focus);
   }
 
@@ -179,7 +214,7 @@ export class GlbAvatarScene {
     const t = this.clock.elapsedTime;
 
     if (this.model) {
-      this.frameCamera(state.isHero);
+      this.frameCamera(state.variant);
 
       const targetYaw = state.idle ? Math.sin(t * 0.35) * 0.42 : state.pointerX * 0.55;
       let targetPitch = state.idle ? -0.05 + Math.sin(t * 0.21) * 0.03 : state.pointerY * 0.32;
@@ -234,6 +269,7 @@ export class GlbAvatarScene {
         m.dispose();
       }
     });
+    this.envRT?.dispose();
     this.renderer.dispose();
   }
 }
