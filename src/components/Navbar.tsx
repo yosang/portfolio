@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Moon, Sun } from "lucide-react";
@@ -10,6 +10,7 @@ import { UI } from "@/data/ui";
 export function Navbar() {
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
+  const [projectsActive, setProjectsActive] = useState(false);
 
   useEffect(() => {
     if ("scrollRestoration" in window.history) {
@@ -23,6 +24,24 @@ export function Navbar() {
     window.addEventListener("pageshow", onPageShow);
     return () => window.removeEventListener("pageshow", onPageShow);
   }, []);
+
+  useEffect(() => {
+    if (pathname !== "/") {
+      setProjectsActive(false);
+      return;
+    }
+    const sec = document.getElementById("prosjekter");
+    if (!sec) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry) setProjectsActive(entry.isIntersecting);
+      },
+      { rootMargin: "-28% 0px -55% 0px", threshold: 0 }
+    );
+    io.observe(sec);
+    return () => io.disconnect();
+  }, [pathname]);
 
   useEffect(() => {
     if (
@@ -39,15 +58,26 @@ export function Navbar() {
   }, [pathname]);
 
   const links = [
-    { href: "/#prosjekter", label: UI.nav.projects, active: false, isProjects: true },
-    { href: "/about", label: UI.nav.about, active: pathname === "/about", isProjects: false },
-    { href: "/ai", label: UI.nav.ai, active: pathname === "/ai", isProjects: false },
-    { href: "/chat", label: UI.nav.chat, active: pathname === "/chat", isProjects: false },
+    {
+      href: "/",
+      label: UI.nav.home,
+      active: pathname === "/" && !projectsActive,
+      kind: "home" as const,
+    },
+    {
+      href: "/#prosjekter",
+      label: UI.nav.projects,
+      active: pathname === "/" && projectsActive,
+      kind: "projects" as const,
+    },
+    { href: "/about", label: UI.nav.about, active: pathname === "/about", kind: "page" as const },
+    { href: "/ai", label: UI.nav.ai, active: pathname === "/ai", kind: "page" as const },
+    { href: "/chat", label: UI.nav.chat, active: pathname === "/chat", kind: "page" as const },
   ];
 
   return (
     <header className="sticky top-3 sm:top-4 z-40 mx-auto w-full max-w-5xl px-3 sm:px-6 pointer-events-none">
-      <div className="glass-capsule pointer-events-auto mx-auto flex w-fit items-center justify-center gap-2 rounded-full px-3 py-1.5 sm:px-3.5 sm:py-2">
+      <div className="glass-capsule pointer-events-auto mx-auto flex w-fit items-center justify-center gap-1.5 rounded-full px-2.5 py-1.5 sm:gap-2 sm:px-3.5 sm:py-2">
         <nav className="flex items-center gap-0.5 sm:gap-1.5">
           <ul className="flex items-center gap-0.5 sm:gap-1">
             {links.map((link) => (
@@ -56,13 +86,19 @@ export function Navbar() {
                   href={link.href}
                   aria-current={link.active ? "page" : undefined}
                   onClick={(e) => {
-                    if (link.isProjects && pathname === "/") {
+                    if (pathname === "/" && link.kind === "home") {
+                      e.preventDefault();
+                      if (window.location.hash) {
+                        window.history.replaceState(null, "", "/");
+                      }
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    } else if (pathname === "/" && link.kind === "projects") {
                       e.preventDefault();
                       window.history.replaceState(null, "", "/#prosjekter");
                       document.getElementById("prosjekter")?.scrollIntoView({ behavior: "smooth" });
                     }
                   }}
-                  className={`inline-block whitespace-nowrap rounded-full px-2.5 py-1 text-[13px] font-medium transition-colors sm:px-3 sm:text-sm ${
+                  className={`inline-block whitespace-nowrap rounded-full px-2 py-1 text-[13px] font-medium transition-colors sm:px-3 sm:text-sm ${
                     link.active
                       ? "bg-ink text-paper"
                       : "text-ink-soft hover:text-ink"

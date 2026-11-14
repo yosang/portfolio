@@ -1,7 +1,7 @@
 import type { AvatarMood } from "@/lib/avatarEngine";
 
 export const UI = {
-  nav: { projects: "Prosjekter", about: "Om", ai: "AI", chat: "Chat" },
+  nav: { home: "Hjem", projects: "Prosjekter", about: "Om", ai: "AI", chat: "Chat" },
   themeLabel: "Bytt mellom lys og mørk visning",
   moods: {
     neutral: "klar",
