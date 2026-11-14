@@ -64,7 +64,7 @@ export const UI = {
   },
   prologue: {
     stanzaOne:
-      "Dette skrives fortsatt av et menneske, bokstav for bokstav. Vi merker det knapt selv, men vi er i ferd med å bli erstattet.",
+      "Dette skrives fortsatt av et menneske, bokstav for bokstav. Vi er i ferd med å bli erstattet.",
     stanzaTwoCutoff:
       "Snart vil ingen vite når mennesket forsvant fra skjermen og maskinen tok ov",
     glitchFrames: [
