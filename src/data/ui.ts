@@ -80,7 +80,7 @@ export const UI = {
     replay: "Se prolog",
     soundOn: "Lyd på",
     soundOff: "Lyd av",
-    enableSound: "Slå på lyd",
+    openMessage: "Åpne melding",
     welcomeBubbles: [
       "Hei, beklager avbruddet. Jeg er AI versjonen av Yosmel, og jeg tar det herfra.",
       "Hva har du lyst til å se på?",

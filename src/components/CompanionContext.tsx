@@ -143,9 +143,6 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
       if (raw) {
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed.messages)) setMessages(parsed.messages);
-        if (typeof parsed.voiceEnabled === "boolean") {
-          setVoiceEnabledState(parsed.voiceEnabled);
-        }
       }
     } catch {
       // ignore
@@ -157,12 +154,12 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
     try {
       sessionStorage.setItem(
         "ai-twin-chat",
-        JSON.stringify({ messages, voiceEnabled })
+        JSON.stringify({ messages })
       );
     } catch {
       // ignore
     }
-  }, [messages, voiceEnabled, isStreaming]);
+  }, [messages, isStreaming]);
 
   const setVoiceEnabled = useCallback((next: boolean) => {
     setVoiceEnabledState(next);

@@ -11,13 +11,11 @@ export interface SpeechFrameState {
 export type KeystrokeKind = "char" | "space" | "backspace";
 
 type FrameListener = (state: SpeechFrameState) => void;
-type RunningListener = (running: boolean) => void;
 
 class PortfolioAudioEngine {
   private ctx: AudioContext | null = null;
   private activeStoppers: Array<() => void> = [];
   private listeners = new Set<FrameListener>();
-  private runningListeners = new Set<RunningListener>();
   private keystrokeBank: AudioBuffer[] | null = null;
   private rafId: number | null = null;
   private streamAnalyser: AnalyserNode | null = null;
@@ -25,13 +23,6 @@ class PortfolioAudioEngine {
   private activeSourceCount = 0;
   private playbackGen = 0;
   private queueChain: Promise<void> = Promise.resolve();
-
-  private notifyRunning() {
-    const running = this.ctx?.state === "running";
-    for (const cb of this.runningListeners) {
-      cb(running);
-    }
-  }
 
   private ensureContext(): AudioContext | null {
     if (typeof window === "undefined") return null;
@@ -42,33 +33,20 @@ class PortfolioAudioEngine {
           .webkitAudioContext;
       if (AudioCtx) {
         this.ctx = new AudioCtx();
-        this.ctx.onstatechange = () => this.notifyRunning();
       }
     }
     if (this.ctx && this.ctx.state === "suspended") {
-      this.ctx
-        .resume()
-        .then(() => this.notifyRunning())
-        .catch(() => {});
+      this.ctx.resume().catch(() => {});
     }
     return this.ctx;
   }
 
   public unlock() {
     this.ensureContext();
-    this.notifyRunning();
   }
 
   public isRunning(): boolean {
     return this.ctx?.state === "running";
-  }
-
-  public subscribeRunning(listener: RunningListener): () => void {
-    this.runningListeners.add(listener);
-    listener(this.isRunning());
-    return () => {
-      this.runningListeners.delete(listener);
-    };
   }
 
   public subscribe(listener: FrameListener): () => void {
