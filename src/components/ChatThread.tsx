@@ -9,6 +9,9 @@ import { UI } from "@/data/ui";
 function pickFollowUps(messages: ChatTurn[]): string[] {
   const last = messages[messages.length - 1];
   if (!last || last.role !== "assistant" || !last.content.trim()) return [];
+  if (messages.length === 1 && last.id === "a-prologue-welcome") {
+    return [PROMPTS[0], PROMPTS[2]];
+  }
 
   const asked = new Set(
     messages

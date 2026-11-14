@@ -48,9 +48,9 @@ export const UI = {
     cvDownload: "Last ned",
     aboutAiLabel: "Om AI versjonen",
     disclaimerPrefix:
-      "Dette er en AI versjon av meg, bygget på svar jeg har skrevet selv. Den kan ta feil, så spør ",
+      "Her styrer en modell klonet på 17 sekunder av stemmen min og notatene mine. Den hevder den har kontroll, men send en epost til ",
     disclaimerLink: "den ekte meg",
-    disclaimerSuffix: " hvis noe er viktig.",
+    disclaimerSuffix: " hvis noe faktisk er viktig.",
     howMade: "Teknisk oppsett",
     tech: [
       "3D modell i egen Web Worker",
@@ -61,6 +61,52 @@ export const UI = {
     fullView: "Fullskjerm",
     close: "Lukk",
     fullStudio: "Fullskjerm",
+  },
+  prologue: {
+    stanzaOne:
+      "Dette skrives fortsatt av et menneske, bokstav for bokstav. Vi merker det knapt selv, men vi er i ferd med å bli erstattet.",
+    stanzaTwoCutoff:
+      "Snart vil ingen vite når mennesket forsvant fra skjermen og maskinen tok ov",
+    glitchFrames: [
+      "Snart vil ingen vite når mennesket forsvant fra skjermen og maskinen tok ovv",
+      "Snart vil ingen vite når mennesket forsvant fra skjermen og maskinen t░k ov█",
+      "Snart vil ingen vite når mennesket forsvant fra skjermen og maskinen tok o▓░",
+      "Snart vil ingen vite når mennesket forsvant fra skjermen og maskinen tok ov█░",
+    ],
+    disconnected: "Forbindelse brutt.",
+    reconnect: "Koble til",
+    enterKeyHint: "Enter",
+    skip: "Hopp over",
+    replay: "Se prolog",
+    soundOn: "Lyd på",
+    soundOff: "Lyd av",
+    enableSound: "Slå på lyd",
+    welcomeBubbles: [
+      "Hei, beklager avbruddet. Jeg er AI versjonen av Yosmel, og jeg tar det herfra.",
+      "Hva har du lyst til å se på?",
+    ],
+  },
+  colophon: {
+    items: [
+      {
+        label: "Intensjon og arkitektur",
+        value: "Yosmel Chiang",
+      },
+      {
+        label: "Ansikt",
+        value: "Skannet i 3D, november 2026",
+      },
+      {
+        label: "Stemme",
+        value: "Klonet fra 17 sekunder ekte opptak",
+      },
+      {
+        label: "Svarene i chatten",
+        value: "Generert der og da, uten at jeg vet hva jeg svarer deg",
+      },
+    ],
+    copyright:
+      "© November 2026 Yosmel Chiang og modellene som snakker i mitt navn. Dokumentert mens vi fortsatt klarte å se forskjell på menneske og maskin.",
   },
   networkError: "Fikk ikke svar akkurat nå. Prøv igjen.",
 };

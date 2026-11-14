@@ -202,18 +202,6 @@ export default function HomePage() {
           )}
         </div>
       </section>
-
-      <footer className="border-t border-line">
-        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-4 py-10 text-sm sm:px-6">
-          <a
-            href={`mailto:${PROFILE.email}`}
-            className="inline-flex items-center gap-1 font-medium text-ink transition-opacity hover:opacity-75"
-          >
-            <span>{PROFILE.email}</span>
-            <ArrowUpRight className="h-3.5 w-3.5" />
-          </a>
-        </div>
-      </footer>
     </div>
   );
 }

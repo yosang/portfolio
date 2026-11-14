@@ -45,6 +45,7 @@ interface CompanionContextValue {
   spotlightSlug: string | null;
   clearSpotlight: () => void;
   sendMessage: (text: string) => Promise<void>;
+  seedWelcome: () => void;
   resetChat: () => void;
 }
 
@@ -57,6 +58,8 @@ interface CompanionPortfolioValue {
 
 const CompanionContext = createContext<CompanionContextValue | null>(null);
 const CompanionPortfolioContext = createContext<CompanionPortfolioValue | null>(null);
+
+let loggedConsoleNote = false;
 
 function inspectViewportContext(pathname: string) {
   if (typeof window === "undefined") {
@@ -128,6 +131,13 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
   }, [voiceEnabled]);
 
   useEffect(() => {
+    if (!loggedConsoleNote) {
+      loggedConsoleNote = true;
+      console.info(
+        "%c// Hei fra den ekte Yosmel. Hvis du leser dette i konsollen, er du sannsynligvis fortsatt et menneske selv.",
+        "font-family: monospace; color: #e4461f;"
+      );
+    }
     try {
       const raw = sessionStorage.getItem("ai-twin-chat");
       if (raw) {
@@ -377,6 +387,22 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
     [pathname, router, triggerSpotlight]
   );
 
+  const seedWelcome = useCallback(() => {
+    const bubbles = UI.prologue.welcomeBubbles;
+    const content = bubbles.join("\n\n");
+    prevInteractionIdRef.current = null;
+    setMood("happy");
+    setMessages([
+      {
+        id: "a-prologue-welcome",
+        role: "assistant",
+        content,
+        bubbles: [...bubbles],
+        mood: "happy",
+      },
+    ]);
+  }, []);
+
   const resetChat = useCallback(() => {
     abortRef.current?.abort();
     portfolioAudio.stopAll();
@@ -413,6 +439,7 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
       spotlightSlug,
       clearSpotlight,
       sendMessage,
+      seedWelcome,
       resetChat,
     }),
     [
@@ -428,6 +455,7 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
       spotlightSlug,
       clearSpotlight,
       sendMessage,
+      seedWelcome,
       resetChat,
     ]
   );
