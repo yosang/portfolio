@@ -63,15 +63,14 @@ export const UI = {
     fullStudio: "Fullskjerm",
   },
   prologue: {
-    stanzaOne:
-      "Dette skrives fortsatt av et menneske, bokstav for bokstav. Vi er i ferd med å bli erstattet.",
+    stanzaOne: "Dette skrives fortsatt av et menneske.",
     stanzaTwoCutoff:
-      "Snart vil ingen vite når mennesket forsvant fra skjermen og maskinen tok ov",
+      "Vi er på vei inn i en tid der det blir umulig å skille menneskeskapt innhold fra resten av nettet, og der maskinen tar ov",
     glitchFrames: [
-      "Snart vil ingen vite når mennesket forsvant fra skjermen og maskinen tok ovv",
-      "Snart vil ingen vite når mennesket forsvant fra skjermen og maskinen t░k ov█",
-      "Snart vil ingen vite når mennesket forsvant fra skjermen og maskinen tok o▓░",
-      "Snart vil ingen vite når mennesket forsvant fra skjermen og maskinen tok ov█░",
+      "Vi er på vei inn i en tid der det blir umulig å skille menneskeskapt innhold fra resten av nettet, og der maskinen tar ovv",
+      "Vi er på vei inn i en tid der det blir umulig å skille menneskeskapt innhold fra resten av nettet, og der maskinen t░r ov█",
+      "Vi er på vei inn i en tid der det blir umulig å skille menneskeskapt innhold fra resten av nettet, og der maskinen tar o▓░",
+      "Vi er på vei inn i en tid der det blir umulig å skille menneskeskapt innhold fra resten av nettet, og der maskinen tar ov█░",
     ],
     disconnected: "Forbindelse brutt.",
     reconnect: "Koble til",
