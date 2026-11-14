@@ -36,11 +36,18 @@ export function ChatDock() {
 
   useEffect(() => {
     if (!isOpen) return;
+    const prevOverflow = document.documentElement.style.overflow;
+    if (window.innerWidth < 640) {
+      document.documentElement.style.overflow = "hidden";
+    }
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setIsOpen(false);
     };
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    return () => {
+      document.documentElement.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", onKey);
+    };
   }, [isOpen, setIsOpen]);
 
   if (pathname === "/chat") return null;
@@ -58,7 +65,7 @@ export function ChatDock() {
       )}
 
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex justify-end">
+        <div className="fixed inset-0 z-50 flex justify-end overflow-hidden">
           <button
             type="button"
             aria-label={t.close}
@@ -69,7 +76,7 @@ export function ChatDock() {
             role="dialog"
             aria-modal="true"
             aria-label={t.title}
-            className="relative flex h-full w-full max-w-[400px] flex-col border-l border-line bg-paper shadow-2xl"
+            className="relative flex h-dvh max-h-dvh w-full flex-col bg-paper shadow-2xl sm:max-w-[400px] sm:border-l sm:border-line"
           >
             <header className="relative z-20 flex items-center justify-between gap-3 border-b border-line px-5 py-3.5">
               <span className="text-xs text-ink-soft">

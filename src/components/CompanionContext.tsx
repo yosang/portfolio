@@ -333,31 +333,19 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
               );
             }
 
-            if (typeof data.pcm === "string" && data.pcm.length > 0 && voiceEnabledRef.current) {
+            if (typeof data.audio === "string" && data.audio.length > 0 && voiceEnabledRef.current) {
               if (
                 typeof data.mode === "string" &&
                 (data.mode === "replicated" || data.mode === "preset")
               ) {
                 setVoiceMode(data.mode);
               }
-              portfolioAudio.enqueuePcmChunk(data.pcm, 24000);
-            }
-
-            if (typeof data.pcmGap === "number" && voiceEnabledRef.current) {
-              portfolioAudio.addSpeechPause(data.pcmGap);
+              const pause = typeof data.pauseBefore === "number" ? data.pauseBefore : 0;
+              portfolioAudio.enqueueWavBase64(data.audio, pause);
             }
 
             if (data.capped === true) {
               setVoiceCapped(true);
-            }
-
-            if (typeof data.audio === "string" && data.audio.length > 0 && voiceEnabledRef.current) {
-              portfolioAudio
-                .playBase64Audio(
-                  data.audio,
-                  typeof data.mimeType === "string" ? data.mimeType : "audio/wav"
-                )
-                .catch(() => {});
             }
           }
         }

@@ -3,7 +3,7 @@
 export type VisemeHint = "rest" | "aa" | "ee" | "oh";
 
 export interface SpeechFrameState {
-  energy: number; // 0..1 normalized amplitude
+  energy: number;
   viseme: VisemeHint;
   speaking: boolean;
 }
@@ -16,9 +16,10 @@ class PortfolioAudioEngine {
   private listeners = new Set<FrameListener>();
   private rafId: number | null = null;
   private streamAnalyser: AnalyserNode | null = null;
-  private nextPcmTime = 0;
+  private nextStartTime = 0;
   private activeSourceCount = 0;
-  private pcmCarryByte: number | null = null;
+  private playbackGen = 0;
+  private queueChain: Promise<void> = Promise.resolve();
 
   private ensureContext(): AudioContext | null {
     if (typeof window === "undefined") return null;
@@ -55,6 +56,8 @@ class PortfolioAudioEngine {
   }
 
   public stopAll() {
+    this.playbackGen += 1;
+    this.queueChain = Promise.resolve();
     if (this.rafId !== null) {
       cancelAnimationFrame(this.rafId);
       this.rafId = null;
@@ -75,17 +78,16 @@ class PortfolioAudioEngine {
       }
       this.streamAnalyser = null;
     }
-    this.nextPcmTime = 0;
+    this.nextStartTime = 0;
     this.activeSourceCount = 0;
-    this.pcmCarryByte = null;
     this.emit({ energy: 0, viseme: "rest", speaking: false });
   }
 
   private scheduleBufferOnAnalyser(
     ctx: AudioContext,
     audioBuffer: AudioBuffer,
-    immediate = false
-  ): Promise<void> {
+    pauseBeforeSec = 0
+  ): void {
     if (!this.streamAnalyser) {
       const analyser = ctx.createAnalyser();
       analyser.fftSize = 256;
@@ -99,10 +101,12 @@ class PortfolioAudioEngine {
     source.buffer = audioBuffer;
     source.connect(analyser);
 
-    const startAt = immediate
-      ? ctx.currentTime
-      : Math.max(ctx.currentTime + 0.04, this.nextPcmTime);
-    this.nextPcmTime = startAt + audioBuffer.duration;
+    const earliest = ctx.currentTime + 0.02;
+    const targetStart =
+      this.nextStartTime > earliest
+        ? this.nextStartTime + pauseBeforeSec
+        : earliest;
+    this.nextStartTime = targetStart + audioBuffer.duration;
     this.activeSourceCount += 1;
 
     let stopped = false;
@@ -120,7 +124,11 @@ class PortfolioAudioEngine {
       const timeData = new Uint8Array(analyser.fftSize);
       const freqData = new Uint8Array(analyser.frequencyBinCount);
       const tick = () => {
-        if (this.activeSourceCount <= 0 || !this.streamAnalyser) {
+        if (
+          (this.activeSourceCount <= 0 &&
+            ctx.currentTime >= this.nextStartTime) ||
+          !this.streamAnalyser
+        ) {
           this.rafId = null;
           this.emit({ energy: 0, viseme: "rest", speaking: false });
           return;
@@ -155,85 +163,48 @@ class PortfolioAudioEngine {
       this.rafId = requestAnimationFrame(tick);
     }
 
-    return new Promise<void>((resolve) => {
-      source.onended = () => {
-        if (!stopped) {
-          this.activeSourceCount = Math.max(0, this.activeSourceCount - 1);
-          if (this.activeSourceCount === 0) {
-            if (this.rafId !== null) {
-              cancelAnimationFrame(this.rafId);
-              this.rafId = null;
-            }
-            this.emit({ energy: 0, viseme: "rest", speaking: false });
+    source.onended = () => {
+      if (!stopped) {
+        this.activeSourceCount = Math.max(0, this.activeSourceCount - 1);
+        if (
+          this.activeSourceCount === 0 &&
+          ctx.currentTime >= this.nextStartTime - 0.02
+        ) {
+          if (this.rafId !== null) {
+            cancelAnimationFrame(this.rafId);
+            this.rafId = null;
           }
+          this.emit({ energy: 0, viseme: "rest", speaking: false });
         }
-        resolve();
-      };
-      source.start(startAt);
-    });
+      }
+    };
+    source.start(targetStart);
   }
 
-  public enqueuePcmChunk(base64Data: string, sampleRate = 24000): void {
-    const ctx = this.ensureContext();
-    if (!ctx || !base64Data) return;
+  public enqueueWavBase64(base64Data: string, pauseBeforeSec = 0): void {
+    if (!base64Data) return;
+    const gen = this.playbackGen;
+    this.queueChain = this.queueChain
+      .then(async () => {
+        if (gen !== this.playbackGen) return;
+        const ctx = this.ensureContext();
+        if (!ctx) return;
+        if (ctx.state === "suspended") {
+          await ctx.resume().catch(() => {});
+        }
+        if (gen !== this.playbackGen) return;
 
-    const binary = atob(base64Data);
-    const hasCarry = this.pcmCarryByte !== null ? 1 : 0;
-    const totalBytes = binary.length + hasCarry;
-    if (totalBytes < 2) {
-      if (binary.length === 1) this.pcmCarryByte = binary.charCodeAt(0);
-      return;
-    }
+        const binary = atob(base64Data);
+        const bytes = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) {
+          bytes[i] = binary.charCodeAt(i);
+        }
 
-    const usableBytes = totalBytes - (totalBytes % 2);
-    const bytes = new Uint8Array(usableBytes);
-    let offset = 0;
-    if (this.pcmCarryByte !== null) {
-      bytes[0] = this.pcmCarryByte;
-      offset = 1;
-      this.pcmCarryByte = null;
-    }
-    const copyLen = usableBytes - offset;
-    for (let i = 0; i < copyLen; i++) {
-      bytes[offset + i] = binary.charCodeAt(i);
-    }
-    if (copyLen < binary.length) {
-      this.pcmCarryByte = binary.charCodeAt(copyLen);
-    }
-
-    const sampleCount = usableBytes >> 1;
-    const view = new DataView(bytes.buffer);
-    const floats = new Float32Array(sampleCount);
-    for (let i = 0; i < sampleCount; i++) {
-      floats[i] = view.getInt16(i * 2, true) / 32768;
-    }
-
-    const audioBuffer = ctx.createBuffer(1, sampleCount, sampleRate);
-    audioBuffer.copyToChannel(floats, 0);
-    void this.scheduleBufferOnAnalyser(ctx, audioBuffer, false);
-  }
-
-  public addSpeechPause(seconds = 0.12): void {
-    if (!this.ctx) return;
-    this.nextPcmTime = Math.max(this.ctx.currentTime, this.nextPcmTime) + seconds;
-  }
-
-  public async playBase64Audio(
-    base64Data: string,
-    _mimeType = "audio/wav"
-  ): Promise<void> {
-    this.stopAll();
-    const ctx = this.ensureContext();
-    if (!ctx) return;
-
-    const binary = atob(base64Data);
-    const bytes = new Uint8Array(binary.length);
-    for (let i = 0; i < binary.length; i++) {
-      bytes[i] = binary.charCodeAt(i);
-    }
-
-    const audioBuffer = await ctx.decodeAudioData(bytes.buffer.slice(0));
-    return this.scheduleBufferOnAnalyser(ctx, audioBuffer, true);
+        const audioBuffer = await ctx.decodeAudioData(bytes.buffer.slice(0));
+        if (gen !== this.playbackGen) return;
+        this.scheduleBufferOnAnalyser(ctx, audioBuffer, pauseBeforeSec);
+      })
+      .catch(() => {});
   }
 }
 

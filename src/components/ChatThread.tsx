@@ -204,7 +204,15 @@ export function Composer({
   const prompts = PROMPTS;
   const [text, setText] = useState("");
   const [promptIdx, setPromptIdx] = useState(0);
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const isDark = tone === "dark";
+
+  useEffect(() => {
+    if (!autoFocus) return;
+    if (window.matchMedia("(min-width: 640px) and (pointer: fine)").matches) {
+      inputRef.current?.focus();
+    }
+  }, [autoFocus]);
 
   useEffect(() => {
     if (text) return;
@@ -237,15 +245,15 @@ export function Composer({
       </label>
       <div className="relative flex min-w-0 flex-1 items-center">
         <input
+          ref={inputRef}
           id={inputId}
           type="text"
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={onKeyDown}
           placeholder={activePrompt}
-          autoFocus={autoFocus}
           autoComplete="off"
-          className={`min-w-0 w-full rounded-full py-2 pl-4 pr-13 text-sm outline-none transition-colors focus-visible:outline-none ${
+          className={`min-w-0 w-full rounded-full py-2 pl-4 pr-4 text-base sm:pr-13 sm:text-sm outline-none transition-colors focus-visible:outline-none ${
             isDark
               ? "border border-white/14 bg-white/[0.07] text-white placeholder:text-zinc-400 focus:border-white/40"
               : "border border-line bg-paper-raised text-ink placeholder:text-ink-soft focus:border-ink"
@@ -256,7 +264,7 @@ export function Composer({
             type="button"
             onClick={() => setText(activePrompt)}
             title={t.tabHint}
-            className={`absolute right-2.5 rounded px-1.5 py-0.5 font-mono text-[10px] transition cursor-pointer ${
+            className={`hidden sm:inline-block absolute right-2.5 rounded px-1.5 py-0.5 font-mono text-[10px] transition cursor-pointer ${
               isDark
                 ? "bg-white/10 text-zinc-300 hover:bg-white/20"
                 : "bg-paper-subtle text-ink-soft hover:text-ink"

@@ -87,12 +87,13 @@ export const PROMPTS: string[] = [
 ];
 
 export const FOLLOW_UP_PROMPTS: Array<{ text: string; match?: RegExp }> = [
-  { text: "Hva er Boss Fight i bordtennis?", match: /bordtennis|qr|turnering/i },
   { text: "Hva gjør du i Ember Booking?", match: /prosjekt|frontend|design|figma/i },
-  { text: "Hvordan bruker du AI i koding?", match: /3d|worker|gemini|kode|stack/i },
-  { text: "Hva gjorde du før utvikling?", match: /noroff|rolle|utdanning|backend/i },
+  { text: "Hvordan er MedCare Clinical bygget?", match: /ember|backend|noroff|eksamen/i },
+  { text: "Hvordan bruker du AI i programvareutvikling?", match: /3d|worker|gemini|utvikling|stack/i },
+  { text: "Hva gjorde du før utvikling?", match: /noroff|rolle|utdanning|medcare/i },
   { text: "Hva slags rolle ser du etter?", match: /ekornes|pt|trener|cuba|erfaring/i },
   { text: "Hva er en svakhet du har?", match: /rolle|remote|hybrid|samarbeid/i },
+  { text: "Hvordan løste du storskjermen i kantina?", match: /bordtennis/i },
   { text: "Hvordan fungerer 3D chatten?" },
   { text: "Vis meg rundt i prosjektene" },
   { text: "Kan jeg få se CV'en din?" },
@@ -117,9 +118,9 @@ export const ITEMS: IndexItem[] = [
     summary:
       "Pågående prosjekt ved Nord-Gudbrandsdal VGS som får elevene opp fra mobilen i friminuttet, med QR kode ved bordet, guilds og live storskjerm i kantina.",
     highlights: [
-      "Spillere skanner QR kode ved bordet, bekrefter resultatet fra begge sider, og ansatte kan hoppe inn som Boss Fight.",
-      "Kongen på haugen, sluttspill og sveitserstil, pluss guilds per klasse, premiehvelv og StatTrak rekkerter.",
-      "Støtte for flere skoler i Node.js og SQLite (5 npm pakker), der navn og epost slettes straks eleven er verifisert.",
+      "Skjermfri flyt ved bordet med QR kode, tosidig resultatbekreftelse, anti-juks og automatisk frigjøring av glemte bord.",
+      "Live storskjerm i kantina via Socket.IO, tilpasset Infoskjermen.no på eldre TV skjermer med animert WebP og ES5 støtte.",
+      "Flere skoler på samme instans i Node.js og innebygd SQLite (5 npm pakker), stresstestet med 100 samtidige spillere.",
     ],
     aiNote:
       "Første versjon gikk fra plan til drift på en uke med Spike and Stabilize.",

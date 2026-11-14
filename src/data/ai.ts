@@ -2,7 +2,7 @@ export const AI_PAGE = {
   title: "Hvordan jeg bruker AI",
   lead: [
     "Det siste året har jeg tatt i bruk AI for fullt i måten jeg utvikler på. Jeg lærer fortsatt nye grep hver uke, bommer innimellom når jeg gir for løse rammer, og merker samtidig stor gevinst i hvor mye jeg faktisk får bygget og ferdigstilt.",
-    "Ja, AI tar unna mye av skrivejobben jeg før gjorde for hånd. Det gir meg mer tid i begge ender av arbeidet: å tenke skikkelig gjennom arkitekturen i starten, og å pusse på detaljene i brukeropplevelsen til slutt.",
+    "Ja, AI tar unna mye av kodeskrivinga jeg før gjorde for hånd. Det gir meg mer tid i begge ender av arbeidet: å tenke skikkelig gjennom arkitekturen i starten, og å pusse på detaljene i brukeropplevelsen til slutt.",
   ],
   shift: {
     heading: "Hvor tiden min går",
@@ -10,12 +10,12 @@ export const AI_PAGE = {
     withAiLabel: "Med AI",
     before: [
       { label: "Arkitektur", pct: 15, tone: "bg-zinc-600" },
-      { label: "Kodeskriving og oppsett", pct: 70, tone: "bg-zinc-400" },
+      { label: "Programvareutvikling og oppsett", pct: 70, tone: "bg-zinc-400" },
       { label: "UX og test", pct: 15, tone: "bg-amber-400/80" },
     ],
     withAi: [
       { label: "Arkitektur og rammer", pct: 35, tone: "bg-[#e4461f]" },
-      { label: "Koding", pct: 25, tone: "bg-zinc-400" },
+      { label: "Programvareutvikling", pct: 25, tone: "bg-zinc-400" },
       { label: "Testing, UX og finpuss", pct: 40, tone: "bg-emerald-400" },
     ],
     caption:
@@ -29,7 +29,11 @@ export const AI_PAGE = {
     },
     {
       title: "Spike and Stabilize",
-      body: "Etter mye egen prøving og feiling har jeg landet på en arbeidsmåte jeg kaller Spike and Stabilize. Først bygger jeg en rask førsteversjon hele veien fra database til UI (Spike) for å se om ideen faktisk fungerer. Når kjernefunksjonen sitter, bytter jeg til Stabilize: rydder vekk støy, håndterer edge cases og gjør koden klar for produksjon.",
+      body: "Etter mye egen prøving og feiling landet jeg på en rytme som viste seg å være en etablert metode kalt Spike and Stabilize, beskrevet av Dan North. Først bygger jeg en rask førsteversjon hele veien fra database til UI (Spike) for å se om ideen faktisk fungerer. Når kjernefunksjonen sitter, bytter jeg til Stabilize: rydder vekk støy, håndterer edge cases og gjør koden klar for produksjon.",
+      link: {
+        label: "Dan North om Spike and Stabilize",
+        href: "https://dannorth.net/blog/on-craftsmanship/",
+      },
     },
     {
       title: "Slank kode gir kort kontekst",
@@ -55,21 +59,21 @@ export const AI_PAGE = {
   practices: [
     {
       project: "VGS Bordtennis",
-      status: "Spike and Stabilize · Pågår",
+      status: "Spike and Stabilize",
       href: "https://vgsbordtennis.no/kiosk/demo",
       description:
         "Første versjon gikk fra plan til drift på en uke med en blanding av arkitekturbygging, raske iterasjoner på design og finpuss med AI. Flat kodebase, developerlog.md og AGENTS.md holder konteksten kort mens prosjektet vokser.",
     },
     {
       project: "Ember Booking",
-      status: "Håndverk først, AI til slutt · Samarbeid",
+      status: "Håndverk først, AI til slutt",
       href: "https://emberbooking.no",
       description:
         "Her var strategien helt motsatt. Jeg gjorde grunnarbeidet selv, laget assets i Figma og bygde opp designsystemet for hånd. AI brukte jeg først helt til slutt for å fange opp inkonsekvenser og syntax feil før utrulling.",
     },
     {
       project: "MedCare Clinical og skoleprosjekter",
-      status: "Minimalt med AI · Noroff",
+      status: "Minimalt med AI",
       href: "https://github.com/yosang/medcare-clinical",
       description:
         "Skoleprosjektene er til for å lære. Der bruker jeg nesten ingen AI utover litt sparring underveis, slik at jeg er sikker på at grunnkonseptene sitter ordentlig på egen hånd.",

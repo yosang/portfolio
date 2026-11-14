@@ -105,14 +105,27 @@ export default function AiTransparencyPage() {
           {t.principles.map((item) => (
             <div
               key={item.title}
-              className="rounded-2xl border border-line bg-paper-raised p-5 space-y-2.5"
+              className="flex flex-col justify-between rounded-2xl border border-line bg-paper-raised p-5 gap-3"
             >
-              <h3 className="font-display text-base font-semibold tracking-tight text-ink">
-                {item.title}
-              </h3>
-              <p className="text-sm leading-relaxed text-ink-soft">
-                {item.body}
-              </p>
+              <div className="space-y-2.5">
+                <h3 className="font-display text-base font-semibold tracking-tight text-ink">
+                  {item.title}
+                </h3>
+                <p className="text-sm leading-relaxed text-ink-soft">
+                  {item.body}
+                </p>
+              </div>
+              {"link" in item && item.link && (
+                <a
+                  href={item.link.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1 self-start text-xs font-medium text-ink underline underline-offset-4 hover:opacity-75"
+                >
+                  <span>{item.link.label}</span>
+                  <ArrowUpRight className="h-3 w-3" />
+                </a>
+              )}
             </div>
           ))}
         </div>
@@ -153,7 +166,7 @@ export default function AiTransparencyPage() {
             const external = p.href.startsWith("http");
             return (
               <div key={p.project} className="py-5 space-y-1.5">
-                <div className="flex items-center justify-between gap-3">
+                <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
                   {external ? (
                     <a
                       href={p.href}

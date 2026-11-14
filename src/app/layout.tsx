@@ -37,9 +37,9 @@ export default function RootLayout({
       lang="nb"
       data-theme="light"
       suppressHydrationWarning
-      className={`${geistSans.variable} ${hostGrotesk.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${hostGrotesk.variable} ${geistMono.variable} antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-dvh flex flex-col">
         <div aria-hidden="true" className="prism-bar" />
         <ThemeProvider>
           <CompanionProvider>

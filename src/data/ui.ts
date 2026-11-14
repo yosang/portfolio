@@ -1,7 +1,7 @@
 import type { AvatarMood } from "@/lib/avatarEngine";
 
 export const UI = {
-  nav: { projects: "Prosjekter", about: "Om meg", ai: "AI", chat: "Chat" },
+  nav: { projects: "Prosjekter", about: "Om", ai: "AI", chat: "Chat" },
   themeLabel: "Bytt mellom lys og mørk visning",
   moods: {
     neutral: "klar",
@@ -12,7 +12,7 @@ export const UI = {
   home: {
     worksTitle: "Prosjekter",
     worksIntro:
-      "Jeg bygger stadig nye ting. Enkelte dager blir det med raske eksperimenter i private repoer som aldri ser dagens lys. Andre dager dukker det opp en ide jeg bare må realisere, og da kommer pennen frem så jeg får lagt en plan med langsiktige mål over et par dager før jeg begynner å kode.",
+      "Jeg bygger stadig nye ting. Enkelte dager er det raske eksperimenter i private repoer som aldri ser dagens lys. Andre dager dukker det opp en ide jeg må få realisert. Da kommer pennen frem, og jeg bruker gjerne et par dager på å legge en plan med langsiktige mål før jeg begynner å kode.",
     filterAll: "Alle",
     filterIndependent: "Egne og samarbeid",
     filterSchool: "Skoleprosjekter",

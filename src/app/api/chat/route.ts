@@ -150,6 +150,47 @@ const ERROR_REPLY =
 const RATE_LIMIT_REPLY =
   "Rolig i svingene! Jeg trenger en liten pust i bakken, prøv gjerne igjen om et lite minutt.";
 
+function cleanForSpeech(raw: string): string {
+  return raw
+    .replace(/[`*_~]+/g, "")
+    .replace(/\s*\n+\s*/g, " ")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
+function findFirstSegmentEnd(text: string): number {
+  const paraIdx = text.indexOf("\n\n");
+  if (paraIdx >= 25) return paraIdx;
+
+  const re = /[.!?](?=\s+[A-ZÆØÅ])/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(text)) !== null) {
+    const idx = m.index;
+    if (idx < 45) continue;
+    if (idx > 220) break;
+    const before = text.slice(Math.max(0, idx - 8), idx).toLowerCase();
+    if (/(?:\bf\.eks|\bbl\.a|\bca|\bnr|\bkl|\bmfl|\bosv)$/.test(before)) {
+      continue;
+    }
+    return idx + 1;
+  }
+  return -1;
+}
+
+function extractWavBase64(res: unknown): string | null {
+  const r = res as {
+    output_audio?: { data?: string };
+    outputs?: Array<{ content?: Array<{ type?: string; data?: string }> }>;
+    steps?: Array<{ content?: Array<{ type?: string; data?: string }> }>;
+  };
+  return (
+    r?.output_audio?.data ||
+    r?.outputs?.flatMap((o) => o.content || []).find((c) => c.type === "audio")?.data ||
+    r?.steps?.flatMap((s) => s.content || []).find((c) => c.type === "audio")?.data ||
+    null
+  );
+}
+
 function moodToSpeechStyle(mood: Mood): string {
   switch (mood) {
     case "happy":
@@ -225,7 +266,7 @@ export async function POST(req: NextRequest) {
                 .slice(-6)
                 .map(
                   (m) =>
-                    `${m.role === "user" ? "Besøkende" : PROFILE.name}: ${m.content.slice(0, MAX_INPUT_CHARS)}`
+                    `${m.role === "user" ? "Besøkende" : PROFILE.shortName}: ${m.content.slice(0, MAX_INPUT_CHARS)}`
                 )
                 .join("\n") + `\n\nSvar på den siste meldingen fra Besøkende over.`
             : lastUserMsg;
@@ -254,6 +295,94 @@ export async function POST(req: NextRequest) {
         let tailBuffer = "";
         let fileEmitted = false;
         let interactionId: string | undefined;
+
+        const activeVoice = configuredVoiceId || presetFallbackVoice;
+        const voiceModeLabel = configuredVoiceId ? "replicated" : "preset";
+        const ttsAi =
+          wantVoice && activeVoice
+            ? new GoogleGenAI({ apiKey, apiVersion: "v1beta" })
+            : null;
+        let voiceBudget: { allowed: boolean; remaining: number } | null = null;
+        let hitDailyCap = false;
+        let earlySegmentOffset = 0;
+        let earlySegmentPromise: Promise<string | null> | null = null;
+
+        const synthesizeWav = async (segmentText: string): Promise<string | null> => {
+          if (!ttsAi || !activeVoice || !segmentText) return null;
+          const defaultModel = configuredVoiceId
+            ? "gemini-3.8-flash-tts"
+            : "gemini-3.8-flash-lite-tts";
+          const primaryModel = process.env.GEMINI_TTS_MODEL?.trim() || defaultModel;
+          const candidates = (
+            primaryModel === "gemini-3.8-flash-lite-tts"
+              ? [primaryModel, "gemini-3.8-flash-tts"]
+              : [primaryModel]
+          ).filter((m) => !exhaustedTtsModels.has(m));
+
+          if (candidates.length === 0) {
+            hitDailyCap = true;
+            return null;
+          }
+
+          for (const candidateModel of candidates) {
+            try {
+              const contentItem: {
+                type: "text";
+                text: string;
+                annotations?: Array<{ type: "speech_metadata"; style: string }>;
+              } = {
+                type: "text",
+                text: segmentText,
+              };
+              if (!configuredVoiceId) {
+                contentItem.annotations = [
+                  {
+                    type: "speech_metadata",
+                    style: moodToSpeechStyle(detectedMood),
+                  },
+                ];
+              }
+
+              const ttsRes = await ttsAi.interactions.create(
+                {
+                  model: candidateModel,
+                  input: [{ type: "user_input", content: [contentItem] }],
+                  response_format: { type: "audio" },
+                  generation_config: {
+                    speech_config: [{ voice: activeVoice }],
+                  },
+                },
+                { maxRetries: 0, timeout: 15000 }
+              );
+              const b64 = extractWavBase64(ttsRes);
+              if (b64) return b64;
+            } catch (ttsErr) {
+              const msg = ttsErr instanceof Error ? ttsErr.message : String(ttsErr);
+              if (msg.includes("429") || msg.includes("Rate limit")) {
+                if (msg.includes("per day")) {
+                  exhaustedTtsModels.add(candidateModel);
+                  hitDailyCap = true;
+                }
+                continue;
+              }
+              console.error(`[TTS Fallback (${candidateModel})]:`, msg);
+              break;
+            }
+          }
+          return null;
+        };
+
+        const maybeStartEarlyVoice = () => {
+          if (!wantVoice || !ttsAi || earlySegmentPromise || voiceBudget) return;
+          const splitAt = findFirstSegmentEnd(fullCleanText);
+          if (splitAt <= 0) return;
+          voiceBudget = checkAndIncrementVoiceBudget();
+          if (!voiceBudget.allowed) return;
+          const seg1 = cleanForSpeech(fullCleanText.slice(0, splitAt));
+          if (!seg1) return;
+          earlySegmentOffset = splitAt;
+          earlySegmentPromise = synthesizeWav(seg1);
+        };
 
         const emitBodyChunk = (chunk: string, final = false) => {
           tailBuffer += chunk;
@@ -286,6 +415,7 @@ export async function POST(req: NextRequest) {
           if (cleaned) {
             fullCleanText += cleaned;
             controller.enqueue(sseFrame({ t: cleaned }));
+            if (!final) maybeStartEarlyVoice();
           }
         };
 
@@ -386,118 +516,63 @@ export async function POST(req: NextRequest) {
         const spokenText = fullCleanText.trim();
         if (process.env.NODE_ENV !== "production") lintReply(spokenText);
 
-        if (wantVoice && spokenText.length > 0) {
-          const activeVoice = configuredVoiceId || presetFallbackVoice;
+        if (wantVoice && spokenText.length > 0 && ttsAi) {
+          if (!voiceBudget) {
+            voiceBudget = checkAndIncrementVoiceBudget();
+          }
 
-          if (activeVoice) {
-            const primaryModel =
-              process.env.GEMINI_TTS_MODEL?.trim() || "gemini-3.8-flash-lite-tts";
-            const candidateModels = (
-              primaryModel === "gemini-3.8-flash-lite-tts"
-                ? [primaryModel, "gemini-3.8-flash-tts"]
-                : [primaryModel]
-            ).filter((m) => !exhaustedTtsModels.has(m));
+          if (!voiceBudget.allowed) {
+            controller.enqueue(sseFrame({ capped: true }));
+          } else if (earlySegmentPromise) {
+            const remainderSpeech = cleanForSpeech(
+              fullCleanText.slice(earlySegmentOffset)
+            );
+            const seg2Promise = remainderSpeech
+              ? synthesizeWav(remainderSpeech)
+              : Promise.resolve(null);
 
-            if (candidateModels.length === 0) {
+            const wav1 = await earlySegmentPromise;
+            let emittedAny = false;
+            if (wav1) {
+              emittedAny = true;
+              controller.enqueue(
+                sseFrame({
+                  audio: wav1,
+                  mode: voiceModeLabel,
+                  remainingVoiceQuota: voiceBudget.remaining,
+                })
+              );
+            }
+
+            const wav2 = await seg2Promise;
+            if (wav2) {
+              emittedAny = true;
+              controller.enqueue(
+                sseFrame({
+                  audio: wav2,
+                  pauseBefore: 0.14,
+                  mode: voiceModeLabel,
+                  remainingVoiceQuota: voiceBudget.remaining,
+                })
+              );
+            }
+
+            if (!emittedAny && hitDailyCap) {
               controller.enqueue(sseFrame({ capped: true }));
-            } else {
-              const budget = checkAndIncrementVoiceBudget();
-              if (!budget.allowed) {
-                controller.enqueue(sseFrame({ capped: true }));
-              } else {
-                const ttsAi = new GoogleGenAI({ apiKey, apiVersion: "v1beta" });
-                const voiceModeLabel = configuredVoiceId ? "replicated" : "preset";
-                let emittedAnyPcm = false;
-                let hitDailyCap = false;
-
-                for (const candidateModel of candidateModels) {
-                  try {
-                    const ttsStream = await ttsAi.interactions.create(
-                      {
-                        model: candidateModel,
-                        input: [
-                          {
-                            type: "user_input",
-                            content: [
-                              {
-                                type: "text",
-                                text: spokenText,
-                                annotations: [
-                                  {
-                                    type: "speech_metadata",
-                                    style: moodToSpeechStyle(detectedMood),
-                                  },
-                                ],
-                              },
-                            ],
-                          },
-                        ],
-                        response_format: { type: "audio" },
-                        generation_config: {
-                          speech_config: [{ voice: activeVoice }],
-                        },
-                        stream: true,
-                      },
-                      { maxRetries: 0, timeout: 12000 }
-                    );
-
-                    let pendingChunks: Buffer[] = [];
-                    let pendingBytes = 0;
-                    let sentFirst = false;
-
-                    const flushPending = () => {
-                      if (pendingBytes === 0) return;
-                      const merged =
-                        pendingChunks.length === 1
-                          ? pendingChunks[0]
-                          : Buffer.concat(pendingChunks, pendingBytes);
-                      pendingChunks = [];
-                      pendingBytes = 0;
-                      emittedAnyPcm = true;
-                      sentFirst = true;
-                      controller.enqueue(
-                        sseFrame({
-                          pcm: merged.toString("base64"),
-                          mode: voiceModeLabel,
-                          remainingVoiceQuota: budget.remaining,
-                        })
-                      );
-                    };
-
-                    for await (const ev of ttsStream) {
-                      if (
-                        ev.event_type === "step.delta" &&
-                        ev.delta?.type === "audio" &&
-                        ev.delta.data
-                      ) {
-                        const buf = Buffer.from(ev.delta.data, "base64");
-                        pendingChunks.push(buf);
-                        pendingBytes += buf.length;
-                        if (pendingBytes >= (!sentFirst ? 3200 : 12000)) {
-                          flushPending();
-                        }
-                      }
-                    }
-                    flushPending();
-                    if (emittedAnyPcm) break;
-                  } catch (ttsErr) {
-                    const msg = ttsErr instanceof Error ? ttsErr.message : String(ttsErr);
-                    if (msg.includes("429") || msg.includes("Rate limit")) {
-                      if (msg.includes("per day")) {
-                        exhaustedTtsModels.add(candidateModel);
-                        hitDailyCap = true;
-                      }
-                      if (!emittedAnyPcm) continue;
-                    }
-                    console.error(`[TTS Fallback (${candidateModel})]:`, msg);
-                    break;
-                  }
-                }
-
-                if (!emittedAnyPcm && hitDailyCap) {
-                  controller.enqueue(sseFrame({ capped: true }));
-                }
-              }
+            }
+          } else {
+            const fullSpeech = cleanForSpeech(spokenText);
+            const wav = fullSpeech ? await synthesizeWav(fullSpeech) : null;
+            if (wav) {
+              controller.enqueue(
+                sseFrame({
+                  audio: wav,
+                  mode: voiceModeLabel,
+                  remainingVoiceQuota: voiceBudget.remaining,
+                })
+              );
+            } else if (hitDailyCap) {
+              controller.enqueue(sseFrame({ capped: true }));
             }
           }
         }
