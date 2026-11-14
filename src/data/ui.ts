@@ -92,7 +92,7 @@ export const UI = {
       },
       {
         label: "Ansikt",
-        value: "Skannet i 3D, november 2026",
+        value: "Skannet i 3D, 2026",
       },
       {
         label: "Stemme",
@@ -103,8 +103,7 @@ export const UI = {
         value: "Generert der og da, uten at jeg vet hva jeg svarer deg",
       },
     ],
-    copyright:
-      "© November 2026 Yosmel Chiang og modellene som snakker i mitt navn. Dokumentert mens vi fortsatt klarte å se forskjell på menneske og maskin.",
+    copyright: "© 2026 Yosmel Chiang og modellene som snakker i mitt navn.",
   },
   networkError: "Fikk ikke svar akkurat nå. Prøv igjen.",
 };

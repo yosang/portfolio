@@ -1,10 +1,16 @@
-"use client";
-
+import type { Metadata } from "next";
 import React from "react";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { PROFILE } from "@/data/portfolio";
 import { UI } from "@/data/ui";
+
+export const metadata: Metadata = {
+  title: UI.about.heading,
+  description:
+    "Bakgrunn, utdanning i backend og frontend ved Noroff School of Technology and Digital Media, arbeid med Ember Booking og verktøykasse.",
+  alternates: { canonical: "/about" },
+};
 
 export default function AboutPage() {
   const t = UI.about;

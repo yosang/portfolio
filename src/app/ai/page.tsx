@@ -1,7 +1,15 @@
+import type { Metadata } from "next";
 import React from "react";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { AI_PAGE } from "@/data/ai";
+
+export const metadata: Metadata = {
+  title: AI_PAGE.title,
+  description:
+    "Hvordan jeg jobber med arkitektur, Spike and Stabilize, slank kontekst og testing når jeg bruker AI i programvareutvikling.",
+  alternates: { canonical: "/ai" },
+};
 
 export default function AiTransparencyPage() {
   const t = AI_PAGE;

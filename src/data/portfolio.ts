@@ -23,6 +23,8 @@ export interface IndexItem {
   aiNote?: string;
 }
 
+export const SITE_URL = "https://yosmel.no";
+
 export const PROFILE = {
   name: "Yosmel Chiang",
   shortName: "Yosmel",

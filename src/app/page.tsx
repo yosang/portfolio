@@ -435,51 +435,58 @@ const WorkShowcaseItem = memo(function WorkShowcaseItem({
         <p className="text-sm leading-relaxed text-ink-soft">{item.subtitle}</p>
       </div>
 
-      {open && (
-        <div
-          id={panelId}
-          className="mt-3.5 space-y-3 rounded-xl border border-line bg-paper-raised p-4 text-sm"
-        >
-          <p className="leading-relaxed text-ink">{item.summary}</p>
-          <ul className="space-y-1.5 text-ink-soft">
-            {item.highlights.map((h, i) => (
-              <li key={i} className="leading-relaxed">
-                · {h}
-              </li>
-            ))}
-          </ul>
-          {item.aiNote && (
-            <p className="border-t border-line pt-2.5 text-xs leading-relaxed text-ink-soft">
-              {item.aiNote}{" "}
-              <Link
-                href="/ai"
-                className="font-medium text-ink underline underline-offset-4 hover:text-trail"
-              >
-                {t.readAiWorkflow} →
-              </Link>
-            </p>
-          )}
-          <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
-            <div className="flex flex-wrap gap-1.5">
-              {item.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="rounded-md bg-paper-subtle px-2 py-0.5 font-mono text-[11px] text-ink-soft"
-                >
-                  {tag}
-                </span>
+      <div
+        id={panelId}
+        inert={!open || undefined}
+        className={`grid transition-[grid-template-rows,opacity,margin] duration-200 ease-out ${
+          open
+            ? "mt-3.5 grid-rows-[1fr] opacity-100"
+            : "mt-0 grid-rows-[0fr] opacity-0 pointer-events-none"
+        }`}
+      >
+        <div className="overflow-hidden">
+          <div className="space-y-3 rounded-xl border border-line bg-paper-raised p-4 text-sm">
+            <p className="leading-relaxed text-ink">{item.summary}</p>
+            <ul className="space-y-1.5 text-ink-soft">
+              {item.highlights.map((h, i) => (
+                <li key={i} className="leading-relaxed">
+                  · {h}
+                </li>
               ))}
+            </ul>
+            {item.aiNote && (
+              <p className="border-t border-line pt-2.5 text-xs leading-relaxed text-ink-soft">
+                {item.aiNote}{" "}
+                <Link
+                  href="/ai"
+                  className="font-medium text-ink underline underline-offset-4 hover:text-trail"
+                >
+                  {t.readAiWorkflow} →
+                </Link>
+              </p>
+            )}
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+              <div className="flex flex-wrap gap-1.5">
+                {item.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="rounded-md bg-paper-subtle px-2 py-0.5 font-mono text-[11px] text-ink-soft"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+              <button
+                type="button"
+                onClick={() => onAsk(t.askAboutPrompt(item.title))}
+                className="text-xs font-medium text-ink underline underline-offset-4 cursor-pointer"
+              >
+                {t.askAbout} →
+              </button>
             </div>
-            <button
-              type="button"
-              onClick={() => onAsk(t.askAboutPrompt(item.title))}
-              className="text-xs font-medium text-ink underline underline-offset-4 cursor-pointer"
-            >
-              {t.askAbout} →
-            </button>
           </div>
         </div>
-      )}
+      </div>
     </article>
   );
 });
