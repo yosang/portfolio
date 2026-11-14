@@ -269,6 +269,11 @@ export function Prologue() {
         if (!flagged && !unseen) return;
       }
 
+      if (window.location.hash) {
+        window.history.replaceState(null, "", window.location.pathname);
+      }
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+
       // Always turn sound ON by default when viewing the prologue message
       voiceEnabledRef.current = true;
       setVoiceEnabled(true);
@@ -336,6 +341,10 @@ export function Prologue() {
       }
       delete document.documentElement.dataset.prologue;
       document.documentElement.style.overflow = "";
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      requestAnimationFrame(() => {
+        window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      });
 
       if (isReconnect) {
         seedWelcome();

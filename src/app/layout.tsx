@@ -44,7 +44,7 @@ export default function RootLayout({
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{if(location.pathname==="/"&&sessionStorage.getItem("yosmel-prologue-seen")!=="1"){document.documentElement.dataset.prologue="1"}}catch(e){}`,
+            __html: `try{if("scrollRestoration"in history){history.scrollRestoration="manual"}if(location.pathname==="/"&&sessionStorage.getItem("yosmel-prologue-seen")!=="1"){document.documentElement.dataset.prologue="1";if(location.hash){history.replaceState(null,"","/")}window.scrollTo(0,0)}else if(location.hash!=="#prosjekter"){window.scrollTo(0,0)}}catch(e){}`,
           }}
         />
       </head>

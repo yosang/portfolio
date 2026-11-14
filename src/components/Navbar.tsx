@@ -13,7 +13,24 @@ export function Navbar() {
   const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
-    if (pathname === "/" && window.location.hash === "#prosjekter") {
+    if ("scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual";
+    }
+    const onPageShow = (e: PageTransitionEvent) => {
+      if (e.persisted && window.location.hash !== "#prosjekter") {
+        window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      }
+    };
+    window.addEventListener("pageshow", onPageShow);
+    return () => window.removeEventListener("pageshow", onPageShow);
+  }, []);
+
+  useEffect(() => {
+    if (
+      pathname === "/" &&
+      window.location.hash === "#prosjekter" &&
+      document.documentElement.dataset.prologue !== "1"
+    ) {
       const id = requestAnimationFrame(() => {
         document.getElementById("prosjekter")?.scrollIntoView({ behavior: "smooth" });
       });
