@@ -20,6 +20,7 @@ class PortfolioAudioEngine {
   private rafId: number | null = null;
   private streamAnalyser: AnalyserNode | null = null;
   private nextStartTime = 0;
+  private nextFallbackWallTime = 0;
   private activeSourceCount = 0;
   private playbackGen = 0;
   private queueChain: Promise<void> = Promise.resolve();
@@ -86,6 +87,7 @@ class PortfolioAudioEngine {
       this.streamAnalyser = null;
     }
     this.nextStartTime = 0;
+    this.nextFallbackWallTime = 0;
     this.activeSourceCount = 0;
     this.emit({ energy: 0, viseme: "rest", speaking: false });
   }
@@ -93,8 +95,32 @@ class PortfolioAudioEngine {
   private scheduleBufferOnAnalyser(
     ctx: AudioContext,
     audioBuffer: AudioBuffer,
-    pauseBeforeSec = 0
+    pauseBeforeSec = 0,
+    onStart?: () => void
   ): void {
+    if (ctx.state !== "running") {
+      const nowSec = performance.now() / 1000;
+      const earliest = nowSec + 0.02;
+      const targetStart =
+        this.nextFallbackWallTime > earliest
+          ? this.nextFallbackWallTime + pauseBeforeSec
+          : earliest + pauseBeforeSec;
+      this.nextFallbackWallTime = targetStart + audioBuffer.duration;
+      if (onStart) {
+        const leadSec = Math.min(pauseBeforeSec, 0.22);
+        const fireInMs = Math.max(0, (targetStart - leadSec - nowSec) * 1000);
+        let stopped = false;
+        const timer = setTimeout(() => {
+          if (!stopped) onStart();
+        }, fireInMs);
+        this.activeStoppers.push(() => {
+          stopped = true;
+          clearTimeout(timer);
+        });
+      }
+      return;
+    }
+
     if (!this.streamAnalyser) {
       const analyser = ctx.createAnalyser();
       analyser.fftSize = 256;
@@ -117,8 +143,22 @@ class PortfolioAudioEngine {
     this.activeSourceCount += 1;
 
     let stopped = false;
+    let startTimer: ReturnType<typeof setTimeout> | null = null;
+    if (onStart) {
+      const leadSec = Math.min(pauseBeforeSec, 0.22);
+      const fireInMs = Math.max(0, (targetStart - leadSec - ctx.currentTime) * 1000);
+      startTimer = setTimeout(() => {
+        startTimer = null;
+        if (!stopped) onStart();
+      }, fireInMs);
+    }
+
     this.activeStoppers.push(() => {
       stopped = true;
+      if (startTimer !== null) {
+        clearTimeout(startTimer);
+        startTimer = null;
+      }
       try {
         source.stop();
       } catch {
@@ -188,50 +228,64 @@ class PortfolioAudioEngine {
     source.start(targetStart);
   }
 
-  public enqueueWavBase64(base64Data: string, pauseBeforeSec = 0): void {
-    if (!base64Data) return;
+  private decodeAndSchedule(
+    getBuffer: () => ArrayBuffer,
+    pauseBeforeSec: number,
+    onStart?: () => void
+  ): void {
     const gen = this.playbackGen;
     this.queueChain = this.queueChain
       .then(async () => {
         if (gen !== this.playbackGen) return;
         const ctx = this.ensureContext();
-        if (!ctx) return;
+        if (!ctx) {
+          onStart?.();
+          return;
+        }
         if (ctx.state === "suspended") {
-          await ctx.resume().catch(() => {});
+          await Promise.race([
+            ctx.resume().catch(() => {}),
+            new Promise<void>((r) => setTimeout(r, 250)),
+          ]);
         }
         if (gen !== this.playbackGen) return;
 
+        const audioBuffer = await ctx.decodeAudioData(getBuffer());
+        if (gen !== this.playbackGen) return;
+        this.scheduleBufferOnAnalyser(ctx, audioBuffer, pauseBeforeSec, onStart);
+      })
+      .catch(() => {
+        if (gen === this.playbackGen) onStart?.();
+      });
+  }
+
+  public enqueueWavBase64(
+    base64Data: string,
+    pauseBeforeSec = 0,
+    onStart?: () => void
+  ): void {
+    if (!base64Data) return;
+    this.decodeAndSchedule(
+      () => {
         const binary = atob(base64Data);
         const bytes = new Uint8Array(binary.length);
         for (let i = 0; i < binary.length; i++) {
           bytes[i] = binary.charCodeAt(i);
         }
-
-        const audioBuffer = await ctx.decodeAudioData(bytes.buffer.slice(0));
-        if (gen !== this.playbackGen) return;
-        this.scheduleBufferOnAnalyser(ctx, audioBuffer, pauseBeforeSec);
-      })
-      .catch(() => {});
+        return bytes.buffer.slice(0);
+      },
+      pauseBeforeSec,
+      onStart
+    );
   }
 
-  public enqueueAudioBuffer(rawBuffer: ArrayBuffer, pauseBeforeSec = 0): void {
+  public enqueueAudioBuffer(
+    rawBuffer: ArrayBuffer,
+    pauseBeforeSec = 0,
+    onStart?: () => void
+  ): void {
     if (!rawBuffer || rawBuffer.byteLength === 0) return;
-    const gen = this.playbackGen;
-    this.queueChain = this.queueChain
-      .then(async () => {
-        if (gen !== this.playbackGen) return;
-        const ctx = this.ensureContext();
-        if (!ctx) return;
-        if (ctx.state === "suspended") {
-          await ctx.resume().catch(() => {});
-        }
-        if (gen !== this.playbackGen) return;
-
-        const audioBuffer = await ctx.decodeAudioData(rawBuffer.slice(0));
-        if (gen !== this.playbackGen) return;
-        this.scheduleBufferOnAnalyser(ctx, audioBuffer, pauseBeforeSec);
-      })
-      .catch(() => {});
+    this.decodeAndSchedule(() => rawBuffer.slice(0), pauseBeforeSec, onStart);
   }
 
   private getKeystrokeBank(ctx: AudioContext): AudioBuffer[] {

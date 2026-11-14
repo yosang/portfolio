@@ -221,6 +221,28 @@ const HeroAiStudio = memo(function HeroAiStudio() {
   const [infoHovered, setInfoHovered] = useState(false);
   const infoOpen = infoPinned || infoHovered;
   const infoRef = useRef<HTMLDivElement | null>(null);
+  const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const openHover = useCallback(() => {
+    if (hoverTimerRef.current) {
+      clearTimeout(hoverTimerRef.current);
+      hoverTimerRef.current = null;
+    }
+    setInfoHovered(true);
+  }, []);
+
+  const closeHoverSoon = useCallback(() => {
+    if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+    hoverTimerRef.current = setTimeout(() => {
+      setInfoHovered(false);
+    }, 110);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     if (!infoPinned) return;
@@ -252,56 +274,36 @@ const HeroAiStudio = memo(function HeroAiStudio() {
           "radial-gradient(circle at 18% 14%, rgba(228, 70, 31, 0.2), transparent 48%), radial-gradient(circle at 84% 22%, rgba(128, 201, 255, 0.14), transparent 50%), #212325",
       }}
     >
-      <div className="relative z-30 flex items-center justify-between gap-2 border-b border-white/10 bg-[#191b1d] px-4 py-2.5">
+      <div
+        ref={infoRef}
+        className="relative z-30 flex items-center justify-between gap-2 border-b border-white/10 bg-[#191b1d] px-4 py-2.5"
+      >
         <span className="text-xs text-zinc-400">
           {isStreaming ? ui.chat.thinking : ui.moods[mood]}
         </span>
 
         <div className="flex items-center gap-1.5">
-          <div
-            ref={infoRef}
-            className="relative flex items-center"
+          <button
+            type="button"
             onPointerEnter={(e) => {
-              if (e.pointerType === "mouse") setInfoHovered(true);
+              if (e.pointerType === "mouse") openHover();
             }}
             onPointerLeave={(e) => {
-              if (e.pointerType === "mouse") setInfoHovered(false);
+              if (e.pointerType === "mouse") closeHoverSoon();
             }}
+            onClick={() =>
+              setInfoPinned((prev) => {
+                const next = !prev;
+                if (!next) setInfoHovered(false);
+                return next;
+              })
+            }
+            aria-label={ui.chat.aboutAiLabel}
+            aria-expanded={infoOpen}
+            className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-white/20 font-mono text-[11px] font-medium leading-none text-zinc-400 transition-colors hover:border-white/45 hover:text-white cursor-pointer"
           >
-            <button
-              type="button"
-              onClick={() =>
-                setInfoPinned((prev) => {
-                  const next = !prev;
-                  if (!next) setInfoHovered(false);
-                  return next;
-                })
-              }
-              aria-label={ui.chat.aboutAiLabel}
-              aria-expanded={infoOpen}
-              className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-white/20 font-mono text-[11px] font-medium leading-none text-zinc-400 transition-colors hover:border-white/45 hover:text-white cursor-pointer"
-            >
-              ?
-            </button>
-
-            {infoOpen && (
-              <div
-                role="tooltip"
-                className="absolute top-full right-0 pt-2 w-64 sm:w-72"
-              >
-                <p className="rounded-xl border border-white/14 bg-[#141618]/98 p-3 text-xs leading-relaxed text-zinc-200 shadow-xl backdrop-blur-md">
-                  {ui.chat.disclaimerPrefix}
-                  <a
-                    href={`mailto:${PROFILE.email}`}
-                    className="font-medium text-white underline decoration-white/40 underline-offset-3 hover:decoration-white"
-                  >
-                    {ui.chat.disclaimerLink}
-                  </a>
-                  {ui.chat.disclaimerSuffix}
-                </p>
-              </div>
-            )}
-          </div>
+            ?
+          </button>
 
           <button
             type="button"
@@ -342,6 +344,30 @@ const HeroAiStudio = memo(function HeroAiStudio() {
             <Maximize2 className="h-3.5 w-3.5" />
           </Link>
         </div>
+
+        {infoOpen && (
+          <div
+            role="tooltip"
+            onPointerEnter={(e) => {
+              if (e.pointerType === "mouse") openHover();
+            }}
+            onPointerLeave={(e) => {
+              if (e.pointerType === "mouse") closeHoverSoon();
+            }}
+            className="absolute inset-x-3 top-full z-40 pt-2 sm:left-auto sm:right-3 sm:w-72"
+          >
+            <p className="rounded-xl border border-white/14 bg-[#141618]/98 p-3 text-xs leading-relaxed text-zinc-200 shadow-xl backdrop-blur-md">
+              {ui.chat.disclaimerPrefix}
+              <a
+                href={`mailto:${PROFILE.email}`}
+                className="font-medium text-white underline decoration-white/40 underline-offset-3 hover:decoration-white"
+              >
+                {ui.chat.disclaimerLink}
+              </a>
+              {ui.chat.disclaimerSuffix}
+            </p>
+          </div>
+        )}
       </div>
 
       <div className="relative h-[265px] w-full sm:h-[290px]">
@@ -391,7 +417,7 @@ const WorkShowcaseItem = memo(function WorkShowcaseItem({
     <article
       data-project-slug={item.slug}
       data-viewport-item={`${item.title} (${item.subtitle})`}
-      className={`work-card group scroll-mt-28 ${
+      className={`work-card group scroll-mt-24 transition-shadow duration-300 ${
         spotlit ? "rounded-[26px] ring-2 ring-trail ring-offset-6 ring-offset-paper" : ""
       }`}
     >

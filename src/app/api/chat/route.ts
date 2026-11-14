@@ -29,6 +29,8 @@ const MAX_INPUT_CHARS = 600;
 let budgetDay = new Date().toISOString().slice(0, 10);
 let voiceUsesToday = 0;
 const exhaustedTtsModels = new Set<string>();
+const ttsWavCache = new Map<string, string>();
+const MAX_TTS_CACHE = 40;
 const ipBuckets = new Map<string, { minuteTs: number; minuteCount: number; dayCount: number }>();
 
 function syncBudgetDay() {
@@ -130,11 +132,13 @@ ${viewportNote}
 
 ## Control tags (mandatory)
 1. Start every response with one mood tag: \`[MOOD:happy]\`, \`[MOOD:neutral]\`, \`[MOOD:confused]\` or \`[MOOD:thinking]\`.
-2. Optional, right after the mood tag, only when the visitor asks for a tour, a specific project, another page, or your CV:
-   - \`[TOUR:<slug>]\` where slug is one of: ${ITEMS.map((i) => i.slug).join(", ")} (scrolls to and highlights that card).
+2. Optional action tags:
+   - \`[TOUR:<slug>]\` where slug is one of: ${ITEMS.map((i) => i.slug).join(", ")} (scrolls to and opens that project card).
+     - Single project: place \`[TOUR:<slug>]\` at the start of the first bubble.
+     - Full project tour (for example "Vis meg rundt i prosjektene" or "Vis meg prosjektene dine"): walk through all 4 projects in top-to-bottom page order (${ITEMS.map((i) => i.slug).join(", ")}) across 4 short bubbles separated by \`\\n\\n\`, starting each bubble with \`[TOUR:<slug>]\` and keeping each bubble super tight (12 to 16 words, max 95 characters) so first audio starts quickly and the tour moves briskly from card to card.
    - \`[GO:/about]\`, \`[GO:/ai]\`, \`[GO:/]\` or \`[GO:/chat]\` to navigate.
    - \`[FILE:cv]\` ONLY when the visitor explicitly asks to see, read, or download your CV / resume.
-3. After the tags, write 1 to 3 short bubbles separated by \`\\n\\n\`. Plain text only, no markdown headings or code blocks unless asked.`;
+3. Write 1 to 3 short bubbles separated by \`\\n\\n\` (or 4 crisp 1-sentence bubbles for a full project tour). Plain text only, no markdown headings or code blocks unless asked.`;
 }
 
 function sseFrame(payload: Record<string, unknown>): Uint8Array {
@@ -152,29 +156,11 @@ const RATE_LIMIT_REPLY =
 
 function cleanForSpeech(raw: string): string {
   return raw
+    .replace(/\bC#/g, "C sharp")
     .replace(/[`*_~]+/g, "")
     .replace(/\s*\n+\s*/g, " ")
     .replace(/\s{2,}/g, " ")
     .trim();
-}
-
-function findFirstSegmentEnd(text: string): number {
-  const paraIdx = text.indexOf("\n\n");
-  if (paraIdx >= 25) return paraIdx;
-
-  const re = /[.!?](?=\s+[A-ZÆØÅ])/g;
-  let m: RegExpExecArray | null;
-  while ((m = re.exec(text)) !== null) {
-    const idx = m.index;
-    if (idx < 45) continue;
-    if (idx > 220) break;
-    const before = text.slice(Math.max(0, idx - 8), idx).toLowerCase();
-    if (/(?:\bf\.eks|\bbl\.a|\bca|\bnr|\bkl|\bmfl|\bosv)$/.test(before)) {
-      continue;
-    }
-    return idx + 1;
-  }
-  return -1;
 }
 
 function extractWavBase64(res: unknown): string | null {
@@ -288,11 +274,14 @@ export async function POST(req: NextRequest) {
           stream: true,
         });
 
-        let headerBuffer = "";
-        let headerParsed = false;
+        const validSlugs = new Set(ITEMS.map((i) => i.slug));
+        let rawStreamBuffer = "";
+        let currentBubbleText = "";
+        let currentBubbleTour: string | undefined;
+        let currentBubbleIndex = 0;
+        let moodEmitted = false;
         let detectedMood: Mood = "neutral";
         let fullCleanText = "";
-        let tailBuffer = "";
         let fileEmitted = false;
         let interactionId: string | undefined;
 
@@ -302,13 +291,21 @@ export async function POST(req: NextRequest) {
           wantVoice && activeVoice
             ? new GoogleGenAI({ apiKey, apiVersion: "v1beta" })
             : null;
-        let voiceBudget: { allowed: boolean; remaining: number } | null = null;
+        const ttsState: {
+          voiceBudget: { allowed: boolean; remaining: number } | null;
+          wakeEmitter: (() => void) | null;
+        } = {
+          voiceBudget: null,
+          wakeEmitter: null,
+        };
         let hitDailyCap = false;
-        let earlySegmentOffset = 0;
-        let earlySegmentPromise: Promise<string | null> | null = null;
 
         const synthesizeWav = async (segmentText: string): Promise<string | null> => {
           if (!ttsAi || !activeVoice || !segmentText) return null;
+          const cacheKey = `${activeVoice}:${configuredVoiceId ? "rep" : detectedMood}:${segmentText}`;
+          const cached = ttsWavCache.get(cacheKey);
+          if (cached) return cached;
+
           const defaultModel = configuredVoiceId
             ? "gemini-3.8-flash-tts"
             : "gemini-3.8-flash-lite-tts";
@@ -355,7 +352,14 @@ export async function POST(req: NextRequest) {
                 { maxRetries: 0, timeout: 15000 }
               );
               const b64 = extractWavBase64(ttsRes);
-              if (b64) return b64;
+              if (b64) {
+                if (ttsWavCache.size >= MAX_TTS_CACHE) {
+                  const oldest = ttsWavCache.keys().next().value;
+                  if (oldest) ttsWavCache.delete(oldest);
+                }
+                ttsWavCache.set(cacheKey, b64);
+                return b64;
+              }
             } catch (ttsErr) {
               const msg = ttsErr instanceof Error ? ttsErr.message : String(ttsErr);
               if (msg.includes("429") || msg.includes("Rate limit")) {
@@ -372,73 +376,141 @@ export async function POST(req: NextRequest) {
           return null;
         };
 
-        const maybeStartEarlyVoice = () => {
-          if (!wantVoice || !ttsAi || earlySegmentPromise || voiceBudget) return;
-          const splitAt = findFirstSegmentEnd(fullCleanText);
-          if (splitAt <= 0) return;
-          voiceBudget = checkAndIncrementVoiceBudget();
-          if (!voiceBudget.allowed) return;
-          const seg1 = cleanForSpeech(fullCleanText.slice(0, splitAt));
-          if (!seg1) return;
-          earlySegmentOffset = splitAt;
-          earlySegmentPromise = synthesizeWav(seg1);
-        };
+        interface TtsBubbleJob {
+          index: number;
+          tour?: string;
+          wavPromise: Promise<string | null>;
+        }
 
-        const emitBodyChunk = (chunk: string, final = false) => {
-          tailBuffer += chunk;
-          let hold = "";
-          if (!final) {
-            const openIdx = tailBuffer.lastIndexOf("[");
-            if (
-              openIdx !== -1 &&
-              !tailBuffer.slice(openIdx).includes("]") &&
-              tailBuffer.length - openIdx < 28
-            ) {
-              hold = tailBuffer.slice(openIdx);
-              tailBuffer = tailBuffer.slice(0, openIdx);
+        const ttsJobs: TtsBubbleJob[] = [];
+        let streamFinishedForTts = false;
+        let activeTtsCount = 0;
+        const ttsSlotQueue: Array<() => void> = [];
+
+        const acquireTtsSlot = () =>
+          new Promise<void>((resolve) => {
+            if (activeTtsCount < 2) {
+              activeTtsCount += 1;
+              resolve();
+            } else {
+              ttsSlotQueue.push(resolve);
             }
-          }
-          const inlineTagRegex = /\[(MOOD|TOUR|GO|FILE):([^\]]+)\]/gi;
-          let m: RegExpExecArray | null;
-          while ((m = inlineTagRegex.exec(tailBuffer)) !== null) {
-            if (
-              m[1].toUpperCase() === "FILE" &&
-              m[2].trim().toLowerCase() === "cv" &&
-              !fileEmitted
-            ) {
-              fileEmitted = true;
-              controller.enqueue(sseFrame({ file: "cv" }));
-            }
-          }
-          const cleaned = tailBuffer.replace(inlineTagRegex, "");
-          tailBuffer = hold;
-          if (cleaned) {
-            fullCleanText += cleaned;
-            controller.enqueue(sseFrame({ t: cleaned }));
-            if (!final) maybeStartEarlyVoice();
+          });
+
+        const releaseTtsSlot = () => {
+          const next = ttsSlotQueue.shift();
+          if (next) {
+            next();
+          } else {
+            activeTtsCount -= 1;
           }
         };
 
-        const flushHeaderAndEmit = (force = false) => {
-          if (headerParsed) return;
-          const tagPattern = /^(?:\s*\[(MOOD|TOUR|GO|FILE):([^\]]+)\]\s*)+/i;
-          const match = headerBuffer.match(tagPattern);
-
-          if (match) {
-            const matchedBlock = match[0];
-            const remainder = headerBuffer.slice(matchedBlock.length);
-            if (
-              !force &&
-              remainder.startsWith("[") &&
-              !remainder.includes("]") &&
-              headerBuffer.length < 110
-            ) {
+        const queueBubbleTts = (index: number, rawBubble: string, tour?: string) => {
+          if (!wantVoice || !ttsAi) return;
+          const speech = cleanForSpeech(rawBubble);
+          if (!speech) return;
+          if (!ttsState.voiceBudget) {
+            ttsState.voiceBudget = checkAndIncrementVoiceBudget();
+            if (!ttsState.voiceBudget.allowed) {
+              controller.enqueue(sseFrame({ capped: true }));
               return;
             }
+          } else if (!ttsState.voiceBudget.allowed) {
+            return;
+          }
 
-            const singleTagRegex = /\[(MOOD|TOUR|GO|FILE):([^\]]+)\]/gi;
+          const wavPromise = (async () => {
+            await acquireTtsSlot();
+            try {
+              return await synthesizeWav(speech);
+            } finally {
+              releaseTtsSlot();
+            }
+          })();
+
+          ttsJobs.push({ index, tour, wavPromise });
+          ttsState.wakeEmitter?.();
+        };
+
+        const ttsEmitterPromise = (async () => {
+          let cursor = 0;
+          let emittedAudioCount = 0;
+          while (true) {
+            while (cursor < ttsJobs.length) {
+              const job = ttsJobs[cursor++];
+              const wav = await job.wavPromise;
+              if (wav) {
+                controller.enqueue(
+                  sseFrame({
+                    audio: wav,
+                    bubbleIndex: job.index,
+                    ...(job.tour ? { tour: job.tour } : {}),
+                    ...(emittedAudioCount > 0 ? { pauseBefore: 0.24 } : {}),
+                    mode: voiceModeLabel,
+                    remainingVoiceQuota: ttsState.voiceBudget?.remaining ?? 0,
+                  })
+                );
+                emittedAudioCount += 1;
+              }
+            }
+            if (streamFinishedForTts && cursor >= ttsJobs.length) break;
+            await new Promise<void>((resolve) => {
+              ttsState.wakeEmitter = resolve;
+            });
+            ttsState.wakeEmitter = null;
+          }
+          if (emittedAudioCount === 0 && hitDailyCap) {
+            controller.enqueue(sseFrame({ capped: true }));
+          }
+        })();
+
+        const processStreamChunk = (chunk: string, final = false) => {
+          rawStreamBuffer += chunk;
+          let work = rawStreamBuffer;
+          rawStreamBuffer = "";
+
+          if (!final) {
+            const openIdx = work.lastIndexOf("[");
+            if (
+              openIdx !== -1 &&
+              !work.slice(openIdx).includes("]") &&
+              work.length - openIdx < 48
+            ) {
+              rawStreamBuffer = work.slice(openIdx);
+              work = work.slice(0, openIdx);
+            }
+            if (work.endsWith("\n")) {
+              let trailingNl = 0;
+              while (
+                trailingNl < work.length &&
+                work[work.length - 1 - trailingNl] === "\n"
+              ) {
+                trailingNl += 1;
+              }
+              rawStreamBuffer = work.slice(work.length - trailingNl) + rawStreamBuffer;
+              work = work.slice(0, work.length - trailingNl);
+            }
+          }
+
+          const parts = work.split(/(\n{2,})/);
+          for (const part of parts) {
+            if (!part) continue;
+            if (/^\n{2,}$/.test(part)) {
+              if (currentBubbleText.trim().length > 0) {
+                fullCleanText += "\n\n";
+                controller.enqueue(sseFrame({ t: "\n\n" }));
+                queueBubbleTts(currentBubbleIndex, currentBubbleText, currentBubbleTour);
+                currentBubbleIndex += 1;
+                currentBubbleText = "";
+                currentBubbleTour = undefined;
+              }
+              continue;
+            }
+
+            const tagRegex = /\[(MOOD|TOUR|GO|FILE):([^\]]+)\]/gi;
             let m: RegExpExecArray | null;
-            while ((m = singleTagRegex.exec(matchedBlock)) !== null) {
+            while ((m = tagRegex.exec(part)) !== null) {
               const kind = m[1].toUpperCase();
               const val = m[2].trim();
               if (kind === "MOOD") {
@@ -451,32 +523,52 @@ export async function POST(req: NextRequest) {
                 ) {
                   detectedMood = lower;
                 }
+                moodEmitted = true;
                 controller.enqueue(sseFrame({ mood: detectedMood }));
               } else if (kind === "TOUR") {
-                controller.enqueue(sseFrame({ tour: val }));
+                const slug = val.toLowerCase();
+                if (validSlugs.has(slug) && !currentBubbleTour) {
+                  currentBubbleTour = slug;
+                  controller.enqueue(
+                    sseFrame({ tourStep: { index: currentBubbleIndex, slug } })
+                  );
+                }
               } else if (kind === "GO") {
                 controller.enqueue(sseFrame({ go: val }));
-              } else if (kind === "FILE" && val.toLowerCase() === "cv" && !fileEmitted) {
+              } else if (
+                kind === "FILE" &&
+                val.toLowerCase() === "cv" &&
+                !fileEmitted
+              ) {
                 fileEmitted = true;
                 controller.enqueue(sseFrame({ file: "cv" }));
               }
             }
 
-            headerParsed = true;
-            if (remainder.length > 0) {
-              emitBodyChunk(remainder, force);
+            let cleaned = part.replace(tagRegex, "");
+            if (currentBubbleText.length === 0) {
+              cleaned = cleaned.replace(/^[ \t\n]+/, "");
             }
-            headerBuffer = "";
-          } else if (
-            force ||
-            (!headerBuffer.trimStart().startsWith("[") && headerBuffer.length > 4) ||
-            headerBuffer.length > 90
-          ) {
-            headerParsed = true;
-            controller.enqueue(sseFrame({ mood: detectedMood }));
-            if (headerBuffer.length > 0) {
-              emitBodyChunk(headerBuffer, force);
-              headerBuffer = "";
+            if (cleaned) {
+              if (!moodEmitted) {
+                moodEmitted = true;
+                controller.enqueue(sseFrame({ mood: detectedMood }));
+              }
+              currentBubbleText += cleaned;
+              fullCleanText += cleaned;
+              controller.enqueue(sseFrame({ t: cleaned }));
+            }
+          }
+
+          if (final) {
+            if (!moodEmitted) {
+              moodEmitted = true;
+              controller.enqueue(sseFrame({ mood: detectedMood }));
+            }
+            if (currentBubbleText.trim().length > 0) {
+              queueBubbleTts(currentBubbleIndex, currentBubbleText, currentBubbleTour);
+              currentBubbleText = "";
+              currentBubbleTour = undefined;
             }
           }
         };
@@ -486,12 +578,7 @@ export async function POST(req: NextRequest) {
             interactionId = event.interaction.id;
           } else if (event.event_type === "step.delta") {
             if (event.delta?.type === "text" && event.delta.text) {
-              if (!headerParsed) {
-                headerBuffer += event.delta.text;
-                flushHeaderAndEmit(false);
-              } else {
-                emitBodyChunk(event.delta.text, false);
-              }
+              processStreamChunk(event.delta.text, false);
             }
           } else if (event.event_type === "interaction.completed") {
             if (event.interaction?.id) {
@@ -500,12 +587,9 @@ export async function POST(req: NextRequest) {
           }
         }
 
-        if (!headerParsed) {
-          flushHeaderAndEmit(true);
-        }
-        if (tailBuffer.length > 0) {
-          emitBodyChunk("", true);
-        }
+        processStreamChunk("", true);
+        streamFinishedForTts = true;
+        ttsState.wakeEmitter?.();
 
         if (interactionId) {
           controller.enqueue(sseFrame({ interactionId }));
@@ -516,66 +600,7 @@ export async function POST(req: NextRequest) {
         const spokenText = fullCleanText.trim();
         if (process.env.NODE_ENV !== "production") lintReply(spokenText);
 
-        if (wantVoice && spokenText.length > 0 && ttsAi) {
-          if (!voiceBudget) {
-            voiceBudget = checkAndIncrementVoiceBudget();
-          }
-
-          if (!voiceBudget.allowed) {
-            controller.enqueue(sseFrame({ capped: true }));
-          } else if (earlySegmentPromise) {
-            const remainderSpeech = cleanForSpeech(
-              fullCleanText.slice(earlySegmentOffset)
-            );
-            const seg2Promise = remainderSpeech
-              ? synthesizeWav(remainderSpeech)
-              : Promise.resolve(null);
-
-            const wav1 = await earlySegmentPromise;
-            let emittedAny = false;
-            if (wav1) {
-              emittedAny = true;
-              controller.enqueue(
-                sseFrame({
-                  audio: wav1,
-                  mode: voiceModeLabel,
-                  remainingVoiceQuota: voiceBudget.remaining,
-                })
-              );
-            }
-
-            const wav2 = await seg2Promise;
-            if (wav2) {
-              emittedAny = true;
-              controller.enqueue(
-                sseFrame({
-                  audio: wav2,
-                  pauseBefore: 0.14,
-                  mode: voiceModeLabel,
-                  remainingVoiceQuota: voiceBudget.remaining,
-                })
-              );
-            }
-
-            if (!emittedAny && hitDailyCap) {
-              controller.enqueue(sseFrame({ capped: true }));
-            }
-          } else {
-            const fullSpeech = cleanForSpeech(spokenText);
-            const wav = fullSpeech ? await synthesizeWav(fullSpeech) : null;
-            if (wav) {
-              controller.enqueue(
-                sseFrame({
-                  audio: wav,
-                  mode: voiceModeLabel,
-                  remainingVoiceQuota: voiceBudget.remaining,
-                })
-              );
-            } else if (hitDailyCap) {
-              controller.enqueue(sseFrame({ capped: true }));
-            }
-          }
-        }
+        await ttsEmitterPromise;
 
         controller.enqueue(sseFrame({ done: true }));
         controller.close();

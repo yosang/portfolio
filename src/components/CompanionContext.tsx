@@ -12,7 +12,11 @@ import React, {
 import { usePathname, useRouter } from "next/navigation";
 import { portfolioAudio } from "@/lib/audioSynth";
 import type { AvatarMood } from "@/lib/avatarEngine";
+import { PROJECT_TOUR_STEPS } from "@/data/portfolio";
 import { UI } from "@/data/ui";
+
+const INSTANT_TOUR_RE =
+  /^(?:kan du\s+)?vis(?:e)?\s+meg\s+(?:rundt(?:\s+i\s+prosjektene(?:\s+dine)?)?|prosjektene(?:\s+dine)?)[.!?]*$/i;
 
 export interface ChatAttachment {
   href: string;
@@ -120,7 +124,58 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
   const messagesRef = useRef<ChatTurn[]>([]);
   const isStreamingRef = useRef(false);
   const voiceEnabledRef = useRef(true);
+  const pathnameRef = useRef(pathname);
+  const spotlightSlugRef = useRef<string | null>(null);
+  const tourCancelledRef = useRef(false);
+  const hasStartedTourScrollRef = useRef(false);
+  const tourTimersRef = useRef<Array<ReturnType<typeof setTimeout>>>([]);
   const abortRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    pathnameRef.current = pathname;
+  }, [pathname]);
+
+  useEffect(() => {
+    spotlightSlugRef.current = spotlightSlug;
+  }, [spotlightSlug]);
+
+  const clearTourTimers = useCallback(() => {
+    for (const timer of tourTimersRef.current) {
+      clearTimeout(timer);
+    }
+    tourTimersRef.current = [];
+  }, []);
+
+  useEffect(() => {
+    const cancelIfTouring = () => {
+      if (!hasStartedTourScrollRef.current) return;
+      tourCancelledRef.current = true;
+    };
+    const onKeyDown = (e: KeyboardEvent) => {
+      const tag = document.activeElement?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA") return;
+      if (
+        e.key === "ArrowDown" ||
+        e.key === "ArrowUp" ||
+        e.key === "PageDown" ||
+        e.key === "PageUp" ||
+        e.key === "Home" ||
+        e.key === "End" ||
+        e.key === " "
+      ) {
+        cancelIfTouring();
+      }
+    };
+    window.addEventListener("wheel", cancelIfTouring, { passive: true });
+    window.addEventListener("touchmove", cancelIfTouring, { passive: true });
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("wheel", cancelIfTouring);
+      window.removeEventListener("touchmove", cancelIfTouring);
+      window.removeEventListener("keydown", onKeyDown);
+      clearTourTimers();
+    };
+  }, [clearTourTimers]);
 
   useEffect(() => {
     messagesRef.current = messages;
@@ -172,23 +227,37 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
 
   const triggerSpotlight = useCallback(
     (slug: string) => {
+      if (tourCancelledRef.current) return;
+      const prevSlug = spotlightSlugRef.current;
+      spotlightSlugRef.current = slug;
       setSpotlightSlug(slug);
+      hasStartedTourScrollRef.current = true;
+
+      if (typeof window !== "undefined" && window.innerWidth < 640) {
+        setIsOpen(false);
+      }
+
       const scrollAndHighlight = () => {
+        if (tourCancelledRef.current) return;
         const el = document.querySelector<HTMLElement>(
           `[data-project-slug="${slug}"]`
         );
         if (el) {
-          el.scrollIntoView({ behavior: "smooth", block: "center" });
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
         }
       };
-      if (pathname !== "/") {
+
+      if (pathnameRef.current !== "/") {
         router.push("/");
-        setTimeout(scrollAndHighlight, 260);
+        const id = setTimeout(scrollAndHighlight, 280);
+        tourTimersRef.current.push(id);
       } else {
-        setTimeout(scrollAndHighlight, 60);
+        const delay = prevSlug && prevSlug !== slug ? 220 : 50;
+        const id = setTimeout(scrollAndHighlight, delay);
+        tourTimersRef.current.push(id);
       }
     },
-    [pathname, router]
+    [router]
   );
 
   const sendMessage = useCallback(
@@ -199,6 +268,10 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
       abortRef.current?.abort();
       const abortController = new AbortController();
       abortRef.current = abortController;
+
+      clearTourTimers();
+      tourCancelledRef.current = false;
+      hasStartedTourScrollRef.current = false;
 
       portfolioAudio.unlock();
       portfolioAudio.stopAll();
@@ -223,8 +296,76 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
       isStreamingRef.current = true;
       setIsStreaming(true);
 
-      const pageContext = inspectViewportContext(pathname);
+      const pageContext = inspectViewportContext(pathnameRef.current);
       const wantVoice = voiceEnabledRef.current;
+
+      if (INSTANT_TOUR_RE.test(trimmed)) {
+        prevInteractionIdRef.current = null;
+        setMood("happy");
+
+        const revealTourStep = (stepIdx: number) => {
+          if (abortController.signal.aborted) return;
+          const visibleBubbles = PROJECT_TOUR_STEPS.slice(0, stepIdx + 1).map(
+            (s) => s.bubble
+          );
+          const content = visibleBubbles.join("\n\n");
+          setMessages((prev) =>
+            prev.map((msg) =>
+              msg.id === assistantId
+                ? { ...msg, content, bubbles: visibleBubbles, mood: "happy" }
+                : msg
+            )
+          );
+          triggerSpotlight(PROJECT_TOUR_STEPS[stepIdx].slug);
+        };
+
+        const runMutedFallbackFrom = (startIdx: number) => {
+          for (let i = startIdx; i < PROJECT_TOUR_STEPS.length; i++) {
+            const delay = i === startIdx ? 80 : (i - startIdx) * 3800;
+            const id = setTimeout(() => {
+              revealTourStep(i);
+            }, delay);
+            tourTimersRef.current.push(id);
+          }
+        };
+
+        isStreamingRef.current = false;
+        setIsStreaming(false);
+
+        if (wantVoice) {
+          setVoiceMode("replicated");
+          (async () => {
+            for (let i = 0; i < PROJECT_TOUR_STEPS.length; i++) {
+              if (abortController.signal.aborted) return;
+              try {
+                const r = await fetch(PROJECT_TOUR_STEPS[i].audioSrc, {
+                  signal: abortController.signal,
+                });
+                if (!r.ok) throw new Error(`HTTP ${r.status}`);
+                const buf = await r.arrayBuffer();
+                if (abortController.signal.aborted) return;
+                if (voiceEnabledRef.current) {
+                  portfolioAudio.enqueueAudioBuffer(
+                    buf,
+                    i === 0 ? 0 : 0.24,
+                    () => revealTourStep(i)
+                  );
+                } else {
+                  runMutedFallbackFrom(i);
+                  return;
+                }
+              } catch (e) {
+                if (e instanceof DOMException && e.name === "AbortError") return;
+                runMutedFallbackFrom(i);
+                return;
+              }
+            }
+          })();
+        } else {
+          runMutedFallbackFrom(0);
+        }
+        return;
+      }
 
       try {
         const res = await fetch("/api/chat", {
@@ -254,6 +395,30 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
         let accumulatedText = "";
         let latestMood: AvatarMood = "neutral";
         let latestAttachment: ChatAttachment | undefined;
+        let isDemoStream = false;
+
+        const pendingTourSteps = new Map<number, string>();
+        const scheduledTourIndices = new Set<number>();
+        let fallbackStepCount = 0;
+
+        const scheduleFallbackTourStep = (bubbleIdx: number, slug: string) => {
+          if (scheduledTourIndices.has(bubbleIdx)) return;
+          scheduledTourIndices.add(bubbleIdx);
+          const delay = fallbackStepCount === 0 ? 120 : fallbackStepCount * 3800;
+          fallbackStepCount += 1;
+          const id = setTimeout(() => {
+            triggerSpotlight(slug);
+          }, delay);
+          tourTimersRef.current.push(id);
+        };
+
+        const flushUnscheduledTourSteps = () => {
+          for (const [idx, slug] of pendingTourSteps.entries()) {
+            if (!scheduledTourIndices.has(idx)) {
+              scheduleFallbackTourStep(idx, slug);
+            }
+          }
+        };
 
         while (true) {
           const { value, done } = await reader.read();
@@ -277,6 +442,7 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
             }
 
             if (typeof data.demo === "boolean") {
+              isDemoStream = data.demo;
               setIsDemoMode(data.demo);
             }
 
@@ -286,8 +452,29 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
               setMood(m);
             }
 
-            if (typeof data.tour === "string" && data.tour) {
-              triggerSpotlight(data.tour);
+            if (
+              data.tourStep &&
+              typeof data.tourStep === "object" &&
+              typeof (data.tourStep as { index?: unknown }).index === "number" &&
+              typeof (data.tourStep as { slug?: unknown }).slug === "string"
+            ) {
+              const { index, slug } = data.tourStep as {
+                index: number;
+                slug: string;
+              };
+              pendingTourSteps.set(index, slug);
+              if (!voiceEnabledRef.current || isDemoStream) {
+                scheduleFallbackTourStep(index, slug);
+              }
+            } else if (
+              typeof data.tour === "string" &&
+              data.tour &&
+              typeof data.audio !== "string"
+            ) {
+              pendingTourSteps.set(0, data.tour);
+              if (!voiceEnabledRef.current || isDemoStream) {
+                scheduleFallbackTourStep(0, data.tour);
+              }
             }
 
             if (typeof data.go === "string" && data.go) {
@@ -340,22 +527,46 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
               );
             }
 
-            if (typeof data.audio === "string" && data.audio.length > 0 && voiceEnabledRef.current) {
-              if (
-                typeof data.mode === "string" &&
-                (data.mode === "replicated" || data.mode === "preset")
-              ) {
-                setVoiceMode(data.mode);
+            if (typeof data.audio === "string" && data.audio.length > 0) {
+              const bubbleIdx =
+                typeof data.bubbleIndex === "number" ? data.bubbleIndex : -1;
+              const tourSlug =
+                typeof data.tour === "string" && data.tour
+                  ? data.tour
+                  : bubbleIdx >= 0
+                    ? pendingTourSteps.get(bubbleIdx)
+                    : undefined;
+
+              if (voiceEnabledRef.current) {
+                if (
+                  typeof data.mode === "string" &&
+                  (data.mode === "replicated" || data.mode === "preset")
+                ) {
+                  setVoiceMode(data.mode);
+                }
+                const pause =
+                  typeof data.pauseBefore === "number" ? data.pauseBefore : 0;
+                if (tourSlug && bubbleIdx >= 0) {
+                  scheduledTourIndices.add(bubbleIdx);
+                }
+                portfolioAudio.enqueueWavBase64(
+                  data.audio,
+                  pause,
+                  tourSlug ? () => triggerSpotlight(tourSlug) : undefined
+                );
+              } else if (tourSlug && bubbleIdx >= 0) {
+                scheduleFallbackTourStep(bubbleIdx, tourSlug);
               }
-              const pause = typeof data.pauseBefore === "number" ? data.pauseBefore : 0;
-              portfolioAudio.enqueueWavBase64(data.audio, pause);
             }
 
             if (data.capped === true) {
               setVoiceCapped(true);
+              flushUnscheduledTourSteps();
             }
           }
         }
+
+        flushUnscheduledTourSteps();
       } catch (err) {
         if (err instanceof DOMException && err.name === "AbortError") {
           return;
@@ -381,7 +592,7 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
         }
       }
     },
-    [pathname, router, triggerSpotlight]
+    [clearTourTimers, router, triggerSpotlight]
   );
 
   const seedWelcome = useCallback(() => {
@@ -402,14 +613,22 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
 
   const resetChat = useCallback(() => {
     abortRef.current?.abort();
+    clearTourTimers();
+    tourCancelledRef.current = false;
+    hasStartedTourScrollRef.current = false;
+    spotlightSlugRef.current = null;
+    setSpotlightSlug(null);
     portfolioAudio.stopAll();
     prevInteractionIdRef.current = null;
     setMessages([]);
     setMood("neutral");
     sessionStorage.removeItem("ai-twin-chat");
-  }, []);
+  }, [clearTourTimers]);
 
-  const clearSpotlight = useCallback(() => setSpotlightSlug(null), []);
+  const clearSpotlight = useCallback(() => {
+    spotlightSlugRef.current = null;
+    setSpotlightSlug(null);
+  }, []);
 
   const portfolioValue = useMemo<CompanionPortfolioValue>(
     () => ({

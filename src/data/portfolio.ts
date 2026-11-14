@@ -101,6 +101,37 @@ export const FOLLOW_UP_PROMPTS: Array<{ text: string; match?: RegExp }> = [
   { text: "Kan jeg få se CV'en din?" },
 ];
 
+export const PROJECT_TOUR_STEPS: Array<{
+  slug: string;
+  audioSrc: string;
+  bubble: string;
+}> = [
+  {
+    slug: "vgs-bordtennis",
+    audioSrc: "/audio/tour/0.mp3",
+    bubble:
+      "Vi starter med VGS Bordtennis, et hobbyprosjekt på fritiden med QR kode ved bordet og live storskjerm i kantina.",
+  },
+  {
+    slug: "ember-booking",
+    audioSrc: "/audio/tour/1.mp3",
+    bubble:
+      "Videre har vi Ember Booking, et norsk bookingsystem jeg driver sammen med Kim der jeg har ansvaret for design og frontend.",
+  },
+  {
+    slug: "medcare-clinical",
+    audioSrc: "/audio/tour/2.mp3",
+    bubble:
+      "Under skoleprosjekter ligger MedCare Clinical, eksamensprosjektet mitt i backend hos Noroff med legetimer i C# og .NET 9.",
+  },
+  {
+    slug: "cinemorra",
+    audioSrc: "/audio/tour/3.mp3",
+    bubble:
+      "Til slutt finner du Cinemorra, en filmkatalog med utlån og eget adminpanel bygget i Next.js og TypeScript.",
+  },
+];
+
 export const ITEMS: IndexItem[] = [
   {
     slug: "vgs-bordtennis",
