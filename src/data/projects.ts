@@ -51,7 +51,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     accent: "#1b6b57",
     ground: "#17211e",
     media: {
-      poster: "/projects/vgs-bordtennis-poster.jpg?v=sage",
+      poster: "/projects/vgs-bordtennis-poster.jpg",
       video: "/projects/vgs-bordtennis.mp4?v=sage",
       alt: "Storskjerm med poengtavle og mobilvisning i VGS Bordtennis.",
     },
@@ -92,7 +92,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     accent: "#1b6b57",
     ground: "#17211e",
     media: {
-      poster: "/projects/ember-poster.jpg?v=sage",
+      poster: "/projects/ember-poster.jpg",
       alt: "Forsiden og funksjonsoversikten på emberbooking.no.",
     },
     tags: ["Next.js 16", "Frontend", "UX / Design", "Merkevare"],
@@ -127,7 +127,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     accent: "#1b6b57",
     ground: "#17211e",
     media: {
-      poster: "/projects/portfolio-poster.jpg?v=sage",
+      poster: "/projects/portfolio-poster.jpg",
       alt: "Fullskjerms 3D studio og AI-metodikk i Interaktiv Portefølje.",
     },
     tags: ["Next.js 16", "Three.js Worker", "Gemini TTS", "AI-assistert"],
@@ -163,7 +163,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     accent: "#1b6b57",
     ground: "#17211e",
     media: {
-      poster: "/projects/skills-poster.jpg?v=sage-2",
+      poster: "/projects/skills-poster.jpg",
       alt: "Oversikt over SKILL.md-moduler og AGENTS.md i github.com/yosang/skills.",
     },
     tags: ["SKILL.md", "AGENTS.md", "Open Source"],
@@ -197,7 +197,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     accent: "#1b6b57",
     ground: "#17211e",
     media: {
-      poster: "/projects/medcare-poster.jpg?v=sage",
+      poster: "/projects/medcare-poster.jpg",
       alt: "Timebestilling, kalender og egne avtaler i MedCare Clinical.",
     },
     tags: ["C#", ".NET 9", "EF Core", "MySQL", "React"],
@@ -231,7 +231,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     accent: "#1b6b57",
     ground: "#17211e",
     media: {
-      poster: "/projects/cinemorra-poster.jpg?v=sage",
+      poster: "/projects/cinemorra-poster.jpg",
       alt: "Filmkatalog med søk, anmeldelser og detaljvisning i Cinemorra.",
     },
     tags: ["Next.js", "TypeScript", "Zustand", "Jest"],

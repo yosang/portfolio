@@ -2,16 +2,17 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { portfolioAudio } from "@/lib/audioSynth";
-import {
+import type {
+  AvatarMood,
+  AvatarRuntimeState,
+  AvatarVariant,
   GlbAvatarScene,
-  type AvatarMood,
-  type AvatarRuntimeState,
-  type AvatarVariant,
 } from "@/lib/avatarEngine";
 
 export type { AvatarMood, AvatarVariant };
 
 const MODEL_URL = "/avatar/yosmel.glb?v=t2-outfit";
+let userHasInteracted = false;
 
 interface AvatarStageProps {
   mood?: AvatarMood;
@@ -94,66 +95,121 @@ export function AvatarStage({
       }
     };
 
-    const initW = Math.max(1, container.clientWidth);
-    const initH = Math.max(1, container.clientHeight);
-    const dpr = Math.min(window.devicePixelRatio || 1, initW < 120 ? 2 : 1.5);
     const modelUrl = new URL(MODEL_URL, window.location.origin).href;
+    let booted = false;
+    let bootTimer: ReturnType<typeof setTimeout> | null = null;
 
     const startFallback = (target: HTMLCanvasElement) => {
-      fallbackScene = new GlbAvatarScene(target, initW, initH, dpr);
-      fallbackScene
-        .load(modelUrl)
-        .then(() => {
+      const w = Math.max(1, container.clientWidth);
+      const h = Math.max(1, container.clientHeight);
+      const curDpr = Math.min(window.devicePixelRatio || 1, w < 120 ? 2 : 1.5);
+      import("@/lib/avatarEngine")
+        .then(({ GlbAvatarScene: SceneClass }) => {
           if (disposed) return;
+          fallbackScene = new SceneClass(target, w, h, curDpr);
+          return fallbackScene.load(modelUrl);
+        })
+        .then(() => {
+          if (disposed || !fallbackScene) return;
           setLoaded(true);
           syncActiveRendering();
         })
         .catch((err) => console.error("Avatar failed to load:", err));
     };
 
-    if (
-      typeof canvas.transferControlToOffscreen === "function" &&
-      typeof Worker !== "undefined"
-    ) {
-      try {
-        const offscreen = canvas.transferControlToOffscreen();
-        worker = new Worker(
-          new URL("../workers/avatar.worker.ts", import.meta.url),
-          { type: "module" }
-        );
-        worker.onmessage = (ev: MessageEvent) => {
-          if (ev.data?.type === "loaded") {
-            setLoaded(true);
-            syncActiveRendering();
-          }
-          if (ev.data?.type === "error") {
-            console.error("Avatar worker failed:", ev.data.message);
-            worker?.terminate();
-            worker = null;
-            if (canvas.parentNode === container) container.removeChild(canvas);
-            const fresh = document.createElement("canvas");
-            fresh.style.cssText = canvas.style.cssText;
-            container.appendChild(fresh);
-            startFallback(fresh);
-          }
-        };
-        worker.postMessage(
-          {
-            type: "init",
-            canvas: offscreen,
-            width: initW,
-            height: initH,
-            dpr,
-            modelUrl,
-            initialState: state,
-          },
-          [offscreen]
-        );
-      } catch {
-        worker = null;
+    const bootEngine = () => {
+      if (booted || disposed) return;
+      booted = true;
+      if (bootTimer) {
+        clearTimeout(bootTimer);
+        bootTimer = null;
+      }
+      removeBootListeners();
+
+      const initW = Math.max(1, container.clientWidth);
+      const initH = Math.max(1, container.clientHeight);
+      const dpr = Math.min(window.devicePixelRatio || 1, initW < 120 ? 2 : 1.5);
+
+      if (
+        typeof canvas.transferControlToOffscreen === "function" &&
+        typeof Worker !== "undefined"
+      ) {
+        try {
+          const offscreen = canvas.transferControlToOffscreen();
+          worker = new Worker(
+            new URL("../workers/avatar.worker.ts", import.meta.url),
+            { type: "module" }
+          );
+          worker.onmessage = (ev: MessageEvent) => {
+            if (ev.data?.type === "loaded") {
+              setLoaded(true);
+              syncActiveRendering();
+            }
+            if (ev.data?.type === "error") {
+              console.error("Avatar worker failed:", ev.data.message);
+              worker?.terminate();
+              worker = null;
+              if (canvas.parentNode === container) container.removeChild(canvas);
+              const fresh = document.createElement("canvas");
+              fresh.style.cssText = canvas.style.cssText;
+              container.appendChild(fresh);
+              startFallback(fresh);
+            }
+          };
+          worker.postMessage(
+            {
+              type: "init",
+              canvas: offscreen,
+              width: initW,
+              height: initH,
+              dpr,
+              modelUrl,
+              initialState: state,
+            },
+            [offscreen]
+          );
+        } catch {
+          worker = null;
+        }
+      }
+      if (!worker && !fallbackScene) startFallback(canvas);
+    };
+
+    const onFirstInteraction = () => {
+      userHasInteracted = true;
+      bootEngine();
+    };
+
+    const removeBootListeners = () => {
+      window.removeEventListener("pointermove", onFirstInteraction);
+      window.removeEventListener("pointerdown", onFirstInteraction);
+      window.removeEventListener("touchstart", onFirstInteraction);
+      window.removeEventListener("scroll", onFirstInteraction);
+      window.removeEventListener("wheel", onFirstInteraction);
+      window.removeEventListener("keydown", onFirstInteraction);
+      window.removeEventListener("load", scheduleAfterLoad);
+    };
+
+    const scheduleAfterLoad = () => {
+      if (booted || disposed) return;
+      bootTimer = setTimeout(bootEngine, 3500);
+    };
+
+    if (userHasInteracted || variant === "head" || variant === "widget") {
+      bootEngine();
+    } else {
+      window.addEventListener("pointermove", onFirstInteraction, { passive: true, once: true });
+      window.addEventListener("pointerdown", onFirstInteraction, { passive: true, once: true });
+      window.addEventListener("touchstart", onFirstInteraction, { passive: true, once: true });
+      window.addEventListener("scroll", onFirstInteraction, { passive: true, once: true });
+      window.addEventListener("wheel", onFirstInteraction, { passive: true, once: true });
+      window.addEventListener("keydown", onFirstInteraction, { passive: true, once: true });
+      if (document.readyState === "complete") {
+        scheduleAfterLoad();
+      } else {
+        window.addEventListener("load", scheduleAfterLoad, { once: true });
       }
     }
-    if (!worker && !fallbackScene) startFallback(canvas);
 
     // Zero-reflow bounds tracking: read from IntersectionObserver & ResizeObserver only, never during scroll
     let cx = window.innerWidth * 0.65;
@@ -259,6 +315,8 @@ export function AvatarStage({
     return () => {
       disposed = true;
       postPatchRef.current = null;
+      if (bootTimer) clearTimeout(bootTimer);
+      removeBootListeners();
       if (pointerRaf) cancelAnimationFrame(pointerRaf);
       clearInterval(idleTimer);
       unsubAudio();

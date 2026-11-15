@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback, useRef, useState } from "react";
+import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import type { IndexItem } from "@/data/portfolio";
 import { UI } from "@/data/ui";
@@ -49,12 +50,13 @@ export function ProjectMedia({ item, priority = false }: ProjectMediaProps) {
       }
     >
       <div className="work-stage__media relative h-full w-full">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Image
           src={item.media.poster}
           alt={item.media.alt}
-          loading={priority ? "eager" : "lazy"}
-          decoding="async"
+          width={1200}
+          height={900}
+          sizes="(min-width: 1024px) 464px, (min-width: 768px) 45vw, 92vw"
+          priority={priority}
           className="h-full w-full object-cover select-none"
         />
 

@@ -115,7 +115,7 @@ export function ChatDock() {
 
   const isOnChatPage = pathname === "/chat";
   const belowFoldOrSubpage = pathname !== "/" || heroScrolledOut;
-  const showFloatingAvatar = !isOnChatPage && !isOpen && belowFoldOrSubpage;
+  const showFloatingAvatar = !isOnChatPage && !isOpen;
   const shouldActivate = !isOnChatPage && (isOpen || belowFoldOrSubpage);
 
   useEffect(() => {
@@ -131,14 +131,14 @@ export function ChatDock() {
     if (!isOnChatPage) {
       if (isOpen && headerSlotRef.current) {
         target = headerSlotRef.current;
-      } else if (showFloatingAvatar && floatingSlotRef.current) {
+      } else if (showFloatingAvatar && belowFoldOrSubpage && floatingSlotRef.current) {
         target = floatingSlotRef.current;
       }
     }
     if (target && portalHost.parentElement !== target) {
       target.appendChild(portalHost);
     }
-  }, [portalHost, isOnChatPage, isOpen, showFloatingAvatar]);
+  }, [portalHost, isOnChatPage, isOpen, showFloatingAvatar, belowFoldOrSubpage]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -180,7 +180,9 @@ export function ChatDock() {
           onClick={() => setIsOpen(true)}
           aria-label={t.dock}
           title={t.dock}
-          className="group fixed right-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-40 flex items-center gap-2.5 cursor-pointer focus-visible:outline-none sm:right-6 sm:bottom-6"
+          className={`group fixed right-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-40 items-center gap-2.5 cursor-pointer focus-visible:outline-none sm:right-6 sm:bottom-6 ${
+            belowFoldOrSubpage ? "flex" : "flex lg:hidden"
+          }`}
         >
           <span
             className={`glass-capsule pointer-events-none rounded-full px-3 py-1.5 text-xs font-medium text-ink transition-all duration-200 ${
