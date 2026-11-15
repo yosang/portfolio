@@ -27,7 +27,7 @@ export const AI_PAGE = {
   principles: [
     {
       title: "Rammer før kode",
-      body: "I prosjekter som VGS Bordtennis starter jeg med korte notater om arkitekturen og en egen AGENTS.md med faste regler. En språkmodell vet ikke av seg selv at en Samsung TV i skolekantina fryser <video> elementer på bilde 0 i Infoskjermen.no, eller at hele appen skal klare seg med fem npm pakker. Slike valg må jeg kartlegge og låse på forhånd.",
+      body: "Før jeg skriver kode eller åpner en agent, kartlegger jeg datamodellen og tekniske begrensninger på papir og i en egen AGENTS.md. En språkmodell kjenner verken målgruppen, sære krav i målplattformen eller hvor slank pakkelisten skal holdes, så slike valg må låses på forhånd.",
       link: {
         label: "Se skills og AGENTS.md på GitHub",
         href: "https://github.com/yosang/skills",
@@ -42,19 +42,19 @@ export const AI_PAGE = {
       },
     },
     {
-      title: "Slank kode gir kort kontekst",
-      body: "Jo flere filer og lag en modell må hoppe mellom, desto fortere mister den oversikten. I VGS Bordtennis er koden bevisst holdt slank i tre flate lag med tydelige seksjoner, slik at jeg kan holde konteksten nede på 100 til 200 linjer om gangen.",
+      title: "Slank kode og en enkelt kilde",
+      body: "Jo flere filer og lag en modell må hoppe mellom, desto fortere mister den oversikten. Jeg holder koden flat, samler delte data på ett sted i stedet for å spre dem over flere filer, og rydder unna strukturell støy fortløpende. Det holder konteksten nede på 100 til 200 linjer om gangen og gjør koden enkel å sette seg inn i for både teamet og mitt fremtidige jeg.",
     },
     {
-      title: "Strengere tester når tempoet øker",
-      body: "Jo fortere koden skrives, desto viktigere blir testene. Før endringer rulles ut i VGS Bordtennis kjører automatiske tester mot en egen SQLite database, pluss en stresstest med 100 samtidige spillere fordelt på to skoler uten feil.",
+      title: "Små commits og grundige tester",
+      body: "Når tempoet øker, blir sikkerhetsnettet enda viktigere. Jeg jobber i små, hyppige commits og holder refaktorering adskilt fra ny funksjonalitet, slik at det alltid er trygt å rulle tilbake og lett for andre å følge historikken. Før endringer rulles ut, verifiseres de med automatiske tester og sjekk av kritiske brukerflyter.",
     },
   ],
   portfolioStance: {
     heading: "Hva som hører hjemme i porteføljen",
     paragraphs: [
       "På GitHub ligger det mange raske eksperimenter der jeg bare tester et verktøy eller en ide i fart. De fungerer fint som kladdebok. Prosjektene jeg viser frem her skal derimot tåle at man ser under panseret, der mine egne valg styrer arkitekturen, flyten og detaljene.",
-      "Det samme gjelder det visuelle. I VGS Bordtennis har vi noen genererte tullevideoer på storskjermen i kantina for å fange oppmerksomheten i friminuttet. Her i porteføljen viser kortene de faktiske sidene og funksjonene jeg har laget, slik at du ser mitt arbeid. Der AI er selve poenget, som 3D versjonen av meg på forsiden, er den merket åpent.",
+      "Det samme gjelder det visuelle. Her i porteføljen viser kortene de faktiske sidene, komponentene og funksjonene jeg har laget, slik at du ser mitt arbeid. Der AI er selve poenget, som 3D versjonen av meg på forsiden, er den merket åpent.",
     ],
     referencePrefix: "Randy J. Hunt skriver godt om akkurat dette i",
     referenceLabel: "On AI-Generated Work in Design Portfolios",
