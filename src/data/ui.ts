@@ -11,8 +11,6 @@ export const UI = {
   } satisfies Record<AvatarMood, string>,
   home: {
     worksTitle: "Prosjekter",
-    worksIntro:
-      "Jeg bygger stadig nye ting. Enkelte dager er det raske eksperimenter i private repoer som aldri ser dagens lys. Andre dager dukker det opp en ide jeg må få realisert. Da kommer pennen frem, og jeg bruker gjerne et par dager på å legge en plan med langsiktige mål før jeg begynner å kode.",
     filterAll: "Alle",
     filterIndependent: "Egne og samarbeid",
     filterSchool: "Skoleprosjekter",

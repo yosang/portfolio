@@ -115,7 +115,7 @@ export default function HomePage() {
         className="scroll-mt-24 border-t border-line py-16 sm:py-20"
       >
         <div className="mx-auto max-w-5xl px-4 sm:px-6">
-          <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
+          <div className="mb-10 flex flex-wrap items-center justify-between gap-4">
             <h2 className="font-display text-2xl font-semibold tracking-tight sm:text-3xl">
               {t.worksTitle}
             </h2>
@@ -150,10 +150,6 @@ export default function HomePage() {
               })}
             </div>
           </div>
-
-          <p className="mb-10 max-w-2xl text-sm leading-relaxed text-ink-soft sm:text-base">
-            {t.worksIntro}
-          </p>
 
           {showIndependent && (
             <div>
