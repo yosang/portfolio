@@ -10,16 +10,16 @@ export const AI_PAGE = {
     withAiLabel: "Med AI",
     before: [
       { label: "Arkitektur", pct: 15, tone: "bg-zinc-600" },
-      { label: "Programvareutvikling og oppsett", pct: 70, tone: "bg-zinc-400" },
+      { label: "Kode og oppsett", pct: 70, tone: "bg-zinc-400" },
       { label: "UX og test", pct: 15, tone: "bg-amber-400/80" },
     ],
     withAi: [
       { label: "Arkitektur og rammer", pct: 35, tone: "bg-[#e4461f]" },
-      { label: "Programvareutvikling", pct: 25, tone: "bg-zinc-400" },
+      { label: "Kode", pct: 25, tone: "bg-zinc-400" },
       { label: "Testing, UX og finpuss", pct: 40, tone: "bg-emerald-400" },
     ],
     caption:
-      "Prompten er bare startskuddet. Slipper du en modell løs uten rammer, produserer den raskt dobbelt så mye kode som nødvendig. Ansvaret for at alt henger sammen er fortsatt mitt.",
+      "Når selve kodeskrivingen går raskere, flyttes mer av arbeidet til starten og slutten. Uten tydelige rammer i forkant og grundig gjennomgang til slutt vokser kodebasen raskt i feil retning.",
   },
   principlesHeading: "Kjørereglene mine",
   principlesIntro:

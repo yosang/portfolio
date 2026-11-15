@@ -15,8 +15,6 @@ import type { AvatarMood } from "@/lib/avatarEngine";
 import {
   PROJECT_TOUR_STEPS,
   SPECIFIC_TOUR_TARGET_RE,
-  USE_CASE_PROMPT,
-  USE_CASE_STEPS,
 } from "@/data/portfolio";
 import { UI } from "@/data/ui";
 
@@ -318,12 +316,10 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
 
       const isInstantTour =
         !SPECIFIC_TOUR_TARGET_RE.test(trimmed) && INSTANT_TOUR_RE.test(trimmed);
-      const isInstantUseCase =
-        trimmed.toLowerCase() === USE_CASE_PROMPT.toLowerCase();
 
-      if (isInstantTour || isInstantUseCase) {
+      if (isInstantTour) {
         const steps: Array<{ slug?: string; audioSrc?: string; bubble: string }> =
-          isInstantTour ? PROJECT_TOUR_STEPS : USE_CASE_STEPS;
+          PROJECT_TOUR_STEPS;
         prevInteractionIdRef.current = null;
         setMood("happy");
 

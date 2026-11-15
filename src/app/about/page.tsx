@@ -36,7 +36,7 @@ export default function AboutPage() {
                     href={seg.href}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-baseline gap-0.5 font-medium text-ink underline decoration-ink/35 underline-offset-4 transition-colors hover:text-trail hover:decoration-trail"
+                    className="inline-flex items-baseline gap-0.5 font-medium text-ink underline decoration-ink/35 underline-offset-4 transition-opacity hover:opacity-75 hover:decoration-ink"
                   >
                     <span>{seg.label}</span>
                     <ArrowUpRight className="h-3.5 w-3.5 shrink-0 self-center opacity-75" />

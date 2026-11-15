@@ -17,28 +17,28 @@ export default function ChatPage() {
       data-viewport-section="Chat"
       className="page-enter mx-auto grid max-w-5xl gap-6 px-4 py-6 sm:px-6 md:h-[calc(100dvh-5.25rem)] md:grid-cols-[340px_1fr] md:py-8"
     >
-      <aside className="flex flex-col overflow-hidden rounded-2xl border border-[#a5b9b2]/20 bg-[#17211e] text-[#edf4f2] shadow-[0_8px_28px_rgba(10,18,15,0.22)]">
+      <aside className="flex flex-col overflow-hidden rounded-2xl border border-white/12 bg-[#17211e] text-[#f7f8f8] shadow-[0_8px_28px_rgba(10,18,15,0.22)]">
         <div className="relative h-64 md:h-auto md:flex-1">
           <div className="absolute inset-0">
             <AvatarStage mood={mood} variant="hero" className="h-full w-full" />
           </div>
         </div>
 
-        <div className="space-y-3 border-t border-[#a5b9b2]/16 bg-[#141d1a] p-4 text-xs">
+        <div className="space-y-3 border-t border-white/10 bg-[#141d1a] p-4 text-xs">
           <div className="flex items-center justify-between">
             <span className="font-medium text-white">{PROFILE.name}</span>
-            <span className="text-[#a5b9b2]">
+            <span className="text-[#9ca0a8]">
               {isStreaming ? t.thinking : UI.moods[mood]}
             </span>
           </div>
 
-          <div className="flex items-center gap-4 text-[#cbe0d9]">
+          <div className="flex items-center gap-4 text-zinc-300">
             <label className="inline-flex items-center gap-1.5 cursor-pointer">
               <input
                 type="checkbox"
                 checked={voiceEnabled}
                 onChange={(e) => setVoiceEnabled(e.target.checked)}
-                className="accent-[#7dc4b0]"
+                className="accent-white"
               />
               {t.sound}
             </label>
@@ -53,11 +53,11 @@ export default function ChatPage() {
             )}
           </div>
 
-          <p className="leading-relaxed text-[#a5b9b2]">
+          <p className="leading-relaxed text-[#9ca0a8]">
             {t.disclaimerPrefix}
             <a
               href={`mailto:${PROFILE.email}`}
-              className="font-medium text-[#edf4f2] underline decoration-white/35 underline-offset-3 hover:text-white"
+              className="font-medium text-[#f7f8f8] underline decoration-white/35 underline-offset-3 hover:text-white"
             >
               {t.disclaimerLink}
             </a>

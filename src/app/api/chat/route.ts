@@ -69,6 +69,20 @@ function checkAndIncrementVoiceBudget(): { allowed: boolean; remaining: number }
   return { allowed: true, remaining: Math.max(0, DAILY_VOICE_CAP - voiceUsesToday) };
 }
 
+const PHRASING_HINTS = [
+  "Formuler svaret med dine egne muntlige ord uten å gjenbruke åpningsordene eller setningsoppbyggingen i notatene. Start gjerne første setning rett på det konkrete poenget.",
+  "Ordlegg deg avslappet og muntlig med en annen inngang og rytme enn oppsettet i notatene, mens du holder deg strengt til faktaene.",
+  "Svar kort og muntlig som i en uformell prat over en kaffekopp. Bytt gjerne om på rekkefølgen av leddene i første setning i forhold til notatene, men behold nøyaktig samme fakta.",
+  "Lag en helt egen, naturlig åpning på første setning slik at svaret ikke starter med de samme ordene som kulepunktet i notatene, samtidig som du holder deg 100 % til faktaene.",
+];
+let phrasingCursor = 0;
+
+function nextPhrasingHint(): string {
+  const hint = PHRASING_HINTS[phrasingCursor % PHRASING_HINTS.length];
+  phrasingCursor = (phrasingCursor + 1) % PHRASING_HINTS.length;
+  return hint;
+}
+
 const PERSONA_PATH = path.join(process.cwd(), "src", "data", "persona.md");
 let cachedPersona: string | null = null;
 
@@ -103,13 +117,17 @@ ${notes}`;
     ? `\n## Hva besøkende ser på skjermen akkurat nå\n- Side: ${page.path || "/"}\n- Seksjon: ${page.section || "Hero"}\n- Kort på skjermen: ${page.showing || "ingen"}\n(Bruk dette KUN hvis besøkende spør direkte om "dette prosjektet" eller "denne siden". Hopp aldri over prosjekter ved en prosjektomvisning, og nevn aldri hva de ser på uoppfordret.)`
     : "";
 
+  const phrasingHint = nextPhrasingHint();
+
   return `${persona}
 
 ## Prosjektoversikt
 ${projectsDigest}
 ${viewportNote}
 
-## Språk: Skriv alltid på helt vanlig, muntlig norsk bokmål. Finn aldri på rare sammensatte ord.
+## Språk og variasjon i denne runden
+- Skriv alltid på helt vanlig, muntlig norsk bokmål. Finn aldri på rare sammensatte ord.
+- ${phrasingHint}
 
 ## Kontrolltagger (obligatorisk)
 1. Start hvert svar med én humør-tagg: \`[MOOD:happy]\`, \`[MOOD:neutral]\`, \`[MOOD:confused]\` eller \`[MOOD:thinking]\`.
@@ -227,6 +245,15 @@ export async function POST(req: NextRequest) {
         const ai = new GoogleGenAI({ apiKey });
         const systemInstruction = buildSystemInstruction(body.page);
 
+        const priorUserTurns = messages
+          .slice(0, -1)
+          .filter((m) => m.role === "user")
+          .map((m) => m.content.trim().toLowerCase());
+        const isRepeatInThread = priorUserTurns.includes(lastUserMsg.trim().toLowerCase());
+        const repeatSuffix = isRepeatInThread
+          ? "\n\n(Merk: Besøkende har spurt om akkurat dette tidligere i samtalen. Svar med en annen ordlyd og setningsoppbygging enn sist, uten å gjenta forrige svar ordrett.)"
+          : "";
+
         const contextualInput =
           !body.previousInteractionId && messages.length > 1
             ? messages
@@ -235,8 +262,8 @@ export async function POST(req: NextRequest) {
                   (m) =>
                     `${m.role === "user" ? "Besøkende" : PROFILE.shortName}: ${m.content.slice(0, MAX_INPUT_CHARS)}`
                 )
-                .join("\n") + `\n\nSvar på den siste meldingen fra Besøkende over.`
-            : lastUserMsg;
+                .join("\n") + `\n\nSvar på den siste meldingen fra Besøkende over.${repeatSuffix}`
+            : `${lastUserMsg}${repeatSuffix}`;
 
         const chatModel =
           process.env.GEMINI_CHAT_MODEL?.trim() || "gemini-3.5-flash-lite";
@@ -248,6 +275,7 @@ export async function POST(req: NextRequest) {
           input: contextualInput,
           generation_config: {
             thinking_level: defaultThinking,
+            temperature: 0.8,
           },
           ...(body.previousInteractionId
             ? { previous_interaction_id: body.previousInteractionId }
@@ -496,6 +524,7 @@ export async function POST(req: NextRequest) {
             .replace(/\bkoding\b/gi, "utvikling")
             .replace(/\bVgs\b/g, "VGS")
             .replace(/\bidé(en|er|ene)?\b/gi, "ide$1")
+            .replace(/\bén\b/gi, (m) => (m[0] === "É" ? "En" : "en"))
             .replace(/\bsømløs(t|e)?\b/gi, "ryddig")
             .replace(/\bdykke\s+(?:dypt\s+)?ned\s+i\b/gi, "jobbe med")
             .replace(/\s*[—–]\s*/g, ", ");

@@ -102,7 +102,7 @@ export const ProjectCard = memo(function ProjectCard({
                 {item.aiNote}{" "}
                 <Link
                   href="/ai"
-                  className="font-medium text-ink underline underline-offset-4 hover:text-trail"
+                  className="font-medium text-ink underline underline-offset-4 hover:opacity-75"
                 >
                   {t.readAiWorkflow} →
                 </Link>

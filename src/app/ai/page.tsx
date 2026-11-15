@@ -34,7 +34,7 @@ export default function AiTransparencyPage() {
       {/* Visual Time-Shift Card (Without AI vs With AI) */}
       <section
         aria-labelledby="ai-shift-heading"
-        className="overflow-hidden rounded-2xl border border-[#a5b9b2]/20 bg-[#17211e] p-6 text-[#edf4f2] shadow-[0_8px_28px_rgba(10,18,15,0.18)] sm:p-8"
+        className="overflow-hidden rounded-2xl border border-white/12 bg-[#17211e] p-6 text-[#f7f8f8] shadow-[0_8px_28px_rgba(10,18,15,0.18)] sm:p-8"
       >
         <h2
           id="ai-shift-heading"

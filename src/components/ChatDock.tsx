@@ -195,7 +195,7 @@ export function ChatDock() {
           <span
             ref={floatingSlotRef}
             style={{ background: STUDIO_BG }}
-            className={`pointer-events-none relative block h-[72px] w-[64px] origin-bottom-right overflow-hidden rounded-2xl border border-[#a5b9b2]/24 shadow-[0_8px_24px_-6px_rgba(10,18,15,0.38)] transition-transform duration-300 ease-out group-hover:-translate-y-0.5 sm:h-[114px] sm:w-[100px] sm:rounded-2xl ${
+            className={`pointer-events-none relative block h-[72px] w-[64px] origin-bottom-right overflow-hidden rounded-2xl border border-white/15 shadow-[0_8px_24px_-6px_rgba(10,18,15,0.38)] transition-transform duration-300 ease-out group-hover:-translate-y-0.5 sm:h-[114px] sm:w-[100px] sm:rounded-2xl ${
               isActiveVoice ? "scale-[1.34] sm:scale-[1.05] ring-2 ring-[#1b6b57]/80 dark:ring-[#7dc4b0]/80" : ""
             }`}
           />
@@ -287,7 +287,7 @@ export function ChatDock() {
                 {t.disclaimerPrefix}
                 <a
                   href={`mailto:${PROFILE.email}`}
-                  className="font-medium text-ink underline underline-offset-3 hover:text-trail"
+                  className="font-medium text-ink underline underline-offset-3 hover:opacity-75"
                 >
                   {t.disclaimerLink}
                 </a>

@@ -249,7 +249,7 @@ export function Composer({
         aria-label={t.send}
         className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-opacity disabled:opacity-35 cursor-pointer disabled:cursor-default ${
           isDark
-            ? "bg-[#edf4f2] text-[#162621] hover:opacity-90"
+            ? "bg-white text-zinc-950 hover:opacity-90"
             : "bg-ink text-paper hover:opacity-90"
         }`}
       >
