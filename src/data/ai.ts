@@ -22,6 +22,8 @@ export const AI_PAGE = {
       "Prompten er bare startskuddet. Slipper du en modell løs uten rammer, produserer den raskt dobbelt så mye kode som nødvendig. Ansvaret for at alt henger sammen er fortsatt mitt.",
   },
   principlesHeading: "Kjørereglene mine",
+  principlesIntro:
+    "Dette er noe jeg fortsatt utforsker og lærer meg underveis, så tanken er på ingen måte å fremstille det som en fasit eller best practice for AI-assistert utvikling. Dette er rett og slett vaner som har fungert godt for meg så langt, og som helt sikkert kommer til å endre seg etter hvert som jeg lærer mer og blir flinkere til å bruke verktøyene.",
   principles: [
     {
       title: "Rammer før kode",

@@ -106,9 +106,14 @@ export default function AiTransparencyPage() {
 
       {/* Guiding Principles */}
       <section className="space-y-6 border-t border-line pt-10">
-        <h2 className="font-display text-2xl font-normal tracking-[-0.025em] text-ink">
-          {t.principlesHeading}
-        </h2>
+        <div className="space-y-3">
+          <h2 className="font-display text-2xl font-normal tracking-[-0.025em] text-ink">
+            {t.principlesHeading}
+          </h2>
+          <p className="text-base leading-relaxed text-ink-soft">
+            {t.principlesIntro}
+          </p>
+        </div>
         <div className="grid gap-6 sm:grid-cols-2">
           {t.principles.map((item) => (
             <div
