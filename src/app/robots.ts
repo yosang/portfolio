@@ -1,7 +1,9 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/data/portfolio";
 
-const AI_AGENTS = [
+const SEARCH_AND_AI_AGENTS = [
+  "Googlebot",
+  "Bingbot",
   "OAI-SearchBot",
   "ChatGPT-User",
   "GPTBot",
@@ -22,13 +24,12 @@ export default function robots(): MetadataRoute.Robots {
         allow: "/",
         disallow: "/api/",
       },
-      ...AI_AGENTS.map((userAgent) => ({
+      ...SEARCH_AND_AI_AGENTS.map((userAgent) => ({
         userAgent,
         allow: "/",
         disallow: "/api/",
       })),
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,
-    host: SITE_URL,
   };
 }

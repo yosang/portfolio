@@ -7,7 +7,7 @@ import { PROFILE } from "@/data/portfolio";
 export const metadata: Metadata = {
   title: "Personvern",
   description:
-    "Hva som behandles og hva som aldri lagres når du besøker yosmel.no eller snakker med AI versjonen av Yosmel.",
+    "Personvern på yosmel.no: oversikt over hva som behandles i 3D-chatten, og hvorfor verken samtalelogg, lydopptak eller sporingsdata lagres.",
   alternates: { canonical: "/personvern" },
 };
 

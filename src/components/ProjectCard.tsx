@@ -76,11 +76,10 @@ export const ProjectCard = memo(function ProjectCard({
 
       <div
         id={panelId}
-        inert={!open || undefined}
-        className={`grid transition-[grid-template-rows,opacity,margin] duration-200 ease-out ${
+        className={`grid transition-[grid-template-rows,margin] duration-200 ease-out ${
           open
-            ? "mt-3.5 grid-rows-[1fr] opacity-100"
-            : "mt-0 grid-rows-[0fr] opacity-0 pointer-events-none"
+            ? "mt-3.5 grid-rows-[1fr]"
+            : "mt-0 grid-rows-[0fr] pointer-events-none"
         }`}
       >
         <div className="overflow-hidden">
@@ -121,6 +120,7 @@ export const ProjectCard = memo(function ProjectCard({
                 {item.aiNote}{" "}
                 <Link
                   href="/ai"
+                  tabIndex={open ? undefined : -1}
                   className="font-medium text-ink underline underline-offset-4 hover:opacity-75"
                 >
                   {t.readAiWorkflow} →
@@ -140,6 +140,7 @@ export const ProjectCard = memo(function ProjectCard({
               </div>
               <button
                 type="button"
+                tabIndex={open ? undefined : -1}
                 onClick={() => onAsk(t.askAboutPrompt(item.title))}
                 className="text-xs font-medium text-ink underline underline-offset-4 cursor-pointer"
               >

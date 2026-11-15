@@ -25,7 +25,7 @@ const geistMono = Geist_Mono({
 
 const DEFAULT_TITLE = `${PROFILE.name} · Fullstackutvikler`;
 const DEFAULT_DESCRIPTION =
-  "Fullstackutvikler innen TypeScript, Next.js, C#, .NET og UX. Studier i backend og frontend ved Noroff School of Technology and Digital Media, og medbygger av Ember Booking.";
+  "Yosmel Chiang er fullstackutvikler innen TypeScript, Next.js, C#, .NET og UX, utdannet ved Noroff og medbygger av bookingsystemet Ember Booking.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

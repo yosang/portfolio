@@ -8,7 +8,7 @@ import { UI } from "@/data/ui";
 export const metadata: Metadata = {
   title: UI.about.heading,
   description:
-    "Bakgrunn, utdanning i backend og frontend ved Noroff School of Technology and Digital Media, arbeid med Ember Booking og verktøykasse.",
+    "Om Yosmel Chiang: fullstackutvikler utdannet i backend og frontend ved Noroff, medbygger av Ember Booking og oversikt over teknisk verktøykasse.",
   alternates: { canonical: "/about" },
 };
 

@@ -7,7 +7,7 @@ import { AI_PAGE } from "@/data/ai";
 export const metadata: Metadata = {
   title: AI_PAGE.title,
   description:
-    "Hvordan jeg jobber med arkitektur, Spike and Stabilize, slank kontekst og testing når jeg bruker AI i programvareutvikling.",
+    "Hvordan Yosmel Chiang bruker AI i programvareutvikling med faste rammer i AGENTS.md, Spike and Stabilize, slank kodebase, små commits og testing.",
   alternates: { canonical: "/ai" },
 };
 
