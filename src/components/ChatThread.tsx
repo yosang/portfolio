@@ -6,7 +6,6 @@ import { useCompanion, type ChatTurn } from "@/components/CompanionContext";
 import {
   FOLLOW_UP_PROMPTS,
   ITEMS,
-  PROMPTS,
   TOUR_PROMPT,
   USE_CASE_PROMPT,
 } from "@/data/portfolio";
@@ -205,9 +204,7 @@ export function Composer({
 }) {
   const { isStreaming, sendMessage } = useCompanion();
   const t = UI.chat;
-  const prompts = PROMPTS;
   const [text, setText] = useState("");
-  const [promptIdx, setPromptIdx] = useState(0);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const isDark = tone === "dark";
 
@@ -217,23 +214,6 @@ export function Composer({
       inputRef.current?.focus();
     }
   }, [autoFocus]);
-
-  useEffect(() => {
-    if (text) return;
-    const id = setInterval(() => {
-      setPromptIdx((i) => (i + 1) % prompts.length);
-    }, 4500);
-    return () => clearInterval(id);
-  }, [text, prompts.length]);
-
-  const activePrompt = prompts[promptIdx % prompts.length] ?? t.placeholder;
-
-  const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Tab" && !text.trim() && activePrompt) {
-      e.preventDefault();
-      setText(activePrompt);
-    }
-  };
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -254,29 +234,14 @@ export function Composer({
           type="text"
           value={text}
           onChange={(e) => setText(e.target.value)}
-          onKeyDown={onKeyDown}
-          placeholder={activePrompt}
+          placeholder={t.placeholder}
           autoComplete="off"
-          className={`min-w-0 w-full rounded-full py-2 pl-4 pr-4 text-base sm:pr-13 sm:text-sm outline-none transition-colors focus-visible:outline-none ${
+          className={`min-w-0 w-full rounded-full px-4 py-2 text-base sm:text-sm outline-none transition-colors focus-visible:outline-none ${
             isDark
               ? "border border-white/14 bg-white/[0.07] text-white placeholder:text-zinc-400 focus:border-white/40"
               : "border border-line bg-paper-raised text-ink placeholder:text-ink-soft focus:border-ink"
           }`}
         />
-        {!text && (
-          <button
-            type="button"
-            onClick={() => setText(activePrompt)}
-            title={t.tabHint}
-            className={`hidden sm:inline-block absolute right-2.5 rounded px-1.5 py-0.5 font-mono text-[10px] transition cursor-pointer ${
-              isDark
-                ? "bg-white/10 text-zinc-300 hover:bg-white/20"
-                : "bg-paper-subtle text-ink-soft hover:text-ink"
-            }`}
-          >
-            Tab
-          </button>
-        )}
       </div>
       <button
         type="submit"

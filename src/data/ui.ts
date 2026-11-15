@@ -35,8 +35,7 @@ export const UI = {
   chat: {
     title: "Snakk med Yosmel",
     intro: "Spør om prosjektene mine, valg av stack eller hvordan jeg jobber.",
-    placeholder: "Spør om hva som helst…",
-    tabHint: "Tab for å fylle inn",
+    placeholder: "Skriv ditt eget spørsmål…",
     send: "Send",
     you: "Du",
     me: "Yosmel",

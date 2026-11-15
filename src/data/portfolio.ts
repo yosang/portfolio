@@ -87,14 +87,6 @@ export const USE_CASE_STEPS: Array<{ audioSrc: string; bubble: string }> = [
   },
 ];
 
-export const PROMPTS: string[] = [
-  "Hva gjorde du før du begynte med utvikling?",
-  "Hvordan er denne 3D chatten skrudd sammen?",
-  "Hva slags utviklerrolle ser du etter?",
-  "Hvordan bruker du AI i programvareutvikling?",
-  "Kan jeg få se CV'en din?",
-];
-
 export const FOLLOW_UP_PROMPTS: Array<{ text: string; match?: RegExp }> = [
   {
     text: USE_CASE_PROMPT,
