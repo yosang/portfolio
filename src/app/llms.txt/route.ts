@@ -5,7 +5,7 @@ export async function GET() {
   const lines: string[] = [
     `# ${PROFILE.name} (@${PROFILE.handle})`,
     "",
-    `> Fullstackutvikler bosatt i Norge (${PROFILE.location}). Fullført toårig utdanning i Backend Development ved Noroff School of Technology and Digital Media (2024 til 2026), og tar nå Frontend Development på deltid ved Noroff. Medbygger av Ember Booking.`,
+    `> Fullstackutvikler bosatt i Norge (${PROFILE.location}). Fullført toårig utdanning i Backend Development ved Noroff School of Technology and Digital Media (2024 til 2026, karakter A i gjennomsnitt), og tar nå Frontend Development på deltid ved Noroff. Medbygger av Ember Booking, med bakgrunn fra industriroboter og som avdelingsleder med personalansvar på Ekornes.`,
     "",
     "## Kort oversikt",
     `- Nettside: ${SITE_URL}`,
@@ -14,6 +14,7 @@ export async function GET() {
     `- Epost: ${PROFILE.email}`,
     `- CV (PDF): ${SITE_URL}/Yosmel_Chiang_CV.pdf`,
     "- Språk: Norsk (morsmål), spansk (morsmål), engelsk (flytende)",
+    "- Daglig arbeid: IKT drift og brukerstøtte ved Nord-Gudbrandsdal VGS, samt frontend og design i Ember Booking.",
     "- Ønsket arbeidsform: Åpen for spennende roller innen frontend, backend eller fullstack (remote eller hybrid).",
     "",
     "## Teknisk verktøykasse",
@@ -38,19 +39,29 @@ export async function GET() {
         "",
         item.summary,
         ...item.highlights.map((h) => `- ${h}`),
+        item.repoNote ? `- ${item.repoNote}` : "",
+        item.aiNote ? `- AI-metodikk: ${item.aiNote}` : "",
         "",
       ].filter((line, idx, arr) => !(line === "" && arr[idx - 1] === ""));
     }),
     "## Hvordan jeg bruker AI i programvareutvikling",
     ...AI_PAGE.lead.map((p) => p),
     "",
+    AI_PAGE.principlesIntro,
+    "",
     ...AI_PAGE.principles.map((p) => `- **${p.title}:** ${p.body}`),
     "",
+    `### ${AI_PAGE.practiceHeading}`,
+    ...AI_PAGE.practices.map(
+      (p) => `- **${p.project} (${p.status}):** ${p.description}`
+    ),
+    "",
     "## Sider på yosmel.no",
-    `- [Forside og prosjekter](${SITE_URL}/): Oversikt over prosjekter og interaktiv 3D AI versjon.`,
+    `- [Forside og prosjekter](${SITE_URL}/): Oversikt over prosjekter og interaktiv 3D AI versjon med stemme og tale-til-tekst.`,
     `- [Om meg](${SITE_URL}/about): Bakgrunn, utdanning ved Noroff, Ember Booking og verktøykasse.`,
-    `- [Hvordan jeg bruker AI](${SITE_URL}/ai): Arbeidsmetodikk med Spike and Stabilize, arkitektur og testing.`,
+    `- [Hvordan jeg bruker AI](${SITE_URL}/ai): Arbeidsmetodikk med Spike and Stabilize, arkitektur, små commits og testing.`,
     `- [Snakk med AI versjonen](${SITE_URL}/chat): Fullskjerm samtale med 3D AI versjonen av ${PROFILE.shortName}.`,
+    `- [Personvern](${SITE_URL}/personvern): Oversikt over hva som behandles i chatten og hvorfor ingen samtaler eller lydopptak lagres.`,
     "",
   ];
 

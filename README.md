@@ -1,6 +1,6 @@
 # Yosmel Chiang · Portfolio
 
-Personal portfolio built with Next.js 16 (App Router, `cacheComponents`), React 19, TypeScript, and Three.js. Includes project case studies, AI engineering methodology (`/ai`), and an interactive 3D avatar running inside an `OffscreenCanvas` Web Worker at 60 fps with real-time streamed responses and cloned voice via Gemini.
+Personal portfolio built with Next.js 16 (App Router, `cacheComponents`), React 19, TypeScript, and Three.js. Includes project case studies, AI engineering methodology (`/ai`), privacy overview (`/personvern`), and an interactive 3D avatar running inside an `OffscreenCanvas` Web Worker at 60 fps with real-time streamed responses, cloned voice, and AI speech-to-text via Gemini.
 
 ## Local Development
 
@@ -45,8 +45,8 @@ All projects are defined in a single source of truth in `src/data/projects.ts` a
   title: "New Project",
   year: "2026",
   category: "independent", // "independent" or "school"
-  accent: "#1d4ce9",
-  ground: "#181d27",
+  accent: "#1b6b57",
+  ground: "#17211e",
   media: {
     poster: "/projects/new-project-poster.jpg",
     video: "/projects/new-project.mp4", // optional hover preview video
@@ -58,10 +58,11 @@ All projects are defined in a single source of truth in `src/data/projects.ts` a
   subtitle: "Short one-line subtitle displayed below the card.",
   summary: "Concise summary shown when expanding project details.",
   highlights: [
-    "First architectural or product highlight.",
-    "Second highlight.",
-    "Third highlight.",
+    "Architecture: First architectural or product highlight.",
+    "Details: Second highlight.",
+    "Outcome: Third highlight.",
   ],
+  repoNote: "Optional note explaining private repository status.",
   aiNote: "Optional note on how AI was used, linked to /ai.",
   tour: {
     bubble:
@@ -77,5 +78,5 @@ All projects are defined in a single source of truth in `src/data/projects.ts` a
 ## Gotchas
 
 - **3D Avatar Web Worker (`src/workers/avatar.worker.ts`):** The Three.js scene runs inside an `OffscreenCanvas` worker so scrolling and UI interactions stay at 60 fps on the main thread. Do not import DOM-dependent modules inside `avatarEngine.ts` or `avatar.worker.ts`.
-- **Pre-generated Tour & Use-Case Voice Clips (`public/audio/`):** Guided tours (`PROJECT_TOUR_STEPS`) and the practical AI use-case prompt (`USE_CASE_STEPS`) play pre-generated MP3 clips for zero-latency playback without consuming the daily live TTS quota (`DAILY_VOICE_CAP`). If a new project omits `tour.audioSrc`, the tour still highlights and scrolls to the card at the normal cadence.
+- **Pre-generated Project Tour Voice Clips (`public/audio/tour/`):** The guided project tour (`PROJECT_TOUR_STEPS`) plays pre-generated MP3 clips for zero-latency playback without consuming the daily live TTS quota (`DAILY_VOICE_CAP`). All other questions stream live from Gemini with text bubbles revealed synchronously as each TTS audio segment starts playing.
 - **Canonical URLs & Indexing:** Every route sets its own canonical URL against `SITE_URL` (`https://yosmel.no`).
