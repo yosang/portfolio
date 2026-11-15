@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ArrowUp, Download, FileText } from "lucide-react";
 import { useCompanion, type ChatTurn } from "@/components/CompanionContext";
-import { FOLLOW_UP_PROMPTS, PROMPTS, TOUR_PROMPT } from "@/data/portfolio";
+import { FOLLOW_UP_PROMPTS, ITEMS, PROMPTS, TOUR_PROMPT } from "@/data/portfolio";
 import { UI } from "@/data/ui";
 
 function pickFollowUp(messages: ChatTurn[]): string | null {
@@ -15,9 +15,7 @@ function pickFollowUp(messages: ChatTurn[]): string | null {
       (m.role === "user" &&
         /rundt i prosjekt|vis.*prosjektene|prosjektene dine/i.test(m.content)) ||
       (m.role === "assistant" &&
-        m.content.includes("VGS Bordtennis") &&
-        m.content.includes("Ember Booking") &&
-        m.content.includes("MedCare Clinical"))
+        ITEMS.filter((item) => m.content.includes(item.title)).length >= 2)
   );
   if (!hasSeenTour) return TOUR_PROMPT;
 

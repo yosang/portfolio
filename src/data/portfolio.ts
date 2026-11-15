@@ -1,27 +1,16 @@
-export type ItemCategory = "independent" | "school";
+export {
+  INDEPENDENT_PROJECTS,
+  ITEMS,
+  PROJECTS,
+  PROJECT_TOUR_STEPS,
+  SCHOOL_PROJECTS,
+  SPECIFIC_TOUR_TARGET_RE,
+  type IndexItem,
+  type ItemCategory,
+  type ProjectItem,
+} from "@/data/projects";
 
 export type AboutSegment = string | { label: string; href: string };
-
-export interface IndexItem {
-  slug: string;
-  year: string;
-  category: ItemCategory;
-  accent: string;
-  ground: string;
-  media: {
-    poster: string;
-    video?: string;
-    alt: string;
-  };
-  tags: string[];
-  liveUrl?: string;
-  repoUrl?: string;
-  title: string;
-  subtitle: string;
-  summary: string;
-  highlights: string[];
-  aiNote?: string;
-}
 
 export const SITE_URL = "https://yosmel.no";
 
@@ -102,130 +91,4 @@ export const FOLLOW_UP_PROMPTS: Array<{ text: string; match?: RegExp }> = [
   { text: "Hvordan fungerer 3D chatten?" },
   { text: "Vis meg rundt i prosjektene" },
   { text: "Kan jeg få se CV'en din?" },
-];
-
-export const PROJECT_TOUR_STEPS: Array<{
-  slug: string;
-  audioSrc: string;
-  bubble: string;
-}> = [
-  {
-    slug: "vgs-bordtennis",
-    audioSrc: "/audio/tour/0.mp3",
-    bubble:
-      "Vi starter med VGS Bordtennis, et hobbyprosjekt på fritiden med QR kode ved bordet og live storskjerm i kantina.",
-  },
-  {
-    slug: "ember-booking",
-    audioSrc: "/audio/tour/1.mp3",
-    bubble:
-      "Videre har vi Ember Booking, et norsk bookingsystem jeg driver sammen med Kim der jeg har ansvaret for design og frontend.",
-  },
-  {
-    slug: "medcare-clinical",
-    audioSrc: "/audio/tour/2.mp3",
-    bubble:
-      "Under skoleprosjekter ligger MedCare Clinical, eksamensprosjektet mitt i backend hos Noroff med legetimer i C# og .NET 9.",
-  },
-  {
-    slug: "cinemorra",
-    audioSrc: "/audio/tour/3.mp3",
-    bubble:
-      "Til slutt finner du Cinemorra, en filmkatalog med utlån og eget adminpanel bygget i Next.js og TypeScript.",
-  },
-];
-
-export const ITEMS: IndexItem[] = [
-  {
-    slug: "vgs-bordtennis",
-    year: "Pågår",
-    category: "independent",
-    accent: "#fbc017",
-    ground: "#0e1524",
-    media: {
-      poster: "/projects/vgs-bordtennis-poster.jpg",
-      video: "/projects/vgs-bordtennis.mp4",
-      alt: "Storskjerm med poengtavle og mobilvisning i VGS Bordtennis.",
-    },
-    tags: ["Node.js", "node:sqlite", "Socket.IO", "Pågår"],
-    liveUrl: "https://vgsbordtennis.no/kiosk/demo",
-    title: "VGS Bordtennis",
-    subtitle: "Sanntids turneringer, guilds og kantineskjerm for videregående skoler.",
-    summary:
-      "Pågående prosjekt ved Nord-Gudbrandsdal VGS som får elevene opp fra mobilen i friminuttet, med QR kode ved bordet, guilds og live storskjerm i kantina.",
-    highlights: [
-      "Skjermfri flyt ved bordet med QR kode, tosidig resultatbekreftelse, anti-juks og automatisk frigjøring av glemte bord.",
-      "Live storskjerm i kantina via Socket.IO, tilpasset Infoskjermen.no på eldre TV skjermer med animert WebP og ES5 støtte.",
-      "Flere skoler på samme instans i Node.js og innebygd SQLite (5 npm pakker), stresstestet med 100 samtidige spillere.",
-    ],
-    aiNote:
-      "Første versjon gikk fra plan til drift på en uke med Spike and Stabilize.",
-  },
-  {
-    slug: "ember-booking",
-    year: "2026",
-    category: "independent",
-    accent: "#e4461f",
-    ground: "#1a120f",
-    media: {
-      poster: "/projects/ember-poster.jpg",
-      alt: "Forsiden og funksjonsoversikten på emberbooking.no.",
-    },
-    tags: ["Next.js 16", "Frontend", "UX / Design", "Merkevare"],
-    liveUrl: "https://emberbooking.no",
-    title: "Ember Booking",
-    subtitle: "Design, frontend, merkevare og brukeropplevelse for norsk bookingsystem.",
-    summary:
-      "Bookingsystem jeg driver sammen med Kim, med ansvar for design, frontend, markedsføringssider og brukeropplevelse.",
-    highlights: [
-      "Vedlikeholder og videreutvikler frontenden og markedsføringssidene på emberbooking.no.",
-      "Ansvar for visuell identitet, merkevare og designsystemet med fokus på lesbarhet og hierarki.",
-      "Jobber løpende med brukeropplevelse og tydelig flyt på tvers av plattformen.",
-    ],
-  },
-  {
-    slug: "medcare-clinical",
-    year: "2026",
-    category: "school",
-    accent: "#14b8a6",
-    ground: "#0b181f",
-    media: {
-      poster: "/projects/medcare-poster.jpg",
-      alt: "Timebestilling, kalender og egne avtaler i MedCare Clinical.",
-    },
-    tags: ["C#", ".NET 9", "EF Core", "MySQL", "React"],
-    repoUrl: "https://github.com/yosang/medcare-clinical",
-    title: "MedCare Clinical",
-    subtitle: "Timebestilling på tvers av klinikker og spesialiteter. Eksamensprosjekt i Backend 2026 hos Noroff.",
-    summary:
-      "Fullstack timebestillingssystem for klinikker levert som eksamensprosjekt i Backend 2026 på Noroff, der pasienter kan søke opp leger og bestille time både som gjest og innlogget bruker.",
-    highlights: [
-      "REST API i C# og .NET 9 med Entity Framework Core mot MySQL, soft delete ved avbestilling og Swagger.",
-      "JWT innlogging med refresh token i cookie, gjestebooking, pasientprofil og eget adminpanel med full CRUD.",
-      "React frontend med TanStack Query, Zustand og Zod, satt opp på Vercel mot Azure Web App og Railway.",
-    ],
-  },
-  {
-    slug: "cinemorra",
-    year: "2026",
-    category: "school",
-    accent: "#ef4444",
-    ground: "#1c0b0d",
-    media: {
-      poster: "/projects/cinemorra-poster.jpg",
-      alt: "Filmkatalog med søk, anmeldelser og detaljvisning i Cinemorra.",
-    },
-    tags: ["Next.js", "TypeScript", "Zustand", "Jest"],
-    liveUrl: "https://cinemorra.vercel.app",
-    repoUrl: "https://github.com/yosang/cinemorra",
-    title: "Cinemorra",
-    subtitle: "Filmkatalog med utlån, søk og eget adminpanel i Next.js. Skoleprosjekt hos Noroff.",
-    summary:
-      "Nettside bygget som skoleoppgave i frontend på Noroff der brukere kan bla gjennom og låne filmer, med eget adminpanel for å legge til og redigere filmer.",
-    highlights: [
-      "Delt opp i Next.js App Router mellom åpne sider og skjermet adminpanel med middleware, loading og error states.",
-      "Server Actions for innlogging og håndtering av filmer, sammen med søk, mørk modus og state i Zustand.",
-      "Komponenttester med Jest og React Testing Library, pluss sjekk av accessibility med eslint-plugin-jsx-a11y.",
-    ],
-  },
 ];

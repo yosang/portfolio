@@ -113,10 +113,22 @@ function loadPersona(): string {
 
 function buildSystemInstruction(page?: ViewportPageContext): string {
   const persona = loadPersona();
-  const projectsDigest = ITEMS.map(
-    (item) =>
-      `- [${item.slug}] ${item.title} (${item.category === "school" ? "Skoleprosjekt" : "Eget / samarbeid"}, ${item.year}): ${item.subtitle} Tags: ${item.tags.join(", ")}. Summary: ${item.summary}`
-  ).join("\n");
+  const projectsDigest = ITEMS.map((item, idx) => {
+    const urls = [item.liveUrl, item.repoUrl].filter(Boolean).join(" · ");
+    const categoryLabel =
+      item.category === "school" ? "Skoleprosjekt" : "Eget / samarbeid";
+    const notes = item.aiContext?.length
+      ? item.aiContext.map((note) => `- ${note}`).join("\n")
+      : item.highlights.map((h) => `- ${h}`).join("\n");
+    return `### ${idx + 1}. ${item.title} (\`[TOUR:${item.slug}]\`, ${categoryLabel}, ${item.year}${urls ? ` · ${urls}` : ""})
+- Subtitle: ${item.subtitle}
+- Summary: ${item.summary}
+- Tech tags: ${item.tags.join(", ")}
+${notes}`;
+  }).join("\n\n");
+
+  const slugList = ITEMS.map((i) => i.slug).join(", ");
+  const count = ITEMS.length;
 
   const viewportNote = page
     ? `\n## Visitor's live viewport\n- Path: ${page.path || "/"}\n- Visible section: ${page.section || "Hero"}\n- Card on screen: ${page.showing || "none"}\n(ONLY use this if the visitor explicitly asks about "this project" or "this page". Never skip earlier projects when giving a project tour, and never mention what they are looking at unprompted.)`
@@ -124,7 +136,7 @@ function buildSystemInstruction(page?: ViewportPageContext): string {
 
   return `${persona}
 
-## Portfolio index
+## Portfolio index & project notes
 ${projectsDigest}
 ${viewportNote}
 
@@ -133,12 +145,12 @@ ${viewportNote}
 ## Control tags (mandatory)
 1. Start every response with one mood tag: \`[MOOD:happy]\`, \`[MOOD:neutral]\`, \`[MOOD:confused]\` or \`[MOOD:thinking]\`.
 2. Optional action tags:
-   - \`[TOUR:<slug>]\` where slug is one of: ${ITEMS.map((i) => i.slug).join(", ")} (scrolls to and opens that project card).
+   - \`[TOUR:<slug>]\` where slug is one of: ${slugList} (scrolls to and opens that project card).
      - Single project: place \`[TOUR:<slug>]\` at the start of the first bubble.
-     - Full project tour (for example "Vis meg rundt i prosjektene" or "Vis meg prosjektene dine"): walk through all 4 projects in top-to-bottom page order (${ITEMS.map((i) => i.slug).join(", ")}) across 4 short bubbles separated by \`\\n\\n\`, starting each bubble with \`[TOUR:<slug>]\` and keeping each bubble super tight (12 to 16 words, max 95 characters) so first audio starts quickly and the tour moves briskly from card to card.
+     - Full project tour (for example "Vis meg rundt i prosjektene" or "Vis meg prosjektene dine"): walk through all ${count} projects in top-to-bottom page order (${slugList}) across ${count} short bubbles separated by \`\\n\\n\`, starting each bubble with \`[TOUR:<slug>]\` and keeping each bubble super tight (12 to 16 words, max 95 characters) so first audio starts quickly and the tour moves briskly from card to card.
    - \`[GO:/about]\`, \`[GO:/ai]\`, \`[GO:/]\` or \`[GO:/chat]\` to navigate.
    - \`[FILE:cv]\` ONLY when the visitor explicitly asks to see, read, or download your CV / resume.
-3. Write 1 to 3 short bubbles separated by \`\\n\\n\` (or 4 crisp 1-sentence bubbles for a full project tour). Plain text only, no markdown headings or code blocks unless asked.`;
+3. Write 1 to 3 short bubbles separated by \`\\n\\n\` (or ${count} crisp 1-sentence bubbles for a full project tour). Plain text only, no markdown headings or code blocks unless asked.`;
 }
 
 function sseFrame(payload: Record<string, unknown>): Uint8Array {

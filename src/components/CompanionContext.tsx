@@ -12,11 +12,11 @@ import React, {
 import { usePathname, useRouter } from "next/navigation";
 import { portfolioAudio } from "@/lib/audioSynth";
 import type { AvatarMood } from "@/lib/avatarEngine";
-import { PROJECT_TOUR_STEPS } from "@/data/portfolio";
+import {
+  PROJECT_TOUR_STEPS,
+  SPECIFIC_TOUR_TARGET_RE,
+} from "@/data/portfolio";
 import { UI } from "@/data/ui";
-
-const SPECIFIC_TOUR_TARGET_RE =
-  /\b(bordtennis|ember|medcare|cinemorra|cv|skoleprosjekt)/i;
 
 const INSTANT_TOUR_RE =
   /^(?:hei[,!\s]+)?(?:ai\s+yosmel[,!\s]+|yosmel[,!\s]+)?(?:kan du\s+|vil du\s+)?(?:vis(?:e)?(?:\s+fram|\s+frem)?(?:\s+meg)?|ta\s+meg\s+(?:med\s+)?(?:gjennom|rundt(?:\s+i)?)|gi\s+meg\s+en\s+(?:runde|omvisning)(?:\s+i|\s+gjennom)?)\s+(?:litt\s+)?(?:rundt(?:\s+i\s+(?:dine\s+)?prosjekt(?:er|ene)(?:\s+dine)?)?|(?:dine\s+|alle\s+)?prosjekt(?:er|ene)(?:\s+dine|\s+du\s+har\s+laget)?|porteføljen(?:\s+din)?)[.!?]*$/i;
@@ -357,18 +357,31 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
           (async () => {
             for (let i = 0; i < PROJECT_TOUR_STEPS.length; i++) {
               if (abortController.signal.aborted) return;
+              const step = PROJECT_TOUR_STEPS[i];
+              const pause = i === 0 ? 0 : 0.24;
+
+              if (!voiceEnabledRef.current) {
+                runMutedFallbackFrom(i);
+                return;
+              }
+
+              if (!step.audioSrc) {
+                portfolioAudio.enqueueSilentStep(3.6, pause, () =>
+                  revealTourStep(i)
+                );
+                continue;
+              }
+
               try {
-                const r = await fetch(PROJECT_TOUR_STEPS[i].audioSrc, {
+                const r = await fetch(step.audioSrc, {
                   signal: abortController.signal,
                 });
                 if (!r.ok) throw new Error(`HTTP ${r.status}`);
                 const buf = await r.arrayBuffer();
                 if (abortController.signal.aborted) return;
                 if (voiceEnabledRef.current) {
-                  portfolioAudio.enqueueAudioBuffer(
-                    buf,
-                    i === 0 ? 0 : 0.24,
-                    () => revealTourStep(i)
+                  portfolioAudio.enqueueAudioBuffer(buf, pause, () =>
+                    revealTourStep(i)
                   );
                 } else {
                   runMutedFallbackFrom(i);
@@ -376,8 +389,14 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
                 }
               } catch (e) {
                 if (e instanceof DOMException && e.name === "AbortError") return;
-                runMutedFallbackFrom(i);
-                return;
+                if (voiceEnabledRef.current) {
+                  portfolioAudio.enqueueSilentStep(3.6, pause, () =>
+                    revealTourStep(i)
+                  );
+                } else {
+                  runMutedFallbackFrom(i);
+                  return;
+                }
               }
             }
           })();
