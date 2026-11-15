@@ -87,7 +87,7 @@ export class GlbAvatarScene {
     });
     this.renderer.shadowMap.enabled = false;
     this.renderer.setClearColor(0x000000, 0);
-    this.renderer.setPixelRatio(Math.min(dpr, 1.5));
+    this.renderer.setPixelRatio(Math.min(dpr, 2));
     this.renderer.setSize(width, height, false);
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.toneMapping = THREE.NeutralToneMapping;
@@ -359,7 +359,7 @@ export class GlbAvatarScene {
   resize(width: number, height: number, dpr: number) {
     this.camera.aspect = Math.max(1, width) / Math.max(1, height);
     this.camera.updateProjectionMatrix();
-    this.renderer.setPixelRatio(Math.min(dpr, 1.5));
+    this.renderer.setPixelRatio(Math.min(dpr, 2));
     this.renderer.setSize(Math.max(1, width), Math.max(1, height), false);
   }
 

@@ -96,7 +96,7 @@ export function AvatarStage({
 
     const initW = Math.max(1, container.clientWidth);
     const initH = Math.max(1, container.clientHeight);
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    const dpr = Math.min(window.devicePixelRatio || 1, initW < 120 ? 2 : 1.5);
     const modelUrl = new URL(MODEL_URL, window.location.origin).href;
 
     const startFallback = (target: HTMLCanvasElement) => {
@@ -187,7 +187,7 @@ export function AvatarStage({
         syncActiveRendering();
         return;
       }
-      const nextDpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      const nextDpr = Math.min(window.devicePixelRatio || 1, w < 120 ? 2 : 1.5);
       vw = Math.max(1, window.innerWidth);
       vh = Math.max(1, window.innerHeight);
       const r = container.getBoundingClientRect();

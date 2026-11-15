@@ -180,8 +180,8 @@ export function ChatDock() {
           <span
             ref={floatingSlotRef}
             style={{ background: STUDIO_BG }}
-            className={`pointer-events-none relative block h-[96px] w-[86px] overflow-hidden rounded-[22px] border border-white/15 shadow-[0_18px_38px_-10px_rgba(16,17,18,0.45)] transition-transform duration-300 group-hover:-translate-y-0.5 sm:h-[114px] sm:w-[100px] sm:rounded-[24px] ${
-              isActiveVoice ? "scale-[1.05] ring-2 ring-[#e4461f]/80" : ""
+            className={`pointer-events-none relative block h-[72px] w-[64px] origin-bottom-right overflow-hidden rounded-[18px] border border-white/15 shadow-[0_18px_38px_-10px_rgba(16,17,18,0.45)] transition-transform duration-300 ease-out group-hover:-translate-y-0.5 sm:h-[114px] sm:w-[100px] sm:rounded-[24px] ${
+              isActiveVoice ? "scale-[1.34] sm:scale-[1.05] ring-2 ring-[#e4461f]/80" : ""
             }`}
           />
         </button>
