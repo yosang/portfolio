@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { ImageResponse } from "next/og";
 import { PROFILE } from "@/data/portfolio";
 
@@ -8,6 +10,11 @@ export const contentType = "image/png";
 const TAGS = ["TypeScript", "Next.js 16", "C# / .NET 9", "Node.js", "UX og design"];
 
 export default function OpenGraphImage() {
+  const avatarBuf = readFileSync(
+    join(process.cwd(), "public", "avatar", "og-avatar.png")
+  );
+  const avatarDataUrl = `data:image/png;base64,${avatarBuf.toString("base64")}`;
+
   return new ImageResponse(
     (
       <div
@@ -15,12 +22,14 @@ export default function OpenGraphImage() {
           width: "100%",
           height: "100%",
           display: "flex",
-          flexDirection: "column",
+          flexDirection: "row",
+          alignItems: "stretch",
           justifyContent: "space-between",
           backgroundColor: "#17211e",
           color: "#f7f8f8",
-          padding: "0",
+          padding: "64px 72px",
           fontFamily: "sans-serif",
+          gap: "48px",
         }}
       >
         <div
@@ -29,20 +38,20 @@ export default function OpenGraphImage() {
             flexDirection: "column",
             justifyContent: "space-between",
             flex: 1,
-            padding: "72px 80px 68px 80px",
           }}
         >
           <div
             style={{
               display: "flex",
               alignItems: "center",
-              justifyContent: "space-between",
+              gap: "14px",
               fontSize: 22,
               color: "#9ca0a8",
               letterSpacing: "-0.01em",
             }}
           >
-            <span>yosmel.no</span>
+            <span style={{ color: "#f7f8f8", fontWeight: 600 }}>yosmel.no</span>
+            <span>·</span>
             <span>@yosang</span>
           </div>
 
@@ -50,12 +59,12 @@ export default function OpenGraphImage() {
             style={{
               display: "flex",
               flexDirection: "column",
-              gap: "20px",
+              gap: "18px",
             }}
           >
             <div
               style={{
-                fontSize: 76,
+                fontSize: 68,
                 fontWeight: 700,
                 letterSpacing: "-0.035em",
                 lineHeight: 1.05,
@@ -66,10 +75,10 @@ export default function OpenGraphImage() {
             </div>
             <div
               style={{
-                fontSize: 32,
-                lineHeight: 1.4,
+                fontSize: 27,
+                lineHeight: 1.42,
                 color: "#c8ccd2",
-                maxWidth: "900px",
+                maxWidth: "690px",
               }}
             >
               Som programvareutvikler er jeg opptatt av ryddig arkitektur, tydelig design og løsninger som faktisk blir brukt.
@@ -80,7 +89,7 @@ export default function OpenGraphImage() {
             style={{
               display: "flex",
               alignItems: "center",
-              gap: "12px",
+              gap: "10px",
             }}
           >
             {TAGS.map((tag) => (
@@ -88,11 +97,11 @@ export default function OpenGraphImage() {
                 key={tag}
                 style={{
                   display: "flex",
-                  padding: "10px 20px",
+                  padding: "9px 18px",
                   borderRadius: "999px",
                   backgroundColor: "rgba(255, 255, 255, 0.06)",
                   border: "1px solid rgba(255, 255, 255, 0.14)",
-                  fontSize: 20,
+                  fontSize: 18,
                   color: "#f7f8f8",
                 }}
               >
@@ -100,6 +109,47 @@ export default function OpenGraphImage() {
               </div>
             ))}
           </div>
+        </div>
+
+        <div
+          style={{
+            width: "300px",
+            height: "502px",
+            display: "flex",
+            flexDirection: "column",
+            borderRadius: "22px",
+            backgroundColor: "#141d1a",
+            border: "1px solid rgba(255, 255, 255, 0.14)",
+            overflow: "hidden",
+            boxShadow: "0 20px 44px rgba(6, 10, 8, 0.45)",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: "12px 18px",
+              borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+              fontSize: 14,
+              color: "#9ca0a8",
+            }}
+          >
+            <span style={{ color: "#f7f8f8", fontWeight: 600 }}>AI Yosmel</span>
+            <span>klar</span>
+          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={avatarDataUrl}
+            alt="AI Yosmel"
+            width={300}
+            height={456}
+            style={{
+              width: "300px",
+              height: "456px",
+              objectFit: "cover",
+            }}
+          />
         </div>
       </div>
     ),
