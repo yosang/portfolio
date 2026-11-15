@@ -473,6 +473,11 @@ export async function POST(req: NextRequest) {
               rawStreamBuffer = work.slice(openIdx);
               work = work.slice(0, openIdx);
             }
+            const trailingWord = work.match(/[A-Za-zÆØÅæøåéÉ-]{1,24}$/);
+            if (trailingWord && trailingWord.index !== undefined && trailingWord.index > 0) {
+              rawStreamBuffer = work.slice(trailingWord.index) + rawStreamBuffer;
+              work = work.slice(0, trailingWord.index);
+            }
             if (work.endsWith("\n")) {
               let trailingNl = 0;
               while (
@@ -485,6 +490,13 @@ export async function POST(req: NextRequest) {
               work = work.slice(0, work.length - trailingNl);
             }
           }
+
+          work = work
+            .replace(/\bkodingen\b/gi, "utviklingen")
+            .replace(/\bkoding\b/gi, "utvikling")
+            .replace(/\bVgs\b/g, "VGS")
+            .replace(/\bdykke\s+(?:dypt\s+)?ned\s+i\b/gi, "jobbe med")
+            .replace(/\s*[—–]\s*/g, ", ");
 
           work = work.replace(/\n([ \t]*\[TOUR:[^\]]+\])/gi, "\n\n$1");
           if (
