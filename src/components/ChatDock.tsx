@@ -12,8 +12,7 @@ import { portfolioAudio } from "@/lib/audioSynth";
 import { PROFILE } from "@/data/portfolio";
 import { UI } from "@/data/ui";
 
-const STUDIO_BG =
-  "radial-gradient(circle at 50% 28%, rgba(237, 110, 72, 0.14), transparent 62%), #1c1917";
+const STUDIO_BG = "#17211e";
 
 export function ChatDock() {
   const pathname = usePathname();
@@ -196,8 +195,8 @@ export function ChatDock() {
           <span
             ref={floatingSlotRef}
             style={{ background: STUDIO_BG }}
-            className={`pointer-events-none relative block h-[72px] w-[64px] origin-bottom-right overflow-hidden rounded-2xl border border-white/15 shadow-[0_8px_22px_-6px_rgba(22,19,18,0.38)] transition-transform duration-300 ease-out group-hover:-translate-y-0.5 sm:h-[114px] sm:w-[100px] sm:rounded-2xl ${
-              isActiveVoice ? "scale-[1.34] sm:scale-[1.05] ring-2 ring-[#e05633]/80" : ""
+            className={`pointer-events-none relative block h-[72px] w-[64px] origin-bottom-right overflow-hidden rounded-2xl border border-[#a5b9b2]/24 shadow-[0_8px_24px_-6px_rgba(10,18,15,0.38)] transition-transform duration-300 ease-out group-hover:-translate-y-0.5 sm:h-[114px] sm:w-[100px] sm:rounded-2xl ${
+              isActiveVoice ? "scale-[1.34] sm:scale-[1.05] ring-2 ring-[#1b6b57]/80 dark:ring-[#7dc4b0]/80" : ""
             }`}
           />
         </button>
@@ -223,7 +222,7 @@ export function ChatDock() {
                   ref={headerSlotRef}
                   style={{ background: STUDIO_BG }}
                   className={`relative h-14 w-14 shrink-0 overflow-hidden rounded-2xl border border-ink/10 dark:border-white/15 ${
-                    isActiveVoice ? "ring-1.5 ring-[#e4461f]/75" : ""
+                    isActiveVoice ? "ring-1.5 ring-[#1b6b57]/75 dark:ring-[#7dc4b0]/75" : ""
                   }`}
                 />
                 <span className="text-xs text-ink-soft">

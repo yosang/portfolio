@@ -3,37 +3,37 @@
 
 :root,
 :root[data-theme="light"] {
-  --canvas: #f7f4ee;
-  --surface-solid: #ffffff;
-  --surface-subtle: #ede8df;
-  --koksgra: #1c1917;
-  --ink: #161312;
-  --ink-soft: #66605b;
-  --line: rgba(22, 19, 18, 0.1);
-  --line-strong: rgba(22, 19, 18, 0.22);
-  --accent: #e05633;
-  --accent-warm: #e05633;
-  --glass-bg: rgba(247, 244, 238, 0.94);
-  --glass-border: rgba(22, 19, 18, 0.1);
-  --glass-shadow: 0 2px 8px rgba(22, 19, 18, 0.05);
-  --stage-shadow: 0 2px 6px rgba(22, 19, 18, 0.05);
+  --canvas: oklch(97.5% 0.01 168);
+  --surface-solid: oklch(99% 0.005 168);
+  --surface-subtle: oklch(93.5% 0.016 168);
+  --koksgra: oklch(23% 0.02 170);
+  --ink: oklch(24% 0.035 170);
+  --ink-soft: oklch(44% 0.032 170);
+  --line: oklch(34% 0.03 170 / 0.14);
+  --line-strong: oklch(34% 0.03 170 / 0.28);
+  --accent: oklch(48% 0.11 168);
+  --accent-warm: oklch(48% 0.11 168);
+  --glass-bg: oklch(97.8% 0.008 168 / 0.92);
+  --glass-border: oklch(34% 0.03 170 / 0.14);
+  --glass-shadow: 0 6px 24px oklch(35% 0.03 170 / 0.08);
+  --stage-shadow: 0 6px 24px oklch(35% 0.03 170 / 0.09);
 }
 
 :root[data-theme="dark"] {
-  --canvas: #141211;
-  --surface-solid: #1d1a18;
-  --surface-subtle: #262220;
-  --koksgra: #1d1a18;
-  --ink: #f3efe9;
-  --ink-soft: #a39c95;
-  --line: rgba(243, 239, 233, 0.1);
-  --line-strong: rgba(243, 239, 233, 0.22);
-  --accent: #ed6e48;
-  --accent-warm: #ed6e48;
-  --glass-bg: rgba(29, 26, 24, 0.94);
-  --glass-border: rgba(243, 239, 233, 0.1);
-  --glass-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
-  --stage-shadow: 0 4px 12px rgba(0, 0, 0, 0.28);
+  --canvas: oklch(23% 0.02 170);
+  --surface-solid: oklch(27% 0.024 170);
+  --surface-subtle: oklch(31.5% 0.028 170);
+  --koksgra: oklch(25% 0.022 170);
+  --ink: oklch(96% 0.01 168);
+  --ink-soft: oklch(76% 0.028 168);
+  --line: oklch(80% 0.03 168 / 0.18);
+  --line-strong: oklch(80% 0.03 168 / 0.34);
+  --accent: oklch(75% 0.09 168);
+  --accent-warm: oklch(75% 0.09 168);
+  --glass-bg: oklch(25% 0.022 170 / 0.92);
+  --glass-border: oklch(80% 0.03 168 / 0.18);
+  --glass-shadow: 0 8px 28px oklch(8% 0.02 170 / 0.28);
+  --stage-shadow: 0 8px 28px oklch(8% 0.02 170 / 0.26);
 }
 
 @theme inline {

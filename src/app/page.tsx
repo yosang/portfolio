@@ -257,13 +257,13 @@ const HeroAiStudio = memo(function HeroAiStudio() {
   return (
     <div
       id="hero-ai-studio"
-      className="relative hidden overflow-hidden rounded-2xl border border-white/10 bg-[#1c1917] text-[#f3efe9] shadow-[0_8px_24px_-8px_rgba(22,19,18,0.22)] lg:block"
+      className="relative hidden overflow-hidden rounded-2xl border border-[#a5b9b2]/20 bg-[#17211e] text-[#edf4f2] shadow-[0_8px_28px_rgba(10,18,15,0.22)] lg:block"
     >
       <div
         ref={infoRef}
-        className="relative z-30 flex items-center justify-between gap-2 border-b border-white/10 bg-[#161412] px-4 py-2.5"
+        className="relative z-30 flex items-center justify-between gap-2 border-b border-[#a5b9b2]/16 bg-[#141d1a] px-4 py-2.5"
       >
-        <span className="text-xs text-[#a39c95]">
+        <span className="text-xs text-[#a5b9b2]">
           {isStreaming ? ui.chat.thinking : ui.moods[mood]}
         </span>
 
@@ -285,7 +285,7 @@ const HeroAiStudio = memo(function HeroAiStudio() {
             }
             aria-label={ui.chat.aboutAiLabel}
             aria-expanded={infoOpen}
-            className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-white/20 font-mono text-[11px] font-medium leading-none text-[#a39c95] transition-colors hover:border-white/45 hover:text-white cursor-pointer"
+            className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-[#a5b9b2]/25 font-mono text-[11px] font-medium leading-none text-[#a5b9b2] transition-colors hover:border-[#a5b9b2]/50 hover:text-white cursor-pointer"
           >
             ?
           </button>
@@ -296,8 +296,8 @@ const HeroAiStudio = memo(function HeroAiStudio() {
             title={ui.chat.sound}
             className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs transition-colors cursor-pointer ${
               voiceEnabled
-                ? "bg-white/12 text-[#f3efe9]"
-                : "text-[#a39c95] hover:text-white"
+                ? "bg-[#263833] text-[#edf4f2]"
+                : "text-[#a5b9b2] hover:text-white"
             }`}
           >
             {voiceEnabled ? (
@@ -314,7 +314,7 @@ const HeroAiStudio = memo(function HeroAiStudio() {
               onClick={resetChat}
               title={ui.chat.clear}
               aria-label={ui.chat.clear}
-              className="rounded-full p-1.5 text-[#a39c95] transition-colors hover:bg-white/10 hover:text-white cursor-pointer"
+              className="rounded-full p-1.5 text-[#a5b9b2] transition-colors hover:bg-white/10 hover:text-white cursor-pointer"
             >
               <RotateCcw className="h-3.5 w-3.5" />
             </button>
@@ -324,7 +324,7 @@ const HeroAiStudio = memo(function HeroAiStudio() {
             href="/chat"
             title={ui.chat.fullStudio}
             aria-label={ui.chat.fullStudio}
-            className="rounded-full p-1.5 text-[#a39c95] transition-colors hover:bg-white/10 hover:text-white"
+            className="rounded-full p-1.5 text-[#a5b9b2] transition-colors hover:bg-white/10 hover:text-white"
           >
             <Maximize2 className="h-3.5 w-3.5" />
           </Link>
@@ -341,7 +341,7 @@ const HeroAiStudio = memo(function HeroAiStudio() {
             }}
             className="absolute inset-x-3 top-full z-40 pt-2 sm:left-auto sm:right-3 sm:w-72"
           >
-            <p className="rounded-xl border border-white/14 bg-[#161412]/98 p-3 text-xs leading-relaxed text-[#e6e1da] shadow-xl backdrop-blur-md">
+            <p className="rounded-xl border border-[#a5b9b2]/22 bg-[#17211e]/98 p-3 text-xs leading-relaxed text-[#edf4f2] shadow-xl backdrop-blur-md">
               {ui.chat.disclaimerPrefix}
               <a
                 href={`mailto:${PROFILE.email}`}
@@ -356,10 +356,6 @@ const HeroAiStudio = memo(function HeroAiStudio() {
       </div>
 
       <div className="relative h-[265px] w-full sm:h-[290px]">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_32%,rgba(237,110,72,0.12),transparent_62%)]"
-        />
         <div className="absolute inset-0">
           {isDesktop && (
             <AvatarStage mood={mood} variant="hero" className="h-full w-full" />
@@ -367,9 +363,9 @@ const HeroAiStudio = memo(function HeroAiStudio() {
         </div>
       </div>
 
-      <div className="relative z-20 border-t border-white/10 bg-[#161412]">
+      <div className="relative z-20 border-t border-[#a5b9b2]/16 bg-[#141d1a]">
         {voiceCapped && voiceEnabled && (
-          <p className="border-b border-white/10 px-4 py-1.5 text-xs text-amber-300">
+          <p className="border-b border-[#a5b9b2]/16 px-4 py-1.5 text-xs text-amber-300">
             {ui.chat.capped}
           </p>
         )}

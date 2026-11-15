@@ -17,32 +17,28 @@ export default function ChatPage() {
       data-viewport-section="Chat"
       className="page-enter mx-auto grid max-w-5xl gap-6 px-4 py-6 sm:px-6 md:h-[calc(100dvh-5.25rem)] md:grid-cols-[340px_1fr] md:py-8"
     >
-      <aside className="flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#1c1917] text-[#f3efe9] shadow-[0_8px_24px_-8px_rgba(22,19,18,0.22)]">
+      <aside className="flex flex-col overflow-hidden rounded-2xl border border-[#a5b9b2]/20 bg-[#17211e] text-[#edf4f2] shadow-[0_8px_28px_rgba(10,18,15,0.22)]">
         <div className="relative h-64 md:h-auto md:flex-1">
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_32%,rgba(237,110,72,0.12),transparent_62%)]"
-          />
           <div className="absolute inset-0">
             <AvatarStage mood={mood} variant="hero" className="h-full w-full" />
           </div>
         </div>
 
-        <div className="space-y-3 border-t border-white/10 bg-[#161412] p-4 text-xs">
+        <div className="space-y-3 border-t border-[#a5b9b2]/16 bg-[#141d1a] p-4 text-xs">
           <div className="flex items-center justify-between">
             <span className="font-medium text-white">{PROFILE.name}</span>
-            <span className="text-[#a39c95]">
+            <span className="text-[#a5b9b2]">
               {isStreaming ? t.thinking : UI.moods[mood]}
             </span>
           </div>
 
-          <div className="flex items-center gap-4 text-[#d6d0c8]">
+          <div className="flex items-center gap-4 text-[#cbe0d9]">
             <label className="inline-flex items-center gap-1.5 cursor-pointer">
               <input
                 type="checkbox"
                 checked={voiceEnabled}
                 onChange={(e) => setVoiceEnabled(e.target.checked)}
-                className="accent-[#ed6e48]"
+                className="accent-[#7dc4b0]"
               />
               {t.sound}
             </label>
@@ -57,11 +53,11 @@ export default function ChatPage() {
             )}
           </div>
 
-          <p className="leading-relaxed text-[#a39c95]">
+          <p className="leading-relaxed text-[#a5b9b2]">
             {t.disclaimerPrefix}
             <a
               href={`mailto:${PROFILE.email}`}
-              className="font-medium text-[#e6e1da] underline decoration-white/35 underline-offset-3 hover:text-white"
+              className="font-medium text-[#edf4f2] underline decoration-white/35 underline-offset-3 hover:text-white"
             >
               {t.disclaimerLink}
             </a>

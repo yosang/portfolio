@@ -20,16 +20,16 @@ export interface ProjectItem {
   highlights: string[];
   aiNote?: string;
   /**
-   * 1-setnings intro som AI Yosmel bruker under prosjektomvisningen ("Vis meg rundt i prosjektene").
-   * `audioSrc` er valgfri: hvis et nytt prosjekt ikke har en ferdiginnspilt MP3 ennå,
-   * vises og fremheves kortet automatisk i riktig rytme uten feil.
+   * 1-sentence spoken intro used during the guided project tour ("Vis meg rundt i prosjektene").
+   * `audioSrc` is optional: if a new project does not have a pre-recorded MP3 yet,
+   * the card is still spotlit and scrolled into view at the normal tour cadence.
    */
   tour: {
     bubble: string;
     audioSrc?: string;
   };
   /**
-   * Ekstra kontekst og grenser som injiseres i AI Yosmel sin systeminstruks for dette prosjektet.
+   * Extra technical context and boundaries injected into the AI system instruction for this project.
    */
   aiContext?: string[];
 }
@@ -37,9 +37,9 @@ export interface ProjectItem {
 export type IndexItem = ProjectItem;
 
 /**
- * Legg til nye prosjekter her.
- * Alt annet på siden (kortvisning, kategorifilter, AI Yosmel sin kunnskap,
- * prosjektomvisning, SEO/JSON-LD og /llms.txt) oppdateres automatisk.
+ * Single source of truth for all portfolio projects.
+ * Adding or updating an entry here automatically updates the home grid, category filters,
+ * AI system prompt, guided project tour, SEO JSON-LD, and /llms.txt.
  */
 const PROJECT_DEFINITIONS: ProjectItem[] = [
   {
@@ -47,11 +47,11 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     title: "VGS Bordtennis",
     year: "Pågår",
     category: "independent",
-    accent: "#e05633",
-    ground: "#1d1a18",
+    accent: "#1b6b57",
+    ground: "#17211e",
     media: {
-      poster: "/projects/vgs-bordtennis-poster.jpg?v=flat",
-      video: "/projects/vgs-bordtennis.mp4?v=flat",
+      poster: "/projects/vgs-bordtennis-poster.jpg?v=sage",
+      video: "/projects/vgs-bordtennis.mp4?v=sage",
       alt: "Storskjerm med poengtavle og mobilvisning i VGS Bordtennis.",
     },
     tags: ["Node.js", "node:sqlite", "Socket.IO", "Pågår"],
@@ -86,10 +86,10 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     title: "Ember Booking",
     year: "2026",
     category: "independent",
-    accent: "#e05633",
-    ground: "#1d1a18",
+    accent: "#1b6b57",
+    ground: "#17211e",
     media: {
-      poster: "/projects/ember-poster.jpg?v=flat",
+      poster: "/projects/ember-poster.jpg?v=sage",
       alt: "Forsiden og funksjonsoversikten på emberbooking.no.",
     },
     tags: ["Next.js 16", "Frontend", "UX / Design", "Merkevare"],
@@ -118,10 +118,10 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     title: "Interaktiv Portefølje",
     year: "2026",
     category: "independent",
-    accent: "#e05633",
-    ground: "#1d1a18",
+    accent: "#1b6b57",
+    ground: "#17211e",
     media: {
-      poster: "/projects/portfolio-poster.jpg?v=flat",
+      poster: "/projects/portfolio-poster.jpg?v=sage",
       alt: "Fullskjerms 3D studio og AI-metodikk i Interaktiv Portefølje.",
     },
     tags: ["Next.js 16", "Three.js Worker", "Gemini TTS", "AI-assistert"],
@@ -145,7 +145,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     aiContext: [
       "Denne porteføljen (`yosmel.no`, kildekode på `github.com/yosang/portfolio`) utforsker hvordan AI kan gjøre et grensesnitt enklere å bruke: man snakker med AI Yosmel i en vanlig samtale, mens den tar leseren gjennom en visuell tour av prosjekter, åpner detaljer, svarer på spørsmål og henter frem CV uten at man må klikke og lete rundt selv.",
       "Hva teknologien kan brukes til utenfor en portefølje: tanken er å komme nærmere en vanlig samtale der den prater med stemme, henter opp riktig sted på skjermen så du slipper å lete selv, og holder seg kun til godkjente fakta. En nettbutikk kan bruke det i kundeservice eller på telefon for å hjelpe kunder, skoler kan bruke det til muntlig trening, og i helsevesenet kan det gi eldre og pasienter enkel veiledning.",
-      "Samtidig var dette prosjektet der jeg høsten 2026 for alvor utfordret meg selv på strukturert AI-assistert utvikling, med egne regler i `AGENTS.md` og `yosmel-skills` (`norsk-tone`, `rolig-design` og `slank-kode`).",
+      "Samtidig var dette prosjektet der jeg høsten 2026 for alvor utfordret meg selv på strukturert AI-assistert utvikling, med egne regler i `AGENTS.md` og `yosmel-skills` (`ui-craft`, `natural-copy` og `lean-architecture`).",
       "Teknisk kjører 3D-skanningen (T2-modell med blendshapes for munnsynk, blunking og uttrykk) på Three.js i en egen `OffscreenCanvas` Web Worker på 60 fps, mens svar og klonet stemme (fra 17 sekunder opptak) strømmes fra Gemini over SSE.",
     ],
   },
@@ -154,10 +154,10 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     title: "MedCare Clinical",
     year: "2026",
     category: "school",
-    accent: "#e05633",
-    ground: "#1d1a18",
+    accent: "#1b6b57",
+    ground: "#17211e",
     media: {
-      poster: "/projects/medcare-poster.jpg?v=flat",
+      poster: "/projects/medcare-poster.jpg?v=sage",
       alt: "Timebestilling, kalender og egne avtaler i MedCare Clinical.",
     },
     tags: ["C#", ".NET 9", "EF Core", "MySQL", "React"],
@@ -188,10 +188,10 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     title: "Cinemorra",
     year: "2026",
     category: "school",
-    accent: "#e05633",
-    ground: "#1d1a18",
+    accent: "#1b6b57",
+    ground: "#17211e",
     media: {
-      poster: "/projects/cinemorra-poster.jpg?v=flat",
+      poster: "/projects/cinemorra-poster.jpg?v=sage",
       alt: "Filmkatalog med søk, anmeldelser og detaljvisning i Cinemorra.",
     },
     tags: ["Next.js", "TypeScript", "Zustand", "Jest"],
@@ -227,8 +227,8 @@ export const SCHOOL_PROJECTS: ProjectItem[] = PROJECT_DEFINITIONS.filter(
 );
 
 /**
- * Alltid sortert i nøyaktig samme rekkefølge som kortene vises på forsiden
- * (Egne først, deretter Skoleprosjekter).
+ * Always ordered to match the visual display order on the home page
+ * (Independent projects first, followed by School projects).
  */
 export const PROJECTS: ProjectItem[] = [
   ...INDEPENDENT_PROJECTS,

@@ -1,69 +1,81 @@
 # Yosmel Chiang · Portfolio
 
-Personlig portefølje bygget i Next.js 16, React 19 og TypeScript. Inneholder prosjektoversikt, arbeidsmetodikk med AI (`/ai`), og en interaktiv 3D versjon av meg som kjører på Three.js i en egen `OffscreenCanvas` Web Worker med strømmede tekst og lydsvar via Gemini.
+Personal portfolio built with Next.js 16 (App Router, `cacheComponents`), React 19, TypeScript, and Three.js. Includes project case studies, AI engineering methodology (`/ai`), and an interactive 3D avatar running inside an `OffscreenCanvas` Web Worker at 60 fps with real-time streamed responses and cloned voice via Gemini.
 
-## Kjøre lokalt
+## Local Development
 
-Legg inn `.env.local`:
+Create `.env.local`:
 
 ```env
-GEMINI_API_KEY=din_nokkel
+GEMINI_API_KEY=your_api_key
 GEMINI_PRESET_VOICE=Puck
 DAILY_VOICE_CAP=25
 ```
 
-Start utviklingsserveren:
+Install dependencies and start the development server:
 
 ```bash
 npm install
 npm run dev
 ```
 
-## Legge til et nytt prosjekt
+| Command | Description |
+| :--- | :--- |
+| `npm run dev` | Start local development server on `http://localhost:3000` |
+| `npm run build` | Production build |
+| `npx tsc --noEmit` | TypeScript typecheck |
 
-Alle prosjekter defineres samlet i `src/data/projects.ts` og vises gjennom den gjenbrukbare komponenten `src/components/ProjectCard.tsx`. Når du legger til et nytt prosjekt i `PROJECT_DEFINITIONS` i `src/data/projects.ts`, oppdateres alt annet automatisk:
+## Adding a New Project
 
-- Prosjektkortet og kategorifilteret på forsiden (`independent` vises først, deretter `school`)
-- AI Yosmel sin kunnskap og prosjektomvisning (`[TOUR:<slug>]`)
-- Søkeord og oppfølgingsspørsmål i chatten
-- Strukturert metadata (JSON-LD) og `/llms.txt`
+All projects are defined in a single source of truth in `src/data/projects.ts` and rendered through the reusable `src/components/ProjectCard.tsx` component. Adding an entry to `PROJECT_DEFINITIONS` in `src/data/projects.ts` automatically updates:
 
-### Steg for steg
+- Project cards and category filters on the home page (`independent` rendered first, followed by `school`)
+- AI Yosmel's system knowledge and guided project tour (`[TOUR:<slug>]`)
+- Search keyword matching and follow-up prompts in chat
+- Structured metadata (`JSON-LD` in `src/app/layout.tsx`) and `/llms.txt`
 
-1. Legg forhåndsvisningsbildet i `public/projects/` (for eksempel `public/projects/nytt-prosjekt-poster.jpg`, gjerne i `4:3` format som `1200x900`).
-2. Legg til et nytt objekt i `PROJECT_DEFINITIONS` i `src/data/projects.ts`:
+### Step by Step
+
+1. Place the preview poster image in `public/projects/` (for example `public/projects/new-project-poster.jpg` at a `4:3` aspect ratio such as `1200x900`).
+2. Add a new object to `PROJECT_DEFINITIONS` in `src/data/projects.ts`:
 
 ```ts
 {
-  slug: "nytt-prosjekt",
-  title: "Nytt Prosjekt",
+  slug: "new-project",
+  title: "New Project",
   year: "2026",
-  category: "independent", // "independent" (Egne) eller "school" (Skoleprosjekter)
-  accent: "#3b82f6",
-  ground: "#0f172a",
+  category: "independent", // "independent" or "school"
+  accent: "#1d4ce9",
+  ground: "#181d27",
   media: {
-    poster: "/projects/nytt-prosjekt-poster.jpg",
-    video: "/projects/nytt-prosjekt.mp4", // valgfri hover video
-    alt: "Skjermbilde av Nytt Prosjekt.",
+    poster: "/projects/new-project-poster.jpg",
+    video: "/projects/new-project.mp4", // optional hover preview video
+    alt: "Preview of New Project.",
   },
   tags: ["Next.js", "TypeScript"],
-  liveUrl: "https://eksempel.no", // valgfri
-  repoUrl: "https://github.com/yosang/nytt-prosjekt", // valgfri
-  subtitle: "Kort undertittel som vises rett under kortet.",
-  summary: "Kort oppsummering som vises når man åpner Detaljer.",
+  liveUrl: "https://example.com", // optional
+  repoUrl: "https://github.com/yosang/new-project", // optional
+  subtitle: "Short one-line subtitle displayed below the card.",
+  summary: "Concise summary shown when expanding project details.",
   highlights: [
-    "Første høydepunkt.",
-    "Andre høydepunkt.",
-    "Tredje høydepunkt.",
+    "First architectural or product highlight.",
+    "Second highlight.",
+    "Third highlight.",
   ],
-  aiNote: "Valgfri linje om hvordan AI ble brukt, med lenke til /ai.",
+  aiNote: "Optional note on how AI was used, linked to /ai.",
   tour: {
     bubble:
-      "Her er Nytt Prosjekt, en kort setning som AI Yosmel viser under omvisningen.",
-    audioSrc: "/audio/tour/nytt-prosjekt.mp3", // valgfri ferdiginnspilt MP3
+      "Short 1-sentence spoken intro used during the guided project tour.",
+    audioSrc: "/audio/tour/new-project.mp3", // optional pre-generated voice clip
   },
   aiContext: [
-    "Tekniske detaljer, arkitekturvalg og avgrensninger som AI Yosmel skal bruke når besøkende spør om prosjektet.",
+    "Detailed technical context and boundaries injected into the AI persona for this project.",
   ],
 }
 ```
+
+## Gotchas
+
+- **3D Avatar Web Worker (`src/workers/avatar.worker.ts`):** The Three.js scene runs inside an `OffscreenCanvas` worker so scrolling and UI interactions stay at 60 fps on the main thread. Do not import DOM-dependent modules inside `avatarEngine.ts` or `avatar.worker.ts`.
+- **Pre-generated Tour & Use-Case Voice Clips (`public/audio/`):** Guided tours (`PROJECT_TOUR_STEPS`) and the practical AI use-case prompt (`USE_CASE_STEPS`) play pre-generated MP3 clips for zero-latency playback without consuming the daily live TTS quota (`DAILY_VOICE_CAP`). If a new project omits `tour.audioSrc`, the tour still highlights and scrolls to the card at the normal cadence.
+- **Canonical URLs & Indexing:** Every route sets its own canonical URL against `SITE_URL` (`https://yosmel.no`).
