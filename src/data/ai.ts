@@ -1,8 +1,8 @@
 export const AI_PAGE = {
   title: "Hvordan jeg bruker AI",
   lead: [
-    "Det siste året har jeg tatt i bruk AI for fullt i måten jeg utvikler på. Jeg lærer fortsatt nye grep hver uke, bommer innimellom når jeg gir for løse rammer, og merker samtidig stor gevinst i hvor mye jeg faktisk får bygget og ferdigstilt.",
-    "Ja, AI tar unna mye av kodeskrivinga jeg før gjorde for hånd. Det gir meg mer tid i begge ender av arbeidet: å tenke skikkelig gjennom arkitekturen i starten, og å pusse på detaljene i brukeropplevelsen til slutt.",
+    "Det siste året har jeg egentlig brukt AI ganske minimalt. Den har mest vært en sparringspartner når jeg har diskutert ideer og tenkt høyt rundt prosjekter, uten at jeg har tatt ut potensialet i selve utviklingen.",
+    "Det var først høsten 2026 at jeg bestemte meg for å gi AI-assistert programvareutvikling et ordentlig forsøk med en strukturert metodikk. Når AI tar unna mer av selve skrivingen, får jeg mer tid i begge ender av arbeidet: å legge en skikkelig plan for arkitekturen i starten, og å pusse på detaljene i brukeropplevelsen til slutt.",
   ],
   shift: {
     heading: "Hvor tiden min går",
