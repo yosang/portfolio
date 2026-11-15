@@ -160,7 +160,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
       poster: "/projects/skills-poster.jpg?v=sage-2",
       alt: "Oversikt over SKILL.md-moduler og AGENTS.md i github.com/yosang/skills.",
     },
-    tags: ["SKILL.md", "AGENTS.md", "AI-arbeidsflyt", "Open Source"],
+    tags: ["SKILL.md", "AGENTS.md", "Open Source"],
     repoUrl: "https://github.com/yosang/skills",
     subtitle:
       "Egne SKILL.md-filer og AGENTS.md-regler for arkitektur, design og språk i AI-assistert utvikling.",
