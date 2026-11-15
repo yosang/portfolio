@@ -318,7 +318,10 @@ export function Composer({
 
           const res = await fetch("/api/transcribe", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+              "Content-Type": "application/json",
+              "X-Portfolio-Client": "yosmel-web",
+            },
             body: JSON.stringify({ audio: base64, mimeType: actualMime }),
           });
           if (res.ok) {

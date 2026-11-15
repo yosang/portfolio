@@ -3,23 +3,98 @@ import { GoogleGenAI } from "@google/genai";
 
 export const maxDuration = 30;
 
-const RATE_LIMIT_PER_MIN = 15;
-const DAILY_IP_CAP = 60;
-const MAX_AUDIO_BASE64_LEN = 3_000_000;
+const DAILY_GLOBAL_TRANSCRIBE_CAP = Number(
+  process.env.DAILY_TRANSCRIBE_CAP || "80"
+);
+const GLOBAL_TRANSCRIBE_PER_MIN = 15;
+const RATE_LIMIT_PER_MIN = 6;
+const DAILY_IP_CAP = 15;
+const MAX_IP_BUCKETS = 1000;
+const MAX_AUDIO_BASE64_LEN = 550_000;
+const MAX_RAW_BODY_LEN = 600_000;
 
 let budgetDay = new Date().toISOString().slice(0, 10);
+let globalTranscribeUsesToday = 0;
+let globalMinuteTs = Date.now();
+let globalMinuteCount = 0;
 const ipBuckets = new Map<
   string,
   { minuteTs: number; minuteCount: number; dayCount: number }
 >();
 
+function getClientIp(req: NextRequest): string {
+  const raw =
+    req.headers.get("x-vercel-forwarded-for")?.split(",")[0]?.trim() ||
+    req.headers.get("cf-connecting-ip")?.trim() ||
+    req.headers.get("x-real-ip")?.trim() ||
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    "local";
+  return raw.slice(0, 64);
+}
+
+function isAllowedRequest(req: NextRequest): boolean {
+  const fetchSite = req.headers.get("sec-fetch-site");
+  if (fetchSite && fetchSite !== "same-origin" && fetchSite !== "none") {
+    return false;
+  }
+
+  const origin = req.headers.get("origin");
+  if (origin) {
+    try {
+      const originHost = new URL(origin).hostname.toLowerCase();
+      const reqHost = req.nextUrl.hostname.toLowerCase();
+      const allowedHost =
+        originHost === reqHost ||
+        originHost === "yosmel.no" ||
+        originHost === "www.yosmel.no" ||
+        originHost === "localhost" ||
+        originHost === "127.0.0.1" ||
+        originHost.endsWith(".vercel.app");
+      if (!allowedHost) return false;
+    } catch {
+      return false;
+    }
+  } else if (process.env.NODE_ENV === "production") {
+    return false;
+  }
+
+  const clientHeader = req.headers.get("x-portfolio-client");
+  if (
+    process.env.NODE_ENV === "production" &&
+    clientHeader !== "yosmel-web"
+  ) {
+    return false;
+  }
+
+  return true;
+}
+
 function checkIpAllowance(ip: string): boolean {
   const today = new Date().toISOString().slice(0, 10);
   if (today !== budgetDay) {
     budgetDay = today;
+    globalTranscribeUsesToday = 0;
+    globalMinuteCount = 0;
     ipBuckets.clear();
   }
   const now = Date.now();
+
+  if (now - globalMinuteTs > 60_000) {
+    globalMinuteTs = now;
+    globalMinuteCount = 0;
+  }
+  if (
+    globalMinuteCount >= GLOBAL_TRANSCRIBE_PER_MIN ||
+    globalTranscribeUsesToday >= DAILY_GLOBAL_TRANSCRIBE_CAP
+  ) {
+    return false;
+  }
+
+  if (!ipBuckets.has(ip) && ipBuckets.size >= MAX_IP_BUCKETS) {
+    const oldest = ipBuckets.keys().next().value;
+    if (oldest) ipBuckets.delete(oldest);
+  }
+
   const entry = ipBuckets.get(ip) ?? {
     minuteTs: now,
     minuteCount: 0,
@@ -38,6 +113,8 @@ function checkIpAllowance(ip: string): boolean {
   }
   entry.minuteCount += 1;
   entry.dayCount += 1;
+  globalMinuteCount += 1;
+  globalTranscribeUsesToday += 1;
   ipBuckets.set(ip, entry);
   return true;
 }
@@ -101,10 +178,11 @@ function extractTextFromInteraction(res: unknown): string {
 }
 
 export async function POST(req: NextRequest) {
-  const clientIp =
-    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-    req.headers.get("x-real-ip")?.trim() ||
-    "local";
+  if (!isAllowedRequest(req)) {
+    return NextResponse.json({ error: "Ikke tillatt." }, { status: 403 });
+  }
+
+  const clientIp = getClientIp(req);
 
   if (!checkIpAllowance(clientIp)) {
     return NextResponse.json(
@@ -123,7 +201,14 @@ export async function POST(req: NextRequest) {
 
   let body: { audio?: string; mimeType?: string };
   try {
-    body = await req.json();
+    const rawText = await req.text();
+    if (!rawText || rawText.length > MAX_RAW_BODY_LEN) {
+      return NextResponse.json(
+        { error: "Lydopptaket er for stort." },
+        { status: 413 }
+      );
+    }
+    body = JSON.parse(rawText);
   } catch {
     return NextResponse.json({ error: "Ugyldig forespørsel." }, { status: 400 });
   }

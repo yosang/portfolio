@@ -417,7 +417,10 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
       try {
         const res = await fetch("/api/chat", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "X-Portfolio-Client": "yosmel-web",
+          },
           signal: abortController.signal,
           body: JSON.stringify({
             messages: updatedHistory.map((m) => ({

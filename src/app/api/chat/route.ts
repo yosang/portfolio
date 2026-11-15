@@ -21,12 +21,19 @@ interface ViewportPageContext {
 }
 
 const DAILY_VOICE_CAP = Number(process.env.DAILY_VOICE_CAP || "25");
-const RATE_LIMIT_PER_MIN = 12;
-const DAILY_IP_CAP = 60;
+const DAILY_GLOBAL_CHAT_CAP = Number(process.env.DAILY_CHAT_CAP || "300");
+const GLOBAL_CHAT_PER_MIN = 35;
+const RATE_LIMIT_PER_MIN = 10;
+const DAILY_IP_CAP = 45;
+const MAX_IP_BUCKETS = 1000;
 const MAX_INPUT_CHARS = 600;
+const MAX_RAW_BODY_LEN = 16_000;
 
 let budgetDay = new Date().toISOString().slice(0, 10);
 let voiceUsesToday = 0;
+let globalChatUsesToday = 0;
+let globalMinuteTs = Date.now();
+let globalMinuteCount = 0;
 const exhaustedTtsModels = new Set<string>();
 const ttsWavCache = new Map<string, string>();
 const MAX_TTS_CACHE = 40;
@@ -37,14 +44,80 @@ function syncBudgetDay() {
   if (today !== budgetDay) {
     budgetDay = today;
     voiceUsesToday = 0;
+    globalChatUsesToday = 0;
+    globalMinuteCount = 0;
     exhaustedTtsModels.clear();
     ipBuckets.clear();
   }
 }
 
+function getClientIp(req: NextRequest): string {
+  const raw =
+    req.headers.get("x-vercel-forwarded-for")?.split(",")[0]?.trim() ||
+    req.headers.get("cf-connecting-ip")?.trim() ||
+    req.headers.get("x-real-ip")?.trim() ||
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    "local";
+  return raw.slice(0, 64);
+}
+
+function isAllowedRequest(req: NextRequest): boolean {
+  const fetchSite = req.headers.get("sec-fetch-site");
+  if (fetchSite && fetchSite !== "same-origin" && fetchSite !== "none") {
+    return false;
+  }
+
+  const origin = req.headers.get("origin");
+  if (origin) {
+    try {
+      const originHost = new URL(origin).hostname.toLowerCase();
+      const reqHost = req.nextUrl.hostname.toLowerCase();
+      const allowedHost =
+        originHost === reqHost ||
+        originHost === "yosmel.no" ||
+        originHost === "www.yosmel.no" ||
+        originHost === "localhost" ||
+        originHost === "127.0.0.1" ||
+        originHost.endsWith(".vercel.app");
+      if (!allowedHost) return false;
+    } catch {
+      return false;
+    }
+  } else if (process.env.NODE_ENV === "production") {
+    return false;
+  }
+
+  const clientHeader = req.headers.get("x-portfolio-client");
+  if (
+    process.env.NODE_ENV === "production" &&
+    clientHeader !== "yosmel-web"
+  ) {
+    return false;
+  }
+
+  return true;
+}
+
 function checkIpAllowance(ip: string): boolean {
   syncBudgetDay();
   const now = Date.now();
+
+  if (now - globalMinuteTs > 60_000) {
+    globalMinuteTs = now;
+    globalMinuteCount = 0;
+  }
+  if (
+    globalMinuteCount >= GLOBAL_CHAT_PER_MIN ||
+    globalChatUsesToday >= DAILY_GLOBAL_CHAT_CAP
+  ) {
+    return false;
+  }
+
+  if (!ipBuckets.has(ip) && ipBuckets.size >= MAX_IP_BUCKETS) {
+    const oldest = ipBuckets.keys().next().value;
+    if (oldest) ipBuckets.delete(oldest);
+  }
+
   const entry = ipBuckets.get(ip) ?? { minuteTs: now, minuteCount: 0, dayCount: 0 };
   if (now - entry.minuteTs > 60_000) {
     entry.minuteTs = now;
@@ -56,6 +129,8 @@ function checkIpAllowance(ip: string): boolean {
   }
   entry.minuteCount += 1;
   entry.dayCount += 1;
+  globalMinuteCount += 1;
+  globalChatUsesToday += 1;
   ipBuckets.set(ip, entry);
   return true;
 }
@@ -190,6 +265,12 @@ function moodToSpeechStyle(mood: Mood): string {
 }
 
 export async function POST(req: NextRequest) {
+  if (!isAllowedRequest(req)) {
+    return new Response(JSON.stringify({ error: "Forbidden" }), {
+      status: 403,
+    });
+  }
+
   let body: {
     messages?: ClientMessage[];
     page?: ViewportPageContext;
@@ -198,17 +279,20 @@ export async function POST(req: NextRequest) {
   };
 
   try {
-    body = await req.json();
+    const rawText = await req.text();
+    if (!rawText || rawText.length > MAX_RAW_BODY_LEN) {
+      return new Response(JSON.stringify({ error: "Payload too large" }), {
+        status: 413,
+      });
+    }
+    body = JSON.parse(rawText);
   } catch {
     return new Response(JSON.stringify({ error: "Invalid JSON payload" }), {
       status: 400,
     });
   }
 
-  const clientIp =
-    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-    req.headers.get("x-real-ip")?.trim() ||
-    "local";
+  const clientIp = getClientIp(req);
 
   const messages = body.messages || [];
   const rawLastMsg =
