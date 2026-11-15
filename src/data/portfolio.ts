@@ -74,6 +74,19 @@ export const TOUR_PROMPT = "Vis meg rundt i prosjektene";
 export const USE_CASE_PROMPT =
   "Hva kan denne AI teknologien brukes til i praksis?";
 
+export const USE_CASE_STEPS: Array<{ audioSrc: string; bubble: string }> = [
+  {
+    audioSrc: "/audio/usecase-0.mp3",
+    bubble:
+      "Tanken er å komme nærmere en vanlig samtale: den prater med stemme, henter opp riktig sted på skjermen så du slipper å lete selv, og holder seg kun til godkjente fakta.",
+  },
+  {
+    audioSrc: "/audio/usecase-1.mp3",
+    bubble:
+      "En nettbutikk kan bruke det i kundeservice eller på telefon for å hjelpe kunder, skoler kan bruke det til muntlig trening, og i helsevesenet kan det gi eldre og pasienter enkel veiledning.",
+  },
+];
+
 export const PROMPTS: string[] = [
   "Hva gjorde du før du begynte med utvikling?",
   "Hvordan er denne 3D chatten skrudd sammen?",

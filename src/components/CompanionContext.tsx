@@ -15,6 +15,8 @@ import type { AvatarMood } from "@/lib/avatarEngine";
 import {
   PROJECT_TOUR_STEPS,
   SPECIFIC_TOUR_TARGET_RE,
+  USE_CASE_PROMPT,
+  USE_CASE_STEPS,
 } from "@/data/portfolio";
 import { UI } from "@/data/ui";
 
@@ -314,7 +316,14 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
       const pageContext = inspectViewportContext(pathnameRef.current);
       const wantVoice = voiceEnabledRef.current;
 
-      if (!SPECIFIC_TOUR_TARGET_RE.test(trimmed) && INSTANT_TOUR_RE.test(trimmed)) {
+      const isInstantTour =
+        !SPECIFIC_TOUR_TARGET_RE.test(trimmed) && INSTANT_TOUR_RE.test(trimmed);
+      const isInstantUseCase =
+        trimmed.toLowerCase() === USE_CASE_PROMPT.toLowerCase();
+
+      if (isInstantTour || isInstantUseCase) {
+        const steps: Array<{ slug?: string; audioSrc?: string; bubble: string }> =
+          isInstantTour ? PROJECT_TOUR_STEPS : USE_CASE_STEPS;
         prevInteractionIdRef.current = null;
         setMood("happy");
 
@@ -328,9 +337,7 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
         const revealTourStep = (stepIdx: number) => {
           if (abortController.signal.aborted) return;
           finishStreamingState();
-          const visibleBubbles = PROJECT_TOUR_STEPS.slice(0, stepIdx + 1).map(
-            (s) => s.bubble
-          );
+          const visibleBubbles = steps.slice(0, stepIdx + 1).map((s) => s.bubble);
           const content = visibleBubbles.join("\n\n");
           setMessages((prev) =>
             prev.map((msg) =>
@@ -339,11 +346,12 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
                 : msg
             )
           );
-          triggerSpotlight(PROJECT_TOUR_STEPS[stepIdx].slug);
+          const slug = steps[stepIdx].slug;
+          if (slug) triggerSpotlight(slug);
         };
 
         const runMutedFallbackFrom = (startIdx: number) => {
-          for (let i = startIdx; i < PROJECT_TOUR_STEPS.length; i++) {
+          for (let i = startIdx; i < steps.length; i++) {
             const delay = i === startIdx ? 60 : (i - startIdx) * 3800;
             const id = setTimeout(() => {
               revealTourStep(i);
@@ -355,9 +363,9 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
         if (wantVoice) {
           setVoiceMode("replicated");
           (async () => {
-            for (let i = 0; i < PROJECT_TOUR_STEPS.length; i++) {
+            for (let i = 0; i < steps.length; i++) {
               if (abortController.signal.aborted) return;
-              const step = PROJECT_TOUR_STEPS[i];
+              const step = steps[i];
               const pause = i === 0 ? 0 : 0.24;
 
               if (!voiceEnabledRef.current) {
