@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { AvatarStage } from "@/components/AvatarStage";
 import { ChatThread, Composer } from "@/components/ChatThread";
 import { useCompanion } from "@/components/CompanionContext";
@@ -61,7 +62,14 @@ export default function ChatPage() {
             >
               {t.disclaimerLink}
             </a>
-            {t.disclaimerSuffix}
+            {t.disclaimerSuffix}{" "}
+            <Link
+              href="/personvern"
+              className="font-medium text-[#f7f8f8] underline decoration-white/35 underline-offset-3 hover:text-white"
+            >
+              {t.privacyLinkLabel}
+            </Link>
+            .
           </p>
         </div>
       </aside>

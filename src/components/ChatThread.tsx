@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
-import { ArrowUp, Download, FileText } from "lucide-react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { ArrowUp, Download, FileText, Loader2, Mic, Square } from "lucide-react";
 import { useCompanion, type ChatTurn } from "@/components/CompanionContext";
 import {
   FOLLOW_UP_PROMPTS,
@@ -205,8 +205,43 @@ export function Composer({
   const { isStreaming, sendMessage } = useCompanion();
   const t = UI.chat;
   const [text, setText] = useState("");
+  const [isRecording, setIsRecording] = useState(false);
+  const [isTranscribing, setIsTranscribing] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const stopTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isDark = tone === "dark";
+
+  const cleanupMedia = useCallback(() => {
+    if (stopTimerRef.current) {
+      clearTimeout(stopTimerRef.current);
+      stopTimerRef.current = null;
+    }
+    if (streamRef.current) {
+      for (const track of streamRef.current.getTracks()) {
+        track.stop();
+      }
+      streamRef.current = null;
+    }
+    mediaRecorderRef.current = null;
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (
+        mediaRecorderRef.current &&
+        mediaRecorderRef.current.state !== "inactive"
+      ) {
+        try {
+          mediaRecorderRef.current.stop();
+        } catch {
+          // ignore
+        }
+      }
+      cleanupMedia();
+    };
+  }, [cleanupMedia]);
 
   useEffect(() => {
     if (!autoFocus) return;
@@ -215,12 +250,124 @@ export function Composer({
     }
   }, [autoFocus]);
 
+  const stopRecording = useCallback(() => {
+    const rec = mediaRecorderRef.current;
+    if (rec && rec.state !== "inactive") {
+      rec.stop();
+    }
+  }, []);
+
+  const toggleRecording = useCallback(async () => {
+    if (isTranscribing) return;
+    if (isRecording) {
+      stopRecording();
+      return;
+    }
+    if (
+      typeof navigator === "undefined" ||
+      !navigator.mediaDevices?.getUserMedia
+    ) {
+      return;
+    }
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream;
+
+      const candidates = [
+        "audio/webm;codecs=opus",
+        "audio/webm",
+        "audio/mp4",
+        "audio/ogg",
+      ];
+      const chosenMime =
+        typeof MediaRecorder !== "undefined" &&
+        typeof MediaRecorder.isTypeSupported === "function"
+          ? candidates.find((m) => MediaRecorder.isTypeSupported(m)) || ""
+          : "";
+
+      const recorder = chosenMime
+        ? new MediaRecorder(stream, { mimeType: chosenMime })
+        : new MediaRecorder(stream);
+
+      const chunks: BlobPart[] = [];
+      recorder.ondataavailable = (ev) => {
+        if (ev.data && ev.data.size > 0) {
+          chunks.push(ev.data);
+        }
+      };
+
+      recorder.onstop = async () => {
+        const actualMime = recorder.mimeType || chosenMime || "audio/webm";
+        cleanupMedia();
+        setIsRecording(false);
+
+        const blob = new Blob(chunks, { type: actualMime });
+        if (blob.size < 400) return;
+
+        setIsTranscribing(true);
+        try {
+          const buf = await blob.arrayBuffer();
+          const bytes = new Uint8Array(buf);
+          let binary = "";
+          const chunkSize = 0x8000;
+          for (let i = 0; i < bytes.length; i += chunkSize) {
+            binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+          }
+          const base64 = btoa(binary);
+
+          const res = await fetch("/api/transcribe", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ audio: base64, mimeType: actualMime }),
+          });
+          if (res.ok) {
+            const data = (await res.json()) as { text?: string };
+            const spoken = data.text?.trim() || "";
+            if (spoken) {
+              setText((prev) =>
+                prev.trim() ? `${prev.trim()} ${spoken}` : spoken
+              );
+              requestAnimationFrame(() => {
+                inputRef.current?.focus();
+              });
+            }
+          }
+        } catch {
+          // ignore network errors on voice transcription
+        } finally {
+          setIsTranscribing(false);
+        }
+      };
+
+      mediaRecorderRef.current = recorder;
+      recorder.start();
+      setIsRecording(true);
+      stopTimerRef.current = setTimeout(() => {
+        stopRecording();
+      }, 20_000);
+    } catch {
+      cleanupMedia();
+      setIsRecording(false);
+    }
+  }, [cleanupMedia, isRecording, isTranscribing, stopRecording]);
+
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!text.trim()) return;
+    if (isRecording) {
+      stopRecording();
+      return;
+    }
+    if (!text.trim() || isTranscribing) return;
     sendMessage(text);
     setText("");
   };
+
+  const activePlaceholder = isRecording
+    ? t.micListening
+    : isTranscribing
+      ? t.micTranscribing
+      : t.placeholder;
 
   return (
     <form onSubmit={submit} className="flex items-center gap-2">
@@ -234,18 +381,41 @@ export function Composer({
           type="text"
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder={t.placeholder}
+          placeholder={activePlaceholder}
           autoComplete="off"
-          className={`min-w-0 w-full rounded-full px-4 py-2 text-base sm:text-sm outline-none transition-colors focus-visible:outline-none ${
+          className={`min-w-0 w-full rounded-full py-2 pl-4 pr-10 text-base sm:text-sm outline-none transition-colors focus-visible:outline-none ${
             isDark
               ? "border border-white/14 bg-white/[0.07] text-white placeholder:text-zinc-400 focus:border-white/40"
               : "border border-line bg-paper-raised text-ink placeholder:text-ink-soft focus:border-ink"
           }`}
         />
+        <button
+          type="button"
+          onClick={toggleRecording}
+          disabled={isTranscribing}
+          title={isRecording ? t.micStop : t.micStart}
+          aria-label={isRecording ? t.micStop : t.micStart}
+          aria-pressed={isRecording}
+          className={`absolute right-1.5 inline-flex h-7 w-7 items-center justify-center rounded-full transition-colors cursor-pointer disabled:cursor-default ${
+            isRecording
+              ? "bg-red-500 text-white animate-pulse"
+              : isDark
+                ? "text-zinc-400 hover:bg-white/10 hover:text-white"
+                : "text-ink-soft hover:bg-ink/8 hover:text-ink"
+          }`}
+        >
+          {isTranscribing ? (
+            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+          ) : isRecording ? (
+            <Square className="h-3 w-3 fill-current" />
+          ) : (
+            <Mic className="h-3.5 w-3.5" />
+          )}
+        </button>
       </div>
       <button
         type="submit"
-        disabled={isStreaming || !text.trim()}
+        disabled={isStreaming || isTranscribing || isRecording || !text.trim()}
         aria-label={t.send}
         className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-opacity disabled:opacity-35 cursor-pointer disabled:cursor-default ${
           isDark

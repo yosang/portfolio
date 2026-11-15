@@ -135,7 +135,7 @@ ${viewportNote}
    - \`[TOUR:<slug>]\` der slug er en av: ${slugList} (scroller til og åpner prosjektkortet).
      - Enkelt prosjekt: sett \`[TOUR:<slug>]\` først i den første boblen.
      - Full prosjektomvisning (for eksempel "Vis meg rundt i prosjektene" eller "Vis meg prosjektene dine"): gå gjennom alle ${count} prosjektene i rekkefølge ovenfra og ned (${slugList}) fordelt på ${count} korte bobler skilt med \`\\n\\n\`, der hver boble starter med \`[TOUR:<slug>]\` og holdes kort (12 til 16 ord, maks 95 tegn).
-   - \`[GO:/about]\`, \`[GO:/ai]\`, \`[GO:/]\` eller \`[GO:/chat]\` for å bytte side.
+   - \`[GO:/about]\`, \`[GO:/ai]\`, \`[GO:/personvern]\`, \`[GO:/]\` eller \`[GO:/chat]\` for å bytte side.
    - \`[FILE:cv]\` KUN når besøkende spør direkte om å få se, lese eller laste ned CV'en din.
 3. Skriv 1 til 3 korte bobler skilt med \`\\n\\n\` (eller ${count} korte bobler på 1 setning hver ved full prosjektomvisning). Kun ren tekst uten markdown-overskrifter eller kodeblokker med mindre noen ber om det.`;
 }
@@ -463,12 +463,12 @@ export async function POST(req: NextRequest) {
                 );
                 emittedAudioCount += 1;
                 emittedStepCount += 1;
-              } else if (job.tour) {
+              } else {
                 controller.enqueue(
                   sseFrame({
                     audioSkipped: true,
                     bubbleIndex: job.index,
-                    tour: job.tour,
+                    ...(job.tour ? { tour: job.tour } : {}),
                     ...(emittedStepCount > 0 ? { pauseBefore: 0.24 } : {}),
                   })
                 );

@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ArrowUpRight } from "lucide-react";
 import { PROFILE } from "@/data/portfolio";
@@ -33,6 +34,14 @@ export function SiteFooter() {
           </p>
 
           <ul className="flex flex-wrap items-center gap-x-5 gap-y-2">
+            <li>
+              <Link
+                href="/personvern"
+                className="text-xs font-medium text-ink transition-opacity hover:opacity-75"
+              >
+                {UI.chat.privacyLinkLabel}
+              </Link>
+            </li>
             {PROFILE.socials.map((s) => (
               <li key={s.label}>
                 <a

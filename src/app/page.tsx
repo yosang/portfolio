@@ -349,7 +349,14 @@ const HeroAiStudio = memo(function HeroAiStudio() {
               >
                 {ui.chat.disclaimerLink}
               </a>
-              {ui.chat.disclaimerSuffix}
+              {ui.chat.disclaimerSuffix}{" "}
+              <Link
+                href="/personvern"
+                className="font-medium text-white underline decoration-white/40 underline-offset-3 hover:decoration-white"
+              >
+                {ui.chat.privacyLinkLabel}
+              </Link>
+              .
             </p>
           </div>
         )}

@@ -48,6 +48,11 @@ export const UI = {
       "Her styrer en modell klonet på 17 sekunder av stemmen min og notatene mine. Den hevder den har kontroll, men send en epost til ",
     disclaimerLink: "den ekte meg",
     disclaimerSuffix: " hvis noe faktisk er viktig.",
+    privacyLinkLabel: "Personvern",
+    micStart: "Snakk inn spørsmål",
+    micStop: "Stopp opptak",
+    micListening: "Lytter… trykk på mikrofonen for å fullføre",
+    micTranscribing: "Tolker tale…",
     howMade: "Teknisk oppsett",
     tech: [
       "3D modell i egen Web Worker",

@@ -291,7 +291,15 @@ export function ChatDock() {
                 >
                   {t.disclaimerLink}
                 </a>
-                {t.disclaimerSuffix}
+                {t.disclaimerSuffix}{" "}
+                <Link
+                  href="/personvern"
+                  onClick={() => setIsOpen(false)}
+                  className="font-medium text-ink underline underline-offset-3 hover:opacity-75"
+                >
+                  {t.privacyLinkLabel}
+                </Link>
+                .
               </p>
             )}
 

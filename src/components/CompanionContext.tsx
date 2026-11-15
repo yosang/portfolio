@@ -229,10 +229,14 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
     }
   }, [messages, isStreaming]);
 
+  const onMuteFlushRef = useRef<(() => void) | null>(null);
+
   const setVoiceEnabled = useCallback((next: boolean) => {
+    voiceEnabledRef.current = next;
     setVoiceEnabledState(next);
     if (!next) {
       portfolioAudio.stopAll();
+      onMuteFlushRef.current?.();
     } else {
       portfolioAudio.unlock();
     }
@@ -439,19 +443,87 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
         let latestMood: AvatarMood = "neutral";
         let latestAttachment: ChatAttachment | undefined;
         let isDemoStream = false;
+        let holdTextForVoice = wantVoice;
+        let revealedBubbleCount = 0;
+        let textStreamFinished = false;
 
         const pendingTourSteps = new Map<number, string>();
         const scheduledTourIndices = new Set<number>();
         let fallbackStepCount = 0;
         let hasQueuedAudio = false;
 
+        const finishStreamingState = () => {
+          if (abortRef.current === abortController && isStreamingRef.current) {
+            isStreamingRef.current = false;
+            setIsStreaming(false);
+          }
+        };
+
+        const syncVisibleText = () => {
+          if (abortController.signal.aborted) return;
+          const splitBubbles = accumulatedText
+            .split(/\n{2,}/)
+            .map((s) => s.trim())
+            .filter(Boolean);
+
+          if (!holdTextForVoice || !voiceEnabledRef.current) {
+            setMood(latestMood);
+            if (textStreamFinished) {
+              finishStreamingState();
+            }
+            setMessages((prev) =>
+              prev.map((msg) =>
+                msg.id === assistantId
+                  ? {
+                      ...msg,
+                      content: accumulatedText,
+                      bubbles: splitBubbles,
+                      mood: latestMood,
+                      ...(latestAttachment ? { attachment: latestAttachment } : {}),
+                    }
+                  : msg
+              )
+            );
+            return;
+          }
+
+          if (revealedBubbleCount === 0) {
+            return;
+          }
+
+          const visibleBubbles = splitBubbles.slice(0, revealedBubbleCount);
+          const visibleContent = visibleBubbles.join("\n\n");
+          setMood(latestMood);
+          finishStreamingState();
+          setMessages((prev) =>
+            prev.map((msg) =>
+              msg.id === assistantId
+                ? {
+                    ...msg,
+                    content: visibleContent,
+                    bubbles: visibleBubbles,
+                    mood: latestMood,
+                    ...(latestAttachment ? { attachment: latestAttachment } : {}),
+                  }
+                : msg
+            )
+          );
+        };
+
+        onMuteFlushRef.current = () => {
+          holdTextForVoice = false;
+          syncVisibleText();
+        };
+
         const scheduleFallbackTourStep = (bubbleIdx: number, slug: string) => {
           if (scheduledTourIndices.has(bubbleIdx)) return;
           scheduledTourIndices.add(bubbleIdx);
           if (hasQueuedAudio && voiceEnabledRef.current) {
-            portfolioAudio.enqueueSilentStep(3.5, 0.24, () =>
-              triggerSpotlight(slug)
-            );
+            portfolioAudio.enqueueSilentStep(3.5, 0.24, () => {
+              revealedBubbleCount = Math.max(revealedBubbleCount, bubbleIdx + 1);
+              syncVisibleText();
+              triggerSpotlight(slug);
+            });
             return;
           }
           const delay = fallbackStepCount === 0 ? 120 : fallbackStepCount * 3800;
@@ -497,12 +569,18 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
             if (typeof data.demo === "boolean") {
               isDemoStream = data.demo;
               setIsDemoMode(data.demo);
+              if (data.demo) {
+                holdTextForVoice = false;
+                syncVisibleText();
+              }
             }
 
             if (typeof data.mood === "string") {
               const m = data.mood as AvatarMood;
               latestMood = m;
-              setMood(m);
+              if (!holdTextForVoice || !voiceEnabledRef.current || revealedBubbleCount > 0) {
+                setMood(m);
+              }
             }
 
             if (
@@ -545,30 +623,15 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
             }
 
             if (data.textDone === true) {
-              isStreamingRef.current = false;
-              setIsStreaming(false);
+              textStreamFinished = true;
+              if (!holdTextForVoice || !voiceEnabledRef.current) {
+                finishStreamingState();
+              }
             }
 
             if (typeof data.t === "string") {
               accumulatedText += data.t;
-              const splitBubbles = accumulatedText
-                .split(/\n{2,}/)
-                .map((s) => s.trim())
-                .filter(Boolean);
-
-              setMessages((prev) =>
-                prev.map((msg) =>
-                  msg.id === assistantId
-                    ? {
-                        ...msg,
-                        content: accumulatedText,
-                        bubbles: splitBubbles,
-                        mood: latestMood,
-                        ...(latestAttachment ? { attachment: latestAttachment } : {}),
-                      }
-                    : msg
-                )
-              );
+              syncVisibleText();
             }
 
             if (typeof data.audio === "string" && data.audio.length > 0) {
@@ -597,10 +660,21 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
                 portfolioAudio.enqueueWavBase64(
                   data.audio,
                   pause,
-                  tourSlug ? () => triggerSpotlight(tourSlug) : undefined
+                  () => {
+                    revealedBubbleCount = Math.max(
+                      revealedBubbleCount,
+                      bubbleIdx >= 0 ? bubbleIdx + 1 : 1
+                    );
+                    syncVisibleText();
+                    if (tourSlug) triggerSpotlight(tourSlug);
+                  }
                 );
-              } else if (tourSlug && bubbleIdx >= 0) {
-                scheduleFallbackTourStep(bubbleIdx, tourSlug);
+              } else {
+                holdTextForVoice = false;
+                syncVisibleText();
+                if (tourSlug && bubbleIdx >= 0) {
+                  scheduleFallbackTourStep(bubbleIdx, tourSlug);
+                }
               }
             } else if (data.audioSkipped === true) {
               const bubbleIdx =
@@ -611,15 +685,24 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
                   : bubbleIdx >= 0
                     ? pendingTourSteps.get(bubbleIdx)
                     : undefined;
-              if (tourSlug && bubbleIdx >= 0) {
-                if (voiceEnabledRef.current && hasQueuedAudio) {
+              if (voiceEnabledRef.current && hasQueuedAudio) {
+                if (tourSlug && bubbleIdx >= 0) {
                   scheduledTourIndices.add(bubbleIdx);
-                  const pause =
-                    typeof data.pauseBefore === "number" ? data.pauseBefore : 0.24;
-                  portfolioAudio.enqueueSilentStep(3.5, pause, () =>
-                    triggerSpotlight(tourSlug)
+                }
+                const pause =
+                  typeof data.pauseBefore === "number" ? data.pauseBefore : 0.24;
+                portfolioAudio.enqueueSilentStep(3.0, pause, () => {
+                  revealedBubbleCount = Math.max(
+                    revealedBubbleCount,
+                    bubbleIdx >= 0 ? bubbleIdx + 1 : 1
                   );
-                } else {
+                  syncVisibleText();
+                  if (tourSlug) triggerSpotlight(tourSlug);
+                });
+              } else {
+                holdTextForVoice = false;
+                syncVisibleText();
+                if (tourSlug && bubbleIdx >= 0) {
                   scheduleFallbackTourStep(bubbleIdx, tourSlug);
                 }
               }
@@ -627,11 +710,18 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
 
             if (data.capped === true) {
               setVoiceCapped(true);
+              holdTextForVoice = false;
+              syncVisibleText();
               flushUnscheduledTourSteps();
             }
           }
         }
 
+        if (!hasQueuedAudio) {
+          holdTextForVoice = false;
+          syncVisibleText();
+        }
+        onMuteFlushRef.current = null;
         flushUnscheduledTourSteps();
       } catch (err) {
         if (err instanceof DOMException && err.name === "AbortError") {
