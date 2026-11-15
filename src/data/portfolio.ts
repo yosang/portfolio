@@ -36,7 +36,7 @@ export const PROFILE = {
         " siden 2013.",
       ],
       [
-        "Til daglig jobber jeg med IKT på Nord-Gudbrandsdal VGS, med drift og support. Ved siden av driver jeg ",
+        "Til daglig jobber jeg på Nord-Gudbrandsdal VGS, med IKT drift og support. Ved siden av driver jeg ",
         { label: "Ember Booking", href: "https://emberbooking.no" },
         " sammen med Kim. Der har jeg ansvaret for design, frontend, merkevare, markedsføringssider og brukeropplevelse.",
       ],
