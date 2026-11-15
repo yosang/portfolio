@@ -129,10 +129,10 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     subtitle:
       "Samtalestyrt grensesnitt med 3D-skannet avatar, stemmekloning og visuell navigasjon.",
     summary:
-      "Laget for at du kan snakke med en AI versjon av meg som i et intervju mens den viser deg rundt på siden. Samtidig fungerer oppsettet som en praktisk demonstrasjon av hvordan sanntids tale, 3D-tilstedeværelse og grensesnitt-styring kan brukes innen handel, helse og opplæring.",
+      "Laget for at du kan snakke med en AI versjon av meg i en vanlig samtale mens den viser deg rundt på siden. Samtidig er oppsettet en praktisk demonstrasjon av hvordan sanntids tale, visuell styring og forankring i egne fagdata kan løse reelle oppgaver innen helse, utdanning og kundeservice.",
     highlights: [
       "Laget for å hjelpe besøkende gjennom innholdet med mindre klikking: AI Yosmel tar deg gjennom en visuell tour av prosjekter, detaljer, svarer på spørsmål og henter frem CV.",
-      "Overførbart til handel, helse og opplæring: samme arkitektur kan drive visuell kundeservice og telefonlinjer i nettbutikk, flerspråklig pasientveiledning fra kvalitetssikrede kilder, eller muntlig samtaletrening.",
+      "Overførbart til helse, skole og handel: samme teknologi kan gi eldre og pårørende muntlig veiledning i helsetjenester, brukes til muntlig trening i skolen, eller fungere som visuell kundeservice i en nettbutikk.",
       "3D-skannet T2-modell med ansikts-blendshapes i en egen OffscreenCanvas Web Worker på 60 fps og klonet stemme, bygget høsten 2026 med faste rammer i AGENTS.md.",
     ],
     aiNote:
@@ -143,8 +143,8 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
         "Her er selve porteføljen du er på nå, laget for at du kan snakke med en AI versjon av meg som viser deg rundt.",
     },
     aiContext: [
-      "Denne porteføljen (`yosmel.no`, kildekode på `github.com/yosang/portfolio`) utforsker hvordan AI kan gjøre et grensesnitt enklere å bruke: man snakker med AI Yosmel som i et intervju eller en videosamtale, mens den tar leseren gjennom en visuell tour av prosjekter, åpner detaljer, svarer på spørsmål og henter frem CV uten at man må klikke og lete rundt selv.",
-      "Hva teknologien kan brukes til utenfor en portefølje: arkitekturen kombinerer sanntids tale, visuell tilstedeværelse, styring av skjermbildet (`[TOUR]`, `[GO]`, `[FILE]`) og streng forankring i godkjente fagdata. Det gjør den nyttig på tre områder: 1. **Handel og kundeservice:** En nettbutikk kan bruke en visuell rådgiver som blar opp riktige produkter på skjermen mens den snakker med kunden, eller koble samme stemmemotor på en telefonlinje. 2. **Helse:** En trygg pasientveileder låst til sykehusets egne godkjente pasientskriv som forklarer forberedelser og oppfølging muntlig på pasientens eget morsmål. 3. **Opplæring:** En interaktiv samtalepartner for muntlig språktrening, intervjutrening eller simulering av samtaler i trygge rammer.",
+      "Denne porteføljen (`yosmel.no`, kildekode på `github.com/yosang/portfolio`) utforsker hvordan AI kan gjøre et grensesnitt enklere å bruke: man snakker med AI Yosmel i en vanlig samtale, mens den tar leseren gjennom en visuell tour av prosjekter, åpner detaljer, svarer på spørsmål og henter frem CV uten at man må klikke og lete rundt selv.",
+      "Hva teknologien kan brukes til utenfor en portefølje: samme teknologi kombinerer sanntids tale, visuell tilstedeværelse, styring av skjermbildet (`[TOUR]`, `[GO]`, `[FILE]`) og streng forankring i godkjente fagdata. Det gjør den nyttig på tre områder: 1. **Helse:** Gi eldre, pasienter og pårørende trygg, muntlig veiledning låst til kvalitetssikrede skriv og rutiner. 2. **Utdanning og skole:** En interaktiv samtalepartner for muntlig trening i språk og fag i trygge rammer. 3. **Handel og kundeservice:** En visuell rådgiver i nettbutikk som blar opp riktige produkter på skjermen mens den snakker med kunden, eller talestyrt kundeservice på en telefonlinje.",
       "Samtidig var dette prosjektet der jeg høsten 2026 for alvor utfordret meg selv på strukturert AI-assistert utvikling, med egne regler i `AGENTS.md` (`kanso` for slank kode og `mimesis` for naturlig språk).",
       "Teknisk kjører 3D-skanningen (T2-modell med blendshapes for munnsynk, blunking og uttrykk) på Three.js i en egen `OffscreenCanvas` Web Worker på 60 fps, mens svar og klonet stemme (fra 17 sekunder opptak) strømmes fra Gemini over SSE.",
     ],
