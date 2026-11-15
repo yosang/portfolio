@@ -33,7 +33,7 @@ export const PROFILE = {
   location: "Otta",
   heroHeadline: "Hei, jeg er Yosmel.",
   heroBio:
-    "Jeg bruker mange timer på å holde meg i forkant av ny teknologi. Ta gjerne en titt på prosjektene jeg har på gang, og slå av en prat med AI versjonen av meg for å bli kjent.",
+    "Fullstackutvikler som er opptatt av ryddig arkitektur, tydelig design og løsninger som faktisk blir brukt. Ta en titt på prosjektene mine, og slå gjerne av en prat med AI versjonen av meg.",
   socials: [
     { label: "GitHub", href: "https://github.com/yosang" },
     { label: "LinkedIn", href: "https://www.linkedin.com/in/yosmel-chiang/" },
