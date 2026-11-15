@@ -57,9 +57,9 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     tags: ["Node.js", "node:sqlite", "Socket.IO", "Pågår"],
     liveUrl: "https://vgsbordtennis.no/kiosk/demo",
     subtitle:
-      "Sanntids turneringer, guilds og kantineskjerm for videregående skoler.",
+      "Sanntids turneringer og kantineskjerm for videregående skoler.",
     summary:
-      "Pågående prosjekt ved Nord-Gudbrandsdal VGS som får elevene opp fra mobilen i friminuttet, med QR kode ved bordet, guilds og live storskjerm i kantina.",
+      "Pågående prosjekt ved Nord-Gudbrandsdal VGS som får elevene opp fra mobilen i friminuttet, med QR kode ved bordet og live storskjerm i kantina.",
     highlights: [
       "Enkel flyt ved bordet med QR kode der begge spillerne bekrefter resultatet, med sjekk mot juks og automatisk frigjøring av glemte bord.",
       "Live storskjerm i kantina via Socket.IO, tilpasset Infoskjermen.no på eldre TV skjermer med animert WebP og ES5 støtte.",
@@ -76,7 +76,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
       "Pågående hobbyprosjekt jeg bygger på fritiden for å få elevene opp fra mobilen og til å spille bordtennis i friminuttet. Flere skoler kan bruke samme løsning med hvert sitt adskilte område (`/?school=<code>` og `/kiosk/<slug>`).",
       "Viktig grense hvis noen spør 'Laget du dette på jobb?' eller 'Betalte skolen for dette?': svar rolig og rett frem at nei, jobben min på skolen er kun IKT drift og support, og VGS Bordtennis er et rent hobbyprosjekt jeg har laget på egen fritid, ulønnet og på eget domene og server. Ikke nevn dette uoppfordret når folk bare spør vanlig om funksjonene i appen.",
       "Slik fungerer kampene ved bordet: spillerne skanner en QR kode ved bordet, legger vekk mobilen mens de spiller, og begge bekrefter poengsummen etterpå (med automatisk godkjenning etter 90 sekunder og sperre mot unaturlig korte sett). Hvis noen glemmer å fullføre et bord, frigjøres det automatisk etter 12 minutter slik at neste par kan spille videre.",
-      "Turneringer, racketer og guilds: støtter Kongen på haugen, sluttspill og Sveitserstil (med Buchholz), i tillegg til klasse-guilds og statistikk på hvilke racketer som vinner mest gjennom sesongen.",
+      "Turneringer og racketer: støtter Kongen på haugen, sluttspill og Sveitserstil (med Buchholz), i tillegg til statistikk på hvilke racketer som vinner mest gjennom sesongen.",
       "Teknisk oppsett og storskjermen i kantina (`/kiosk`): bygget i Node.js med innebygd `node:sqlite` (i `WAL` modus) og kun 5 npm pakker, kjørende i Docker på Fly.io. Storskjermen i kantina oppdateres live over Socket.IO og er tilpasset Infoskjermen.no på eldre Samsung TV-er (bruker animert WebP i stedet for `<video>` fordi TV-nettleseren fryser videoer på første bilde, samt ES5 støtte, lokale fonter og nattmodus). Stresstestet med 100 samtidige spillere uten feil.",
       "Personvern (nevn kun kort hvis det er naturlig eller noen spør): midlertidig navn og epost slettes (`NULL`) så snart en arrangør har godkjent eleven, slik at kun en enveis `HMAC-SHA256` hash lagres, og det finnes ingen fritekst-chat.",
     ],
