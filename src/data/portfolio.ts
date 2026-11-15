@@ -81,11 +81,14 @@ export const PROFILE = {
   },
 };
 
+export const TOUR_PROMPT = "Vis meg rundt i prosjektene";
+
 export const PROMPTS: string[] = [
-  "Vis meg rundt i prosjektene",
   "Hva gjorde du før du begynte med utvikling?",
   "Hvordan er denne 3D chatten skrudd sammen?",
   "Hva slags utviklerrolle ser du etter?",
+  "Hvordan bruker du AI i programvareutvikling?",
+  "Kan jeg få se CV'en din?",
 ];
 
 export const FOLLOW_UP_PROMPTS: Array<{ text: string; match?: RegExp }> = [
@@ -166,8 +169,7 @@ export const ITEMS: IndexItem[] = [
     ground: "#1a120f",
     media: {
       poster: "/projects/ember-poster.jpg",
-      video: "/projects/ember.mp4",
-      alt: "Oversikt og bestillingsstatistikk i grensesnittet til Ember Booking.",
+      alt: "Forsiden og funksjonsoversikten på emberbooking.no.",
     },
     tags: ["Next.js 16", "Frontend", "UX / Design", "Merkevare"],
     liveUrl: "https://emberbooking.no",

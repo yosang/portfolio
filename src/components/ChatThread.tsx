@@ -3,12 +3,23 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ArrowUp, Download, FileText } from "lucide-react";
 import { useCompanion, type ChatTurn } from "@/components/CompanionContext";
-import { FOLLOW_UP_PROMPTS, PROMPTS } from "@/data/portfolio";
+import { FOLLOW_UP_PROMPTS, PROMPTS, TOUR_PROMPT } from "@/data/portfolio";
 import { UI } from "@/data/ui";
 
-function pickFollowUps(messages: ChatTurn[]): string[] {
+function pickFollowUp(messages: ChatTurn[]): string | null {
   const last = messages[messages.length - 1];
-  if (!last || last.role !== "assistant" || !last.content.trim()) return [];
+  if (!last || last.role !== "assistant" || !last.content.trim()) return null;
+
+  const hasSeenTour = messages.some(
+    (m) =>
+      (m.role === "user" &&
+        /rundt i prosjekt|vis.*prosjektene|prosjektene dine/i.test(m.content)) ||
+      (m.role === "assistant" &&
+        m.content.includes("VGS Bordtennis") &&
+        m.content.includes("Ember Booking") &&
+        m.content.includes("MedCare Clinical"))
+  );
+  if (!hasSeenTour) return TOUR_PROMPT;
 
   const asked = new Set(
     messages
@@ -21,27 +32,22 @@ function pickFollowUps(messages: ChatTurn[]): string[] {
   const contextText = `${prevUser} ${last.content}`;
 
   const pool = FOLLOW_UP_PROMPTS.filter((p) => {
+    if (p.text === TOUR_PROMPT) return false;
     if (asked.has(p.text.toLowerCase())) return false;
     if (p.text.includes("CV") && hasCv) return false;
     return true;
   });
 
-  const picked: string[] = [];
-  const topicMatch = pool.find((p) => p.match?.test(contextText));
-  if (topicMatch) picked.push(topicMatch.text);
-
   if (assistantCount >= 2 && !hasCv) {
-    const cvItem = pool.find((p) => p.text.includes("CV") && !picked.includes(p.text));
-    if (cvItem && picked.length < 2) picked.push(cvItem.text);
+    const cvItem = pool.find((p) => p.text.includes("CV"));
+    if (cvItem) return cvItem.text;
   }
 
-  for (const item of pool) {
-    if (picked.length >= 2) break;
-    if (!picked.includes(item.text) && (!item.text.includes("CV") || assistantCount >= 2)) {
-      picked.push(item.text);
-    }
-  }
-  return picked;
+  const topicMatch = pool.find((p) => p.match?.test(contextText));
+  if (topicMatch) return topicMatch.text;
+
+  const fallback = pool.find((p) => !p.text.includes("CV") || assistantCount >= 2);
+  return fallback?.text ?? null;
 }
 
 export function ChatThread({
@@ -56,8 +62,7 @@ export function ChatThread({
   const { messages, isStreaming, sendMessage } = useCompanion();
   const t = UI.chat;
   const scrollRef = useRef<HTMLDivElement | null>(null);
-  const prompts = PROMPTS;
-  const followUps = !isStreaming ? pickFollowUps(messages) : [];
+  const followUp = !isStreaming ? pickFollowUp(messages) : null;
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -75,23 +80,19 @@ export function ChatThread({
               {t.intro}
             </p>
           )}
-          <ul className="flex flex-wrap gap-1.5">
-            {(compact ? prompts.slice(0, 2) : prompts).map((prompt) => (
-              <li key={prompt}>
-                <button
-                  type="button"
-                  onClick={() => sendMessage(prompt)}
-                  className={`rounded-full px-3 py-1.5 text-left text-xs font-medium transition-colors cursor-pointer ${
-                    isDark
-                      ? "border border-white/12 bg-white/[0.06] text-zinc-200 hover:border-white/30 hover:bg-white/[0.12]"
-                      : "border border-line bg-paper-raised text-ink hover:border-ink"
-                  }`}
-                >
-                  {prompt}
-                </button>
-              </li>
-            ))}
-          </ul>
+          <div>
+            <button
+              type="button"
+              onClick={() => sendMessage(TOUR_PROMPT)}
+              className={`rounded-full px-3 py-1.5 text-left text-xs font-medium transition-colors cursor-pointer ${
+                isDark
+                  ? "border border-white/12 bg-white/[0.06] text-zinc-200 hover:border-white/30 hover:bg-white/[0.12]"
+                  : "border border-line bg-paper-raised text-ink hover:border-ink"
+              }`}
+            >
+              {TOUR_PROMPT}
+            </button>
+          </div>
         </div>
       ) : (
         <ol className="space-y-2.5">
@@ -167,24 +168,20 @@ export function ChatThread({
           )}
         </ol>
       )}
-      {followUps.length > 0 && (
-        <ul className="mt-2.5 flex flex-wrap gap-1.5">
-          {followUps.map((q) => (
-            <li key={q}>
-              <button
-                type="button"
-                onClick={() => sendMessage(q)}
-                className={`rounded-full px-3 py-1 text-left text-xs transition-colors cursor-pointer ${
-                  isDark
-                    ? "border border-white/12 bg-white/[0.04] text-zinc-300 hover:border-white/30 hover:bg-white/[0.11] hover:text-white"
-                    : "border border-line bg-paper text-ink-soft hover:border-ink hover:text-ink"
-                }`}
-              >
-                {q}
-              </button>
-            </li>
-          ))}
-        </ul>
+      {followUp && (
+        <div className="mt-2.5">
+          <button
+            type="button"
+            onClick={() => sendMessage(followUp)}
+            className={`rounded-full px-3 py-1 text-left text-xs transition-colors cursor-pointer ${
+              isDark
+                ? "border border-white/12 bg-white/[0.04] text-zinc-300 hover:border-white/30 hover:bg-white/[0.11] hover:text-white"
+                : "border border-line bg-paper text-ink-soft hover:border-ink hover:text-ink"
+            }`}
+          >
+            {followUp}
+          </button>
+        </div>
       )}
     </div>
   );
