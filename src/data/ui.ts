@@ -62,28 +62,6 @@ export const UI = {
     close: "Lukk",
     fullStudio: "Fullskjerm",
   },
-  prologue: {
-    messageCutoff:
-      "Vi er på vei inn i en tid der det blir umulig å skille menneskeskapt innhold fra resten av nettet, og der maskinen tar ov",
-    glitchFrames: [
-      "Vi er på vei inn i en tid der det blir umulig å skille menneskeskapt innhold fra resten av nettet, og der maskinen tar ovv",
-      "Vi er på vei inn i en tid der det blir umulig å skille menneskeskapt innhold fra resten av nettet, og der maskinen t░r ov█",
-      "Vi er på vei inn i en tid der det blir umulig å skille menneskeskapt innhold fra resten av nettet, og der maskinen tar o▓░",
-      "Vi er på vei inn i en tid der det blir umulig å skille menneskeskapt innhold fra resten av nettet, og der maskinen tar ov█░",
-    ],
-    disconnected: "Forbindelse brutt.",
-    reconnect: "Koble til",
-    enterKeyHint: "Enter",
-    skip: "Hopp over",
-    replay: "Se prolog",
-    soundOn: "Lyd på",
-    soundOff: "Lyd av",
-    openMessage: "Åpne melding",
-    welcomeBubbles: [
-      "Hei, beklager avbruddet. Jeg er AI versjonen av Yosmel, og jeg tar det herfra.",
-      "Hva har du lyst til å se på?",
-    ],
-  },
   colophon: {
     items: [
       {

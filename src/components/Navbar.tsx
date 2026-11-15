@@ -44,11 +44,7 @@ export function Navbar() {
   }, [pathname]);
 
   useEffect(() => {
-    if (
-      pathname === "/" &&
-      window.location.hash === "#prosjekter" &&
-      document.documentElement.dataset.prologue !== "1"
-    ) {
+    if (pathname === "/" && window.location.hash === "#prosjekter") {
       const id = requestAnimationFrame(() => {
         document.getElementById("prosjekter")?.scrollIntoView({ behavior: "smooth" });
       });

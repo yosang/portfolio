@@ -1,31 +1,13 @@
 "use client";
 
-import React, { useCallback } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import React from "react";
+import { usePathname } from "next/navigation";
 import { ArrowUpRight } from "lucide-react";
 import { PROFILE } from "@/data/portfolio";
 import { UI } from "@/data/ui";
-import { PROLOGUE_REPLAY_EVENT } from "@/components/Prologue";
-import { portfolioAudio } from "@/lib/audioSynth";
 
 export function SiteFooter() {
   const pathname = usePathname();
-  const router = useRouter();
-
-  const handleReplay = useCallback(() => {
-    portfolioAudio.unlock();
-    portfolioAudio.stopAll();
-    if (pathname !== "/") {
-      router.push("/");
-      setTimeout(() => {
-        window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-        window.dispatchEvent(new CustomEvent(PROLOGUE_REPLAY_EVENT));
-      }, 60);
-      return;
-    }
-    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-    window.dispatchEvent(new CustomEvent(PROLOGUE_REPLAY_EVENT));
-  }, [pathname, router]);
 
   if (pathname === "/chat") return null;
 
@@ -50,23 +32,13 @@ export function SiteFooter() {
             {UI.colophon.copyright}
           </p>
 
-          <div className="flex shrink-0 flex-wrap items-center gap-5 font-medium text-ink">
-            <button
-              type="button"
-              onClick={handleReplay}
-              className="font-mono text-xs text-ink-soft underline decoration-ink/25 underline-offset-4 transition-colors hover:text-ink cursor-pointer"
-            >
-              {UI.prologue.replay}
-            </button>
-
-            <a
-              href={`mailto:${PROFILE.email}`}
-              className="inline-flex items-center gap-1 text-xs font-medium text-ink transition-opacity hover:opacity-75"
-            >
-              <span>{PROFILE.email}</span>
-              <ArrowUpRight className="h-3.5 w-3.5" />
-            </a>
-          </div>
+          <a
+            href={`mailto:${PROFILE.email}`}
+            className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-ink transition-opacity hover:opacity-75"
+          >
+            <span>{PROFILE.email}</span>
+            <ArrowUpRight className="h-3.5 w-3.5" />
+          </a>
         </div>
       </div>
     </footer>

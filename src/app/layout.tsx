@@ -5,7 +5,6 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { CompanionProvider } from "@/components/CompanionContext";
 import { Navbar } from "@/components/Navbar";
 import { ChatDock } from "@/components/ChatDock";
-import { Prologue } from "@/components/Prologue";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ITEMS, PROFILE, SITE_URL } from "@/data/portfolio";
 
@@ -159,7 +158,7 @@ export default function RootLayout({
         />
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{if("scrollRestoration"in history){history.scrollRestoration="manual"}if(location.pathname==="/"&&sessionStorage.getItem("yosmel-prologue-seen")!=="1"){document.documentElement.dataset.prologue="1";if(location.hash){history.replaceState(null,"","/")}window.scrollTo(0,0)}else if(location.hash!=="#prosjekter"){window.scrollTo(0,0)}}catch(e){}`,
+            __html: `try{if("scrollRestoration"in history){history.scrollRestoration="manual"}if(location.hash!=="#prosjekter"){window.scrollTo(0,0)}}catch(e){}`,
           }}
         />
       </head>
@@ -167,7 +166,6 @@ export default function RootLayout({
         <div aria-hidden="true" className="prism-bar" />
         <ThemeProvider>
           <CompanionProvider>
-            <Prologue />
             <Navbar />
             <main className="flex-1">{children}</main>
             <SiteFooter />

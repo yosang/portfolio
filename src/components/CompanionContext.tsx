@@ -49,7 +49,6 @@ interface CompanionContextValue {
   spotlightSlug: string | null;
   clearSpotlight: () => void;
   sendMessage: (text: string) => Promise<void>;
-  seedWelcome: () => void;
   resetChat: () => void;
 }
 
@@ -197,7 +196,12 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
       const raw = sessionStorage.getItem("ai-twin-chat");
       if (raw) {
         const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed.messages)) setMessages(parsed.messages);
+        if (Array.isArray(parsed.messages)) {
+          const restored = (parsed.messages as ChatTurn[]).filter(
+            (m) => m.id !== "a-prologue-welcome"
+          );
+          if (restored.length > 0) setMessages(restored);
+        }
       }
     } catch {
       // ignore
@@ -595,22 +599,6 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
     [clearTourTimers, router, triggerSpotlight]
   );
 
-  const seedWelcome = useCallback(() => {
-    const bubbles = UI.prologue.welcomeBubbles;
-    const content = bubbles.join("\n\n");
-    prevInteractionIdRef.current = null;
-    setMood("happy");
-    setMessages([
-      {
-        id: "a-prologue-welcome",
-        role: "assistant",
-        content,
-        bubbles: [...bubbles],
-        mood: "happy",
-      },
-    ]);
-  }, []);
-
   const resetChat = useCallback(() => {
     abortRef.current?.abort();
     clearTourTimers();
@@ -655,7 +643,6 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
       spotlightSlug,
       clearSpotlight,
       sendMessage,
-      seedWelcome,
       resetChat,
     }),
     [
@@ -671,7 +658,6 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
       spotlightSlug,
       clearSpotlight,
       sendMessage,
-      seedWelcome,
       resetChat,
     ]
   );

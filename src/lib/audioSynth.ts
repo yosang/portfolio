@@ -8,15 +8,12 @@ export interface SpeechFrameState {
   speaking: boolean;
 }
 
-export type KeystrokeKind = "char" | "space" | "backspace";
-
 type FrameListener = (state: SpeechFrameState) => void;
 
 class PortfolioAudioEngine {
   private ctx: AudioContext | null = null;
   private activeStoppers: Array<() => void> = [];
   private listeners = new Set<FrameListener>();
-  private keystrokeBank: AudioBuffer[] | null = null;
   private rafId: number | null = null;
   private streamAnalyser: AnalyserNode | null = null;
   private nextStartTime = 0;
@@ -286,138 +283,6 @@ class PortfolioAudioEngine {
   ): void {
     if (!rawBuffer || rawBuffer.byteLength === 0) return;
     this.decodeAndSchedule(() => rawBuffer.slice(0), pauseBeforeSec, onStart);
-  }
-
-  private getKeystrokeBank(ctx: AudioContext): AudioBuffer[] {
-    if (this.keystrokeBank) return this.keystrokeBank;
-    const sr = ctx.sampleRate;
-    const bufLen = Math.floor(sr * 0.028);
-    const bank: AudioBuffer[] = [];
-    for (let v = 0; v < 16; v++) {
-      const buf = ctx.createBuffer(1, bufLen, sr);
-      const ch = buf.getChannelData(0);
-      const gap = Math.floor(sr * (0.0038 + (v % 5) * 0.0007));
-      for (let i = 0; i < bufLen; i++) {
-        const t1 = i / sr;
-        let s = (Math.random() * 2 - 1) * Math.exp(-t1 * 1200) * 0.42;
-        if (i >= gap) {
-          const t2 = (i - gap) / sr;
-          s += (Math.random() * 2 - 1) * Math.exp(-t2 * 440) * 0.95;
-        }
-        ch[i] = s;
-      }
-      bank.push(buf);
-    }
-    this.keystrokeBank = bank;
-    return bank;
-  }
-
-  public playKeystroke(kind: KeystrokeKind, idx = 0): void {
-    const ctx = this.ensureContext();
-    if (!ctx || ctx.state !== "running") return;
-
-    const bank = this.getKeystrokeBank(ctx);
-    const src = ctx.createBufferSource();
-    src.buffer = bank[Math.abs(idx) % bank.length];
-
-    const jitter = ((Math.abs(idx) * 53 + 17) % 100) / 100;
-    let rate = 0.92 + jitter * 0.18;
-    let cavityHz = 920 + jitter * 260;
-    let crispHz = 2650 + jitter * 550;
-    let gainVal = 0.14 + jitter * 0.04;
-
-    if (kind === "space") {
-      rate = 0.78 + jitter * 0.06;
-      cavityHz = 560;
-      crispHz = 1650;
-      gainVal = 0.18;
-    } else if (kind === "backspace") {
-      rate = 1.06 + jitter * 0.08;
-      cavityHz = 1080;
-      crispHz = 2900;
-      gainVal = 0.12;
-    }
-
-    src.playbackRate.value = rate;
-
-    const hp = ctx.createBiquadFilter();
-    hp.type = "highpass";
-    hp.frequency.value = 260;
-
-    const cavity = ctx.createBiquadFilter();
-    cavity.type = "peaking";
-    cavity.frequency.value = cavityHz;
-    cavity.Q.value = 1.8;
-    cavity.gain.value = 5.5;
-
-    const lp = ctx.createBiquadFilter();
-    lp.type = "lowpass";
-    lp.frequency.value = crispHz;
-    lp.Q.value = 0.9;
-
-    const g = ctx.createGain();
-    g.gain.value = gainVal;
-
-    src.connect(hp);
-    hp.connect(cavity);
-    cavity.connect(lp);
-    lp.connect(g);
-    g.connect(ctx.destination);
-    src.start(ctx.currentTime);
-  }
-
-  public playConnectionDrop(): void {
-    const ctx = this.ensureContext();
-    if (!ctx || ctx.state !== "running") return;
-
-    const sr = ctx.sampleRate;
-    const dropLen = Math.floor(sr * 0.24);
-    const dropBuf = ctx.createBuffer(1, dropLen, sr);
-    const d = dropBuf.getChannelData(0);
-    for (let i = 0; i < dropLen; i++) {
-      const t = i / sr;
-      if (t < 0.014) {
-        d[i] = (Math.random() * 2 - 1) * Math.exp(-t * 260) * 0.7;
-      } else if (t >= 0.042 && t < 0.056) {
-        const dt = t - 0.042;
-        d[i] = (Math.random() * 2 - 1) * Math.exp(-dt * 280) * 0.65;
-      } else if (t >= 0.095 && t < 0.18) {
-        const gate = t < 0.145 ? 1 : Math.exp(-(t - 0.145) * 400);
-        d[i] = (Math.random() * 2 - 1) * 0.48 * gate;
-      }
-    }
-
-    const now = ctx.currentTime;
-    const src = ctx.createBufferSource();
-    src.buffer = dropBuf;
-
-    const bp = ctx.createBiquadFilter();
-    bp.type = "bandpass";
-    bp.frequency.value = 1150;
-    bp.Q.value = 1.1;
-
-    const g = ctx.createGain();
-    g.gain.value = 0.2;
-
-    src.connect(bp);
-    bp.connect(g);
-    g.connect(ctx.destination);
-    src.start(now);
-
-    const osc = ctx.createOscillator();
-    osc.type = "sine";
-    osc.frequency.setValueAtTime(115, now + 0.14);
-    osc.frequency.exponentialRampToValueAtTime(36, now + 0.21);
-
-    const og = ctx.createGain();
-    og.gain.setValueAtTime(0.0001, now + 0.14);
-    og.gain.linearRampToValueAtTime(0.085, now + 0.145);
-    og.gain.exponentialRampToValueAtTime(0.0001, now + 0.215);
-
-    osc.connect(og);
-    og.connect(ctx.destination);
-    osc.start(now + 0.14);
-    osc.stop(now + 0.22);
   }
 }
 
