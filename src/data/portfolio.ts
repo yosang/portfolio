@@ -40,6 +40,9 @@ export const PROFILE = {
         { label: "Ember Booking", href: "https://emberbooking.no" },
         " sammen med Kim. Der har jeg ansvaret for design, frontend, merkevare, markedsføringssider og brukeropplevelse.",
       ],
+      [
+        "Jeg trives godt med det jeg gjør i dag, og er åpen for spennende utviklerroller innen frontend, backend eller fullstack når den rette muligheten dukker opp. Siden jeg er etablert her med familien, passer remote eller en praktisk hybridløsning best.",
+      ],
     ] as AboutSegment[][],
     stackGroups: [
       {

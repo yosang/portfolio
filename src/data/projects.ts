@@ -18,6 +18,7 @@ export interface ProjectItem {
   subtitle: string;
   summary: string;
   highlights: string[];
+  repoNote?: string;
   aiNote?: string;
   /**
    * 1-sentence spoken intro used during the guided project tour ("Vis meg rundt i prosjektene").
@@ -61,10 +62,12 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     summary:
       "Pågående prosjekt ved Nord-Gudbrandsdal VGS som får elevene opp fra mobilen i friminuttet, med QR kode ved bordet og live storskjerm i kantina.",
     highlights: [
-      "Enkel flyt ved bordet med QR kode der begge spillerne bekrefter resultatet, med sjekk mot juks og automatisk frigjøring av glemte bord.",
-      "Live storskjerm i kantina via Socket.IO, tilpasset Infoskjermen.no på eldre TV skjermer med animert WebP og ES5 støtte.",
-      "Flere skoler på samme instans i Node.js og innebygd SQLite (5 npm pakker), stresstestet med 100 samtidige spillere.",
+      "Kampflyt: Enkel flyt ved bordet med QR kode der begge spillerne bekrefter resultatet, med sjekk mot juks og automatisk frigjøring av glemte bord.",
+      "Storskjerm: Live tavle i kantina via Socket.IO, tilpasset Infoskjermen.no på eldre TV skjermer med animert WebP og ES5 støtte.",
+      "Arkitektur: Flere skoler på samme instans i Node.js og innebygd SQLite (5 npm pakker), stresstestet med 100 samtidige spillere.",
     ],
+    repoNote:
+      "Privat repo mens løsningen er i aktiv utprøving. Jeg viser gjerne frem kodebasen og arkitekturen i en prat.",
     aiNote:
       "Første versjon gikk fra plan til drift på en uke med Spike and Stabilize.",
     tour: {
@@ -99,10 +102,12 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     summary:
       "Bookingsystem jeg driver sammen med Kim, med ansvar for design, frontend, markedsføringssider og brukeropplevelse.",
     highlights: [
-      "Vedlikeholder og videreutvikler frontenden og markedsføringssidene på emberbooking.no.",
-      "Ansvar for visuell identitet, merkevare og designsystemet med fokus på lesbarhet og hierarki.",
-      "Jobber løpende med brukeropplevelse og tydelig flyt på tvers av plattformen.",
+      "Min rolle: Vedlikeholder og videreutvikler frontenden og markedsføringssidene på emberbooking.no.",
+      "Designsystem: Ansvar for visuell identitet, merkevare og komponenter med fokus på lesbarhet og tydelig hierarki.",
+      "Brukeropplevelse: Jobber løpende med struktur, tilgjengelighet og enkel flyt på tvers av plattformen.",
     ],
+    repoNote:
+      "Privat repo (kommersielt produkt i drift). Jeg viser gjerne frem koden og designsystemet i en samtale.",
     tour: {
       audioSrc: "/audio/tour/1.mp3",
       bubble:
@@ -132,9 +137,9 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     summary:
       "Laget for at du kan snakke med en AI versjon av meg i en vanlig samtale mens den viser deg rundt på siden. Samtidig er oppsettet en praktisk demonstrasjon av hvordan sanntids tale, visuell styring og forankring i egne fagdata kan løse reelle oppgaver innen helse, utdanning og kundeservice.",
     highlights: [
-      "Laget for å hjelpe besøkende gjennom innholdet med mindre klikking: AI Yosmel tar deg gjennom en visuell tour av prosjekter, detaljer, svarer på spørsmål og henter frem CV.",
-      "Overførbart til helse, skole og næringsliv: samme teknologi kan gi eldre og pårørende muntlig veiledning i helsetjenester, brukes til muntlig trening i skolen, eller fungere som visuell kundeservice for en bedrift.",
-      "3D-skannet T2-modell med ansikts-blendshapes i en egen OffscreenCanvas Web Worker på 60 fps og klonet stemme, bygget høsten 2026 med faste rammer i AGENTS.md og skills.",
+      "Samtalegrensesnitt: AI Yosmel tar besøkende gjennom en visuell omvisning i prosjektene, svarer med stemme og henter frem CV ved behov.",
+      "Bruksområder: Samme oppsett kan gi eldre og pasienter muntlig veiledning i helsevesenet, brukes til muntlig trening i skolen eller løse kundeservice for bedrifter.",
+      "Arkitektur: 3D-skannet modell med blendshapes i en egen OffscreenCanvas Web Worker på 60 fps, kombinert med sanntids TTS og tale-til-tekst.",
     ],
     aiNote:
       "Bygget høsten 2026 med faste rammer i AGENTS.md og skills.",
@@ -202,9 +207,9 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     summary:
       "Fullstack timebestillingssystem for klinikker levert som eksamensprosjekt i Backend 2026 på Noroff, der pasienter kan søke opp leger og bestille time både som gjest og innlogget bruker.",
     highlights: [
-      "REST API i C# og .NET 9 med Entity Framework Core mot MySQL, soft delete ved avbestilling og Swagger.",
-      "JWT innlogging med refresh token i cookie, gjestebooking, pasientprofil og eget adminpanel med full CRUD.",
-      "React frontend med TanStack Query, Zustand og Zod, satt opp på Vercel mot Azure Web App og Railway.",
+      "Backend: REST API i C# og .NET 9 med Entity Framework Core mot MySQL, soft delete ved avbestilling og Swagger.",
+      "Sikkerhet og flyt: JWT innlogging med refresh token i cookie, gjestebooking, pasientprofil og eget adminpanel med full CRUD.",
+      "Frontend og drift: React med TanStack Query, Zustand og Zod, satt opp på Vercel mot Azure Web App og Railway.",
     ],
     tour: {
       audioSrc: "/audio/tour/2.mp3",
@@ -237,9 +242,9 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     summary:
       "Nettside bygget som skoleoppgave i frontend på Noroff der brukere kan bla gjennom og låne filmer, med eget adminpanel for å legge til og redigere filmer.",
     highlights: [
-      "Delt opp i Next.js App Router mellom åpne sider og eget adminpanel med middleware, loading og error states.",
-      "Server Actions for innlogging og håndtering av filmer, sammen med søk, mørk modus og state i Zustand.",
-      "Komponenttester med Jest og React Testing Library, pluss sjekk av accessibility med eslint-plugin-jsx-a11y.",
+      "Struktur: Delt opp i Next.js App Router mellom åpne sider og eget adminpanel med middleware, loading og error states.",
+      "Funksjonalitet: Server Actions for innlogging og håndtering av filmer, sammen med søk, mørk modus og state i Zustand.",
+      "Kvalitetssikring: Komponenttester med Jest og React Testing Library, pluss sjekk av accessibility med eslint-plugin-jsx-a11y.",
     ],
     tour: {
       audioSrc: "/audio/tour/3.mp3",

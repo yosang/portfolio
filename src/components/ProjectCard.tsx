@@ -91,12 +91,31 @@ export const ProjectCard = memo(function ProjectCard({
           >
             <p className="leading-relaxed text-ink">{item.summary}</p>
             <ul className="space-y-1.5 text-ink-soft">
-              {item.highlights.map((h, i) => (
-                <li key={i} className="leading-relaxed">
-                  · {h}
-                </li>
-              ))}
+              {item.highlights.map((h, i) => {
+                const colonIdx = h.indexOf(":");
+                const hasLabel = colonIdx > 0 && colonIdx <= 24;
+                return (
+                  <li key={i} className="leading-relaxed">
+                    ·{" "}
+                    {hasLabel ? (
+                      <>
+                        <span className="font-medium text-ink">
+                          {h.slice(0, colonIdx + 1)}
+                        </span>
+                        {h.slice(colonIdx + 1)}
+                      </>
+                    ) : (
+                      h
+                    )}
+                  </li>
+                );
+              })}
             </ul>
+            {item.repoNote && (
+              <p className="border-t border-line pt-2.5 text-xs leading-relaxed text-ink-soft">
+                {item.repoNote}
+              </p>
+            )}
             {item.aiNote && (
               <p className="border-t border-line pt-2.5 text-xs leading-relaxed text-ink-soft">
                 {item.aiNote}{" "}
