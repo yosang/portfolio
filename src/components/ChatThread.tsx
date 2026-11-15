@@ -3,7 +3,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ArrowUp, Download, FileText } from "lucide-react";
 import { useCompanion, type ChatTurn } from "@/components/CompanionContext";
-import { FOLLOW_UP_PROMPTS, ITEMS, PROMPTS, TOUR_PROMPT } from "@/data/portfolio";
+import {
+  FOLLOW_UP_PROMPTS,
+  ITEMS,
+  PROMPTS,
+  TOUR_PROMPT,
+  USE_CASE_PROMPT,
+} from "@/data/portfolio";
 import { UI } from "@/data/ui";
 
 function pickFollowUp(messages: ChatTurn[]): string | null {
@@ -78,18 +84,21 @@ export function ChatThread({
               {t.intro}
             </p>
           )}
-          <div>
-            <button
-              type="button"
-              onClick={() => sendMessage(TOUR_PROMPT)}
-              className={`rounded-full px-3 py-1.5 text-left text-xs font-medium transition-colors cursor-pointer ${
-                isDark
-                  ? "border border-white/12 bg-white/[0.06] text-zinc-200 hover:border-white/30 hover:bg-white/[0.12]"
-                  : "border border-line bg-paper-raised text-ink hover:border-ink"
-              }`}
-            >
-              {TOUR_PROMPT}
-            </button>
+          <div className="flex flex-wrap gap-1.5">
+            {[TOUR_PROMPT, USE_CASE_PROMPT].map((prompt) => (
+              <button
+                key={prompt}
+                type="button"
+                onClick={() => sendMessage(prompt)}
+                className={`rounded-full px-3 py-1.5 text-left text-xs font-medium transition-colors cursor-pointer ${
+                  isDark
+                    ? "border border-white/12 bg-white/[0.06] text-zinc-200 hover:border-white/30 hover:bg-white/[0.12]"
+                    : "border border-line bg-paper-raised text-ink hover:border-ink"
+                }`}
+              >
+                {prompt}
+              </button>
+            ))}
           </div>
         </div>
       ) : (

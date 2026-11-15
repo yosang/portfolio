@@ -71,6 +71,8 @@ export const PROFILE = {
 };
 
 export const TOUR_PROMPT = "Vis meg rundt i prosjektene";
+export const USE_CASE_PROMPT =
+  "Hva kan denne AI teknologien brukes til i praksis?";
 
 export const PROMPTS: string[] = [
   "Hva gjorde du før du begynte med utvikling?",
@@ -82,7 +84,7 @@ export const PROMPTS: string[] = [
 
 export const FOLLOW_UP_PROMPTS: Array<{ text: string; match?: RegExp }> = [
   {
-    text: "Hva kan denne 3D og stemmeteknologien brukes til i praksis?",
+    text: USE_CASE_PROMPT,
     match: /3d|worker|portefølje|cinemorra|stemme/i,
   },
   { text: "Hva gjør du i Ember Booking?", match: /prosjekt|frontend|design|figma/i },
