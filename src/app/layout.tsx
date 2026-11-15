@@ -147,6 +147,12 @@ export default function RootLayout({
     >
       <head>
         <link
+          rel="preload"
+          href="/avatar/yosmel.glb?v=t2-fast"
+          as="fetch"
+          crossOrigin="anonymous"
+        />
+        <link
           rel="alternate"
           type="text/plain"
           href="/llms.txt"

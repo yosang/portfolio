@@ -180,8 +180,8 @@ export function ChatDock() {
           <span
             ref={floatingSlotRef}
             style={{ background: STUDIO_BG }}
-            className={`pointer-events-none relative block h-[74px] w-[66px] overflow-hidden rounded-[20px] border border-white/15 shadow-[0_18px_38px_-10px_rgba(16,17,18,0.45)] transition-transform duration-200 group-hover:-translate-y-0.5 sm:h-[88px] sm:w-[78px] sm:rounded-[22px] ${
-              isActiveVoice ? "ring-2 ring-[#e4461f]/80" : ""
+            className={`pointer-events-none relative block h-[96px] w-[86px] overflow-hidden rounded-[22px] border border-white/15 shadow-[0_18px_38px_-10px_rgba(16,17,18,0.45)] transition-transform duration-300 group-hover:-translate-y-0.5 sm:h-[114px] sm:w-[100px] sm:rounded-[24px] ${
+              isActiveVoice ? "scale-[1.05] ring-2 ring-[#e4461f]/80" : ""
             }`}
           />
         </button>
@@ -206,7 +206,7 @@ export function ChatDock() {
                 <div
                   ref={headerSlotRef}
                   style={{ background: STUDIO_BG }}
-                  className={`relative h-11 w-11 shrink-0 overflow-hidden rounded-full border border-ink/10 dark:border-white/15 ${
+                  className={`relative h-14 w-14 shrink-0 overflow-hidden rounded-2xl border border-ink/10 dark:border-white/15 ${
                     isActiveVoice ? "ring-1.5 ring-[#e4461f]/75" : ""
                   }`}
                 />

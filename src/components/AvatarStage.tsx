@@ -11,7 +11,7 @@ import {
 
 export type { AvatarMood, AvatarVariant };
 
-const MODEL_URL = "/avatar/yosmel.glb";
+const MODEL_URL = "/avatar/yosmel.glb?v=t2-fast";
 
 interface AvatarStageProps {
   mood?: AvatarMood;

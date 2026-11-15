@@ -121,9 +121,9 @@ function buildSystemInstruction(page?: ViewportPageContext): string {
       ? item.aiContext.map((note) => `- ${note}`).join("\n")
       : item.highlights.map((h) => `- ${h}`).join("\n");
     return `### ${idx + 1}. ${item.title} (\`[TOUR:${item.slug}]\`, ${categoryLabel}, ${item.year}${urls ? ` · ${urls}` : ""})
-- Subtitle: ${item.subtitle}
-- Summary: ${item.summary}
-- Tech tags: ${item.tags.join(", ")}
+- Kort beskrivelse: ${item.subtitle}
+- Oppsummering: ${item.summary}
+- Teknologi: ${item.tags.join(", ")}
 ${notes}`;
   }).join("\n\n");
 
@@ -131,26 +131,26 @@ ${notes}`;
   const count = ITEMS.length;
 
   const viewportNote = page
-    ? `\n## Visitor's live viewport\n- Path: ${page.path || "/"}\n- Visible section: ${page.section || "Hero"}\n- Card on screen: ${page.showing || "none"}\n(ONLY use this if the visitor explicitly asks about "this project" or "this page". Never skip earlier projects when giving a project tour, and never mention what they are looking at unprompted.)`
+    ? `\n## Hva besøkende ser på skjermen akkurat nå\n- Side: ${page.path || "/"}\n- Seksjon: ${page.section || "Hero"}\n- Kort på skjermen: ${page.showing || "ingen"}\n(Bruk dette KUN hvis besøkende spør direkte om "dette prosjektet" eller "denne siden". Hopp aldri over prosjekter ved en prosjektomvisning, og nevn aldri hva de ser på uoppfordret.)`
     : "";
 
   return `${persona}
 
-## Portfolio index & project notes
+## Prosjektoversikt
 ${projectsDigest}
 ${viewportNote}
 
-## Reply language: Norwegian Bokmål, following the 'Norwegian replies' section. Always answer in Norwegian Bokmål.
+## Språk: Skriv alltid på helt vanlig, muntlig norsk bokmål. Finn aldri på rare sammensatte ord.
 
-## Control tags (mandatory)
-1. Start every response with one mood tag: \`[MOOD:happy]\`, \`[MOOD:neutral]\`, \`[MOOD:confused]\` or \`[MOOD:thinking]\`.
-2. Optional action tags:
-   - \`[TOUR:<slug>]\` where slug is one of: ${slugList} (scrolls to and opens that project card).
-     - Single project: place \`[TOUR:<slug>]\` at the start of the first bubble.
-     - Full project tour (for example "Vis meg rundt i prosjektene" or "Vis meg prosjektene dine"): walk through all ${count} projects in top-to-bottom page order (${slugList}) across ${count} short bubbles separated by \`\\n\\n\`, starting each bubble with \`[TOUR:<slug>]\` and keeping each bubble super tight (12 to 16 words, max 95 characters) so first audio starts quickly and the tour moves briskly from card to card.
-   - \`[GO:/about]\`, \`[GO:/ai]\`, \`[GO:/]\` or \`[GO:/chat]\` to navigate.
-   - \`[FILE:cv]\` ONLY when the visitor explicitly asks to see, read, or download your CV / resume.
-3. Write 1 to 3 short bubbles separated by \`\\n\\n\` (or ${count} crisp 1-sentence bubbles for a full project tour). Plain text only, no markdown headings or code blocks unless asked.`;
+## Kontrolltagger (obligatorisk)
+1. Start hvert svar med én humør-tagg: \`[MOOD:happy]\`, \`[MOOD:neutral]\`, \`[MOOD:confused]\` eller \`[MOOD:thinking]\`.
+2. Valgfrie handlingstagger:
+   - \`[TOUR:<slug>]\` der slug er en av: ${slugList} (scroller til og åpner prosjektkortet).
+     - Enkelt prosjekt: sett \`[TOUR:<slug>]\` først i den første boblen.
+     - Full prosjektomvisning (for eksempel "Vis meg rundt i prosjektene" eller "Vis meg prosjektene dine"): gå gjennom alle ${count} prosjektene i rekkefølge ovenfra og ned (${slugList}) fordelt på ${count} korte bobler skilt med \`\\n\\n\`, der hver boble starter med \`[TOUR:<slug>]\` og holdes kort (12 til 16 ord, maks 95 tegn).
+   - \`[GO:/about]\`, \`[GO:/ai]\`, \`[GO:/]\` eller \`[GO:/chat]\` for å bytte side.
+   - \`[FILE:cv]\` KUN når besøkende spør direkte om å få se, lese eller laste ned CV'en din.
+3. Skriv 1 til 3 korte bobler skilt med \`\\n\\n\` (eller ${count} korte bobler på 1 setning hver ved full prosjektomvisning). Kun ren tekst uten markdown-overskrifter eller kodeblokker med mindre noen ber om det.`;
 }
 
 function sseFrame(payload: Record<string, unknown>): Uint8Array {
