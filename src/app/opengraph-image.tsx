@@ -17,30 +17,19 @@ export default function OpenGraphImage() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          backgroundColor: "#141517",
-          backgroundImage:
-            "radial-gradient(circle at 16% 18%, rgba(228, 70, 31, 0.22), transparent 48%), radial-gradient(circle at 86% 20%, rgba(128, 201, 255, 0.14), transparent 50%)",
-          color: "#f3f2ee",
+          backgroundColor: "#17211e",
+          color: "#f7f8f8",
           padding: "0",
           fontFamily: "sans-serif",
         }}
       >
         <div
           style={{
-            width: "100%",
-            height: "6px",
-            background:
-              "linear-gradient(90deg, #141517 0%, #fbc017 24%, #e4461f 52%, #80c9ff 78%, #141517 100%)",
-          }}
-        />
-
-        <div
-          style={{
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
             flex: 1,
-            padding: "68px 80px 64px 80px",
+            padding: "72px 80px 68px 80px",
           }}
         >
           <div
@@ -49,7 +38,7 @@ export default function OpenGraphImage() {
               alignItems: "center",
               justifyContent: "space-between",
               fontSize: 22,
-              color: "#969ca6",
+              color: "#9ca0a8",
               letterSpacing: "-0.01em",
             }}
           >
@@ -70,7 +59,7 @@ export default function OpenGraphImage() {
                 fontWeight: 700,
                 letterSpacing: "-0.035em",
                 lineHeight: 1.05,
-                color: "#f3f2ee",
+                color: "#f7f8f8",
               }}
             >
               {PROFILE.name}
@@ -79,11 +68,11 @@ export default function OpenGraphImage() {
               style={{
                 fontSize: 32,
                 lineHeight: 1.4,
-                color: "#c5c8ce",
+                color: "#c8ccd2",
                 maxWidth: "900px",
               }}
             >
-              Fullstackutvikler med fokus på struktur, UX og programvare som faktisk blir brukt.
+              Som programvareutvikler er jeg opptatt av ryddig arkitektur, tydelig design og løsninger som faktisk blir brukt.
             </div>
           </div>
 
@@ -101,10 +90,10 @@ export default function OpenGraphImage() {
                   display: "flex",
                   padding: "10px 20px",
                   borderRadius: "999px",
-                  backgroundColor: "rgba(255, 255, 255, 0.07)",
+                  backgroundColor: "rgba(255, 255, 255, 0.06)",
                   border: "1px solid rgba(255, 255, 255, 0.14)",
                   fontSize: 20,
-                  color: "#e5e4df",
+                  color: "#f7f8f8",
                 }}
               >
                 {tag}
