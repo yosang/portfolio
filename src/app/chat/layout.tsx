@@ -1,13 +1,18 @@
 import type { Metadata } from "next";
+import React from "react";
 import { UI } from "@/data/ui";
 
 export const metadata: Metadata = {
   title: UI.chat.title,
   description:
-    "Slå av en prat med 3D AI versjonen av Yosmel Chiang om prosjekter, arkitektur og valg av stack.",
+    "Snakk med 3D AI versjonen av Yosmel Chiang i sanntid med stemme og tale-til-tekst om prosjekter, arkitektur, utdanning ved Noroff og arbeidsmetodikk.",
   alternates: { canonical: "/chat" },
 };
 
-export default function ChatLayout({ children }: { children: React.ReactNode }) {
+export default function ChatLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return children;
 }
