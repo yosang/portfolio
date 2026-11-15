@@ -26,6 +26,10 @@ export const AI_PAGE = {
     {
       title: "Rammer før kode",
       body: "I prosjekter som VGS Bordtennis starter jeg med korte notater om arkitekturen og en egen AGENTS.md med faste regler. En språkmodell vet ikke av seg selv at en Samsung TV i skolekantina fryser <video> elementer på bilde 0 i Infoskjermen.no, eller at hele appen skal klare seg med fem npm pakker. Slike valg må jeg kartlegge og låse på forhånd.",
+      link: {
+        label: "Se skills og AGENTS.md på GitHub",
+        href: "https://github.com/yosang/skills",
+      },
     },
     {
       title: "Spike and Stabilize",

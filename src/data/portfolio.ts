@@ -33,7 +33,7 @@ export const PROFILE = {
       [
         "Jeg heter Yosmel Gutierrez Chiang og bor på Otta. Jeg har fullført en toårig utdanning i backendutvikling hos Noroff, og tar nå frontendutvikling på deltid samme sted. På GitHub har jeg vært ",
         { label: "@yosang", href: "https://github.com/yosang" },
-        " siden 2013, med rundt 2 300 bidrag det siste året.",
+        " siden 2013.",
       ],
       [
         "Til daglig jobber jeg med IKT på Nord-Gudbrandsdal VGS, med drift og support. Ved siden av driver jeg ",

@@ -150,6 +150,40 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     ],
   },
   {
+    slug: "skills",
+    title: "Agent Skills",
+    year: "2026",
+    category: "independent",
+    accent: "#1b6b57",
+    ground: "#17211e",
+    media: {
+      poster: "/projects/skills-poster.jpg?v=sage",
+      alt: "Oversikt over SKILL.md-moduler og AGENTS.md i github.com/yosang/skills.",
+    },
+    tags: ["SKILL.md", "AGENTS.md", "3P Framework", "Open Source"],
+    repoUrl: "https://github.com/yosang/skills",
+    subtitle:
+      "Egne SKILL.md-filer og AGENTS.md-regler som styrer arkitektur, UI-håndverk og språk ved AI-assistert utvikling.",
+    summary:
+      "Åpent repo med de konkrete kjørereglene jeg bruker når jeg jobber med kodeagenter, delt inn i ui-craft, natural-copy og lean-architecture.",
+    highlights: [
+      "ui-craft: Låser designvalg til Matt D. Smiths 3P-rammeverk (Purpose, Principles, Personality), 60-30-10-fargeregelen, flytende clamp()-typografi og matte flater uten standard AI-glød.",
+      "lean-architecture: Krever rammer på papir og i AGENTS.md før kode, bygging etter Dan Norths Spike and Stabilize, en enkelt kilde for delte data og dokumentering av tause produksjonsfeller.",
+      "natural-copy: Fjerner fyllord, tankestreker og stive direkteoversettelser i både engelsk dokumentasjon og norsk grensesnitt- og taletekst.",
+    ],
+    aiNote:
+      "Brukes på tvers av denne porteføljen og andre egne prosjekter.",
+    tour: {
+      audioSrc: "/audio/tour/skills.mp3",
+      bubble:
+        "Her er også skills-repoet mitt med faste regler for arkitektur, design og språk når jeg bruker AI.",
+    },
+    aiContext: [
+      "`skills` (`github.com/yosang/skills`) er mitt åpne GitHub-repo med `SKILL.md`-filer og `AGENTS.md`-regler for AI-assistert programvareutvikling, kompatibelt med verktøy som følger Agent Skills-standarden (Claude Code, Cursor, Antigravity og Gemini CLI).",
+      "Repoet samler erfaringene mine fra blant annet Ember Booking, VGS Bordtennis og denne porteføljen i tre konkrete moduler: `ui-craft` (bygget på Matt D. Smiths 3P-rammeverk Purpose, Principles, Personality, 60-30-10-regelen, flytende `clamp()`-typografi fra Utopia.fyi og matte overflater), `natural-copy` (naturlig språk uten tankestreker, klisjeer og stive direkteoversettelser), og `lean-architecture` (planlegging før kode, Dan Norths Spike and Stabilize, en enkelt kilde for delte data og dokumentering av `Gotchas` som feiler lydløst i produksjon).",
+    ],
+  },
+  {
     slug: "medcare-clinical",
     title: "MedCare Clinical",
     year: "2026",
