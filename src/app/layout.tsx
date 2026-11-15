@@ -148,7 +148,7 @@ export default function RootLayout({
       <head>
         <link
           rel="preload"
-          href="/avatar/yosmel.glb?v=t2-fast"
+          href="/avatar/yosmel.glb?v=t2-skin"
           as="fetch"
           crossOrigin="anonymous"
         />
