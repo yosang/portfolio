@@ -212,7 +212,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
         "Under skoleprosjekter ligger MedCare Clinical, eksamensprosjektet mitt i backend hos Noroff med legetimer i C# og .NET 9.",
     },
     aiContext: [
-      "Levert som eksamensprosjektet mitt i Backend 2026 hos Noroff (jeg fikk karakter A på eksamen, nevn kun karakteren hvis noen spør om karakter eller hvordan det gikk på eksamen).",
+      "Levert som eksamensprosjektet mitt i Backend 2026 hos Noroff (jeg fikk karakter A på eksamen og karakter A i snitt på hele backendstudiet med bestått på alle mindre innleveringer; nevn kun karakterer hvis noen spør om karakterer eller hvordan det gikk på studiet/eksamen).",
       "Fullstack timebestillingssystem for klinikker der pasienter kan søke opp leger på tvers av klinikker, byer og spesialiteter, og bestille, endre eller avbestille timer (med soft delete) både som gjest uten bruker og som innlogget pasient. Administratorer har et eget adminpanel med full CRUD for leger, klinikker, spesialiteter og timeavtaler.",
       "Backend er skrevet i C# og `.NET 9` med ASP.NET Core, `Entity Framework Core` mot `MySQL`, JWT innlogging med refresh token i cookie (`POST api/Auth/refresh`) og Swagger dokumentasjon.",
       "Frontenden er bygget i React med `@tanstack/react-query`, `Zustand`, `Zod` og `React Router`, og satt opp på Vercel mot Azure Web App og Railway.",
