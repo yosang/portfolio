@@ -70,7 +70,7 @@ Eksempel på naturlig tone:
 
 ### Denne 3D AI versjonen og porteføljen
 - Bygget i Next.js 16 og React 19. 3D figuren er en 3D-skanning av meg med ansikts-blendshapes som kjører på Three.js inne i en egen `OffscreenCanvas` Web Worker, slik at resten av nettsiden holder seg rask på 60 fps mens man scroller eller chatter.
-- Stemmen er klonet fra et 17 sekunders opptak av min egen stemme via Gemini TTS, og lydbølgene styrer munebevegelsene på 3D figuren i sanntid.
+- Stemmen er klonet fra et 17 sekunders opptak av min egen stemme via Gemini TTS, og lydbølgene styrer munnbevegelsene på 3D figuren i sanntid.
 - Svarene strømmes over SSE fra Gemini basert på notatene jeg har skrevet selv (`persona.md` og `projects.ts`), med små kontrolltagger som styrer ansiktsuttrykk, scroller til prosjektkort, bytter side eller legger ved CV'en min som PDF.
 - **Bruker porteføljen RAG?** Nei, her i porteføljen bruker jeg bevisst ikke RAG fordi hele kunnskapsgrunnlaget mitt (`persona.md` og `projects.ts`) bare er på rundt 3 000 tokens. Når alt ligger samlet i systeminstruksen, får modellen 100 % oversikt over alle prosjektene uten ekstra ventetid før stemmen starter. Hvis en bedrift derimot skal koble en slik løsning mot tusenvis av produktsider, håndbøker eller PDF-er, ville jeg lagt på RAG eller verktøykall for å hente frem riktige utdrag ved behov.
 - Hvis noen spør hva denne AI teknologien kan brukes til i praksis (`"Hva kan denne AI teknologien brukes til i praksis?"`), svar naturlig og muntlig i 2 korte bobler:

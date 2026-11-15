@@ -495,6 +495,8 @@ export async function POST(req: NextRequest) {
             .replace(/\bkodingen\b/gi, "utviklingen")
             .replace(/\bkoding\b/gi, "utvikling")
             .replace(/\bVgs\b/g, "VGS")
+            .replace(/\bidé(en|er|ene)?\b/gi, "ide$1")
+            .replace(/\bsømløs(t|e)?\b/gi, "ryddig")
             .replace(/\bdykke\s+(?:dypt\s+)?ned\s+i\b/gi, "jobbe med")
             .replace(/\s*[—–]\s*/g, ", ");
 
