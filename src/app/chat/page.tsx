@@ -17,32 +17,32 @@ export default function ChatPage() {
       data-viewport-section="Chat"
       className="page-enter mx-auto grid max-w-5xl gap-6 px-4 py-6 sm:px-6 md:h-[calc(100dvh-5.25rem)] md:grid-cols-[340px_1fr] md:py-8"
     >
-      <aside className="flex flex-col overflow-hidden rounded-[22px] border border-white/12 bg-[#212325] text-white shadow-[0_24px_54px_-18px_rgba(16,17,18,0.36)]">
+      <aside className="flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#1c1917] text-[#f3efe9] shadow-[0_8px_24px_-8px_rgba(22,19,18,0.22)]">
         <div className="relative h-64 md:h-auto md:flex-1">
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(255,231,201,0.16),transparent_68%)]"
+            className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_32%,rgba(237,110,72,0.12),transparent_62%)]"
           />
           <div className="absolute inset-0">
             <AvatarStage mood={mood} variant="hero" className="h-full w-full" />
           </div>
         </div>
 
-        <div className="space-y-3 border-t border-white/10 bg-[#181a1c] p-4 text-xs">
+        <div className="space-y-3 border-t border-white/10 bg-[#161412] p-4 text-xs">
           <div className="flex items-center justify-between">
             <span className="font-medium text-white">{PROFILE.name}</span>
-            <span className="text-zinc-400">
+            <span className="text-[#a39c95]">
               {isStreaming ? t.thinking : UI.moods[mood]}
             </span>
           </div>
 
-          <div className="flex items-center gap-4 text-zinc-300">
+          <div className="flex items-center gap-4 text-[#d6d0c8]">
             <label className="inline-flex items-center gap-1.5 cursor-pointer">
               <input
                 type="checkbox"
                 checked={voiceEnabled}
                 onChange={(e) => setVoiceEnabled(e.target.checked)}
-                className="accent-[#fbc017]"
+                className="accent-[#ed6e48]"
               />
               {t.sound}
             </label>
@@ -57,11 +57,11 @@ export default function ChatPage() {
             )}
           </div>
 
-          <p className="leading-relaxed text-zinc-400">
+          <p className="leading-relaxed text-[#a39c95]">
             {t.disclaimerPrefix}
             <a
               href={`mailto:${PROFILE.email}`}
-              className="font-medium text-zinc-200 underline decoration-white/35 underline-offset-3 hover:text-white"
+              className="font-medium text-[#e6e1da] underline decoration-white/35 underline-offset-3 hover:text-white"
             >
               {t.disclaimerLink}
             </a>
@@ -70,8 +70,8 @@ export default function ChatPage() {
         </div>
       </aside>
 
-      <section className="surface-card flex min-h-[55vh] flex-col gap-4 rounded-[22px] p-5 sm:p-7 md:min-h-0">
-        <h1 className="font-display text-2xl font-semibold tracking-tight">{t.title}</h1>
+      <section className="surface-card flex min-h-[55vh] flex-col gap-4 rounded-2xl p-5 sm:p-7 md:min-h-0">
+        <h1 className="font-display text-2xl font-normal tracking-[-0.025em]">{t.title}</h1>
         {voiceCapped && voiceEnabled && (
           <p className="text-xs text-ink-soft">{t.capped}</p>
         )}

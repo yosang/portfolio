@@ -13,7 +13,7 @@ import { PROFILE } from "@/data/portfolio";
 import { UI } from "@/data/ui";
 
 const STUDIO_BG =
-  "radial-gradient(circle at 22% 18%, rgba(228, 70, 31, 0.22), transparent 52%), radial-gradient(circle at 82% 24%, rgba(128, 201, 255, 0.15), transparent 54%), #212325";
+  "radial-gradient(circle at 50% 28%, rgba(237, 110, 72, 0.14), transparent 62%), #1c1917";
 
 export function ChatDock() {
   const pathname = usePathname();
@@ -196,8 +196,8 @@ export function ChatDock() {
           <span
             ref={floatingSlotRef}
             style={{ background: STUDIO_BG }}
-            className={`pointer-events-none relative block h-[72px] w-[64px] origin-bottom-right overflow-hidden rounded-[18px] border border-white/15 shadow-[0_18px_38px_-10px_rgba(16,17,18,0.45)] transition-transform duration-300 ease-out group-hover:-translate-y-0.5 sm:h-[114px] sm:w-[100px] sm:rounded-[24px] ${
-              isActiveVoice ? "scale-[1.34] sm:scale-[1.05] ring-2 ring-[#e4461f]/80" : ""
+            className={`pointer-events-none relative block h-[72px] w-[64px] origin-bottom-right overflow-hidden rounded-2xl border border-white/15 shadow-[0_8px_22px_-6px_rgba(22,19,18,0.38)] transition-transform duration-300 ease-out group-hover:-translate-y-0.5 sm:h-[114px] sm:w-[100px] sm:rounded-2xl ${
+              isActiveVoice ? "scale-[1.34] sm:scale-[1.05] ring-2 ring-[#e05633]/80" : ""
             }`}
           />
         </button>

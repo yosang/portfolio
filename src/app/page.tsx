@@ -3,7 +3,6 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
-  ArrowUpRight,
   Maximize2,
   RotateCcw,
   Volume2,
@@ -78,30 +77,14 @@ export default function HomePage() {
         className="mx-auto max-w-5xl px-4 pt-8 pb-12 sm:px-6 sm:pt-10 sm:pb-16 lg:pt-14 lg:pb-24"
       >
         <div className="grid gap-10 lg:grid-cols-[1fr_420px] lg:items-center lg:gap-14">
-          <div className="space-y-6">
-            <h1 className="font-display text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+          <div className="space-y-5">
+            <h1 className="font-display text-4xl font-normal tracking-[-0.03em] text-ink sm:text-5xl">
               {PROFILE.heroHeadline}
             </h1>
 
             <p className="max-w-md text-lg leading-relaxed text-ink-soft">
               {PROFILE.heroBio}
             </p>
-
-            <ul className="flex flex-wrap items-center gap-x-5 gap-y-2 pt-1 text-sm font-medium">
-              {PROFILE.socials.map((s) => (
-                <li key={s.label}>
-                  <a
-                    href={s.href}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-1 text-ink-soft transition-colors hover:text-ink"
-                  >
-                    <span>{s.label}</span>
-                    <ArrowUpRight className="h-3.5 w-3.5" />
-                  </a>
-                </li>
-              ))}
-            </ul>
           </div>
 
           <HeroAiStudio />
@@ -116,7 +99,7 @@ export default function HomePage() {
       >
         <div className="mx-auto max-w-5xl px-4 sm:px-6">
           <div className="mb-10 flex flex-wrap items-center justify-between gap-4">
-            <h2 className="font-display text-2xl font-semibold tracking-tight sm:text-3xl">
+            <h2 className="font-display text-2xl font-normal tracking-[-0.025em] sm:text-3xl">
               {t.worksTitle}
             </h2>
 
@@ -154,7 +137,7 @@ export default function HomePage() {
           {showIndependent && (
             <div>
               {showSchool && (
-                <h3 className="mb-6 font-display text-lg font-semibold tracking-tight text-ink">
+                <h3 className="mb-6 font-display text-lg font-medium tracking-[-0.015em] text-ink">
                   {t.filterIndependent}
                 </h3>
               )}
@@ -177,7 +160,7 @@ export default function HomePage() {
           {showSchool && (
             <div className={showIndependent ? "mt-16 border-t border-line pt-14" : ""}>
               {showIndependent && (
-                <h3 className="mb-6 font-display text-lg font-semibold tracking-tight text-ink">
+                <h3 className="mb-6 font-display text-lg font-medium tracking-[-0.015em] text-ink">
                   {t.filterSchool}
                 </h3>
               )}
@@ -274,17 +257,13 @@ const HeroAiStudio = memo(function HeroAiStudio() {
   return (
     <div
       id="hero-ai-studio"
-      className="relative hidden overflow-hidden rounded-[24px] border border-white/12 text-white shadow-[0_24px_56px_-18px_rgba(16,17,18,0.34)] lg:block"
-      style={{
-        background:
-          "radial-gradient(circle at 18% 14%, rgba(228, 70, 31, 0.2), transparent 48%), radial-gradient(circle at 84% 22%, rgba(128, 201, 255, 0.14), transparent 50%), #212325",
-      }}
+      className="relative hidden overflow-hidden rounded-2xl border border-white/10 bg-[#1c1917] text-[#f3efe9] shadow-[0_8px_24px_-8px_rgba(22,19,18,0.22)] lg:block"
     >
       <div
         ref={infoRef}
-        className="relative z-30 flex items-center justify-between gap-2 border-b border-white/10 bg-[#191b1d] px-4 py-2.5"
+        className="relative z-30 flex items-center justify-between gap-2 border-b border-white/10 bg-[#161412] px-4 py-2.5"
       >
-        <span className="text-xs text-zinc-400">
+        <span className="text-xs text-[#a39c95]">
           {isStreaming ? ui.chat.thinking : ui.moods[mood]}
         </span>
 
@@ -306,7 +285,7 @@ const HeroAiStudio = memo(function HeroAiStudio() {
             }
             aria-label={ui.chat.aboutAiLabel}
             aria-expanded={infoOpen}
-            className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-white/20 font-mono text-[11px] font-medium leading-none text-zinc-400 transition-colors hover:border-white/45 hover:text-white cursor-pointer"
+            className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-white/20 font-mono text-[11px] font-medium leading-none text-[#a39c95] transition-colors hover:border-white/45 hover:text-white cursor-pointer"
           >
             ?
           </button>
@@ -317,8 +296,8 @@ const HeroAiStudio = memo(function HeroAiStudio() {
             title={ui.chat.sound}
             className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs transition-colors cursor-pointer ${
               voiceEnabled
-                ? "bg-white/12 text-zinc-100"
-                : "text-zinc-400 hover:text-white"
+                ? "bg-white/12 text-[#f3efe9]"
+                : "text-[#a39c95] hover:text-white"
             }`}
           >
             {voiceEnabled ? (
@@ -335,7 +314,7 @@ const HeroAiStudio = memo(function HeroAiStudio() {
               onClick={resetChat}
               title={ui.chat.clear}
               aria-label={ui.chat.clear}
-              className="rounded-full p-1.5 text-zinc-400 transition-colors hover:bg-white/10 hover:text-white cursor-pointer"
+              className="rounded-full p-1.5 text-[#a39c95] transition-colors hover:bg-white/10 hover:text-white cursor-pointer"
             >
               <RotateCcw className="h-3.5 w-3.5" />
             </button>
@@ -345,7 +324,7 @@ const HeroAiStudio = memo(function HeroAiStudio() {
             href="/chat"
             title={ui.chat.fullStudio}
             aria-label={ui.chat.fullStudio}
-            className="rounded-full p-1.5 text-zinc-400 transition-colors hover:bg-white/10 hover:text-white"
+            className="rounded-full p-1.5 text-[#a39c95] transition-colors hover:bg-white/10 hover:text-white"
           >
             <Maximize2 className="h-3.5 w-3.5" />
           </Link>
@@ -362,7 +341,7 @@ const HeroAiStudio = memo(function HeroAiStudio() {
             }}
             className="absolute inset-x-3 top-full z-40 pt-2 sm:left-auto sm:right-3 sm:w-72"
           >
-            <p className="rounded-xl border border-white/14 bg-[#141618]/98 p-3 text-xs leading-relaxed text-zinc-200 shadow-xl backdrop-blur-md">
+            <p className="rounded-xl border border-white/14 bg-[#161412]/98 p-3 text-xs leading-relaxed text-[#e6e1da] shadow-xl backdrop-blur-md">
               {ui.chat.disclaimerPrefix}
               <a
                 href={`mailto:${PROFILE.email}`}
@@ -379,7 +358,7 @@ const HeroAiStudio = memo(function HeroAiStudio() {
       <div className="relative h-[265px] w-full sm:h-[290px]">
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_38%,rgba(255,231,201,0.14),transparent_65%)]"
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_32%,rgba(237,110,72,0.12),transparent_62%)]"
         />
         <div className="absolute inset-0">
           {isDesktop && (
@@ -388,7 +367,7 @@ const HeroAiStudio = memo(function HeroAiStudio() {
         </div>
       </div>
 
-      <div className="relative z-20 border-t border-white/10 bg-[#17191b]">
+      <div className="relative z-20 border-t border-white/10 bg-[#161412]">
         {voiceCapped && voiceEnabled && (
           <p className="border-b border-white/10 px-4 py-1.5 text-xs text-amber-300">
             {ui.chat.capped}

@@ -38,7 +38,7 @@ export const ProjectCard = memo(function ProjectCard({
 
       <div className="mt-3.5 space-y-1 px-0.5">
         <div className="flex items-baseline justify-between gap-3">
-          <h3 className="font-display text-lg font-semibold tracking-tight text-ink">
+          <h3 className="font-display text-lg font-medium tracking-[-0.015em] text-ink">
             {item.title}
           </h3>
 
@@ -85,7 +85,7 @@ export const ProjectCard = memo(function ProjectCard({
       >
         <div className="overflow-hidden">
           <div
-            className={`space-y-3 rounded-2xl border bg-paper-raised p-4 text-sm transition-colors duration-200 ${
+            className={`space-y-3 rounded-xl border bg-paper-raised p-4 text-sm transition-colors duration-200 ${
               spotlit ? "border-trail/65" : "border-line"
             }`}
           >

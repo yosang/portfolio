@@ -32,13 +32,21 @@ export function SiteFooter() {
             {UI.colophon.copyright}
           </p>
 
-          <a
-            href={`mailto:${PROFILE.email}`}
-            className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-ink transition-opacity hover:opacity-75"
-          >
-            <span>{PROFILE.email}</span>
-            <ArrowUpRight className="h-3.5 w-3.5" />
-          </a>
+          <ul className="flex flex-wrap items-center gap-x-5 gap-y-2">
+            {PROFILE.socials.map((s) => (
+              <li key={s.label}>
+                <a
+                  href={s.href}
+                  target={s.href.startsWith("http") ? "_blank" : undefined}
+                  rel={s.href.startsWith("http") ? "noreferrer" : undefined}
+                  className="inline-flex items-center gap-1 text-xs font-medium text-ink transition-opacity hover:opacity-75"
+                >
+                  <span>{s.label}</span>
+                  <ArrowUpRight className="h-3.5 w-3.5" />
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </footer>

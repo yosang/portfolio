@@ -1,5 +1,4 @@
 import { NextRequest } from "next/server";
-import { spawn } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { GoogleGenAI } from "@google/genai";
@@ -68,36 +67,6 @@ function checkAndIncrementVoiceBudget(): { allowed: boolean; remaining: number }
   }
   voiceUsesToday += 1;
   return { allowed: true, remaining: Math.max(0, DAILY_VOICE_CAP - voiceUsesToday) };
-}
-
-const MIMESIS_LINTER = path.join(
-  process.cwd(),
-  "..",
-  ".agents",
-  "vendor",
-  "cyze-skills",
-  "skills",
-  "mimesis",
-  "linter"
-);
-
-function lintReply(text: string) {
-  try {
-    const child = spawn("python", [MIMESIS_LINTER], {
-      env: { ...process.env, PYTHONIOENCODING: "utf-8" },
-    });
-    let out = "";
-    child.stdout.on("data", (chunk) => {
-      out += chunk.toString("utf8");
-    });
-    child.on("close", (code) => {
-      if (code === 1 && out) console.warn(`[mimesis] reply flagged:\n${out}`);
-    });
-    child.on("error", () => {});
-    child.stdin.end(text, "utf8");
-  } catch {
-    // ignore missing local python in dev
-  }
 }
 
 const PERSONA_PATH = path.join(process.cwd(), "src", "data", "persona.md");
@@ -629,9 +598,6 @@ export async function POST(req: NextRequest) {
         }
 
         controller.enqueue(sseFrame({ textDone: true }));
-
-        const spokenText = fullCleanText.trim();
-        if (process.env.NODE_ENV !== "production") lintReply(spokenText);
 
         await ttsEmitterPromise;
 

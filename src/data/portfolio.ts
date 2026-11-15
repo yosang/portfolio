@@ -20,9 +20,9 @@ export const PROFILE = {
   handle: "yosang",
   email: "yosmelchiang@gmail.com",
   location: "Otta",
-  heroHeadline: "Hei, jeg er Yosmel.",
+  heroHeadline: "Hei, Yosmel her,",
   heroBio:
-    "Fullstackutvikler som er opptatt av ryddig arkitektur, tydelig design og løsninger som faktisk blir brukt. Ta en titt på prosjektene mine, og slå gjerne av en prat med AI versjonen av meg.",
+    "Som programvareutvikler er jeg opptatt av ryddig arkitektur, tydelig design og løsninger som faktisk blir brukt. Ta en titt på prosjektene mine, og slå gjerne av en prat med AI versjonen av meg.",
   socials: [
     { label: "GitHub", href: "https://github.com/yosang" },
     { label: "LinkedIn", href: "https://www.linkedin.com/in/yosmel-chiang/" },

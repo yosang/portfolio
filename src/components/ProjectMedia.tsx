@@ -77,7 +77,7 @@ export function ProjectMedia({ item, priority = false }: ProjectMediaProps) {
       {primaryHref && (
         <span
           aria-hidden="true"
-          className="work-stage__pill pointer-events-none absolute right-3.5 bottom-3.5 z-10 inline-flex items-center gap-1 rounded-full border border-white/18 bg-[#141619]/82 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-md"
+          className="work-stage__pill pointer-events-none absolute right-3 bottom-3 z-10 inline-flex items-center gap-1 rounded-full border border-white/15 bg-[#181514]/88 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm"
         >
           <span>{pillLabel}</span>
           <ArrowUpRight className="h-3.5 w-3.5" />
@@ -96,7 +96,7 @@ export function ProjectMedia({ item, priority = false }: ProjectMediaProps) {
       target="_blank"
       rel="noreferrer"
       aria-label={`${pillLabel}: ${item.title}`}
-      className="block rounded-[24px]"
+      className="block rounded-[14px]"
     >
       {stageContent}
     </a>

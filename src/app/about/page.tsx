@@ -21,7 +21,7 @@ export default function AboutPage() {
       className="page-enter mx-auto max-w-3xl space-y-14 px-4 py-14 sm:px-6 md:py-20"
     >
       <section className="space-y-5">
-        <h1 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl">
+        <h1 className="font-display text-3xl font-normal tracking-[-0.03em] sm:text-4xl">
           {t.heading}
         </h1>
         <div className="space-y-4 text-base leading-relaxed text-ink/90">
@@ -49,7 +49,7 @@ export default function AboutPage() {
       </section>
 
       <section className="space-y-5 border-t border-line pt-10">
-        <h2 className="font-display text-xl font-semibold tracking-tight">
+        <h2 className="font-display text-xl font-normal tracking-[-0.02em]">
           {t.toolkit}
         </h2>
         <dl className="grid gap-6 sm:grid-cols-3">

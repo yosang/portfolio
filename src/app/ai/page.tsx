@@ -21,7 +21,7 @@ export default function AiTransparencyPage() {
     >
       {/* Intro */}
       <section className="space-y-5">
-        <h1 className="font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+        <h1 className="font-display text-3xl font-normal tracking-[-0.03em] text-ink sm:text-4xl">
           {t.title}
         </h1>
         <div className="space-y-4 text-base leading-relaxed text-ink/90 sm:text-lg">
@@ -34,11 +34,11 @@ export default function AiTransparencyPage() {
       {/* Visual Time-Shift Card (Without AI vs With AI) */}
       <section
         aria-labelledby="ai-shift-heading"
-        className="overflow-hidden rounded-[24px] border border-white/10 bg-[#212325] p-6 text-white shadow-[0_22px_50px_-20px_rgba(16,17,18,0.28)] sm:p-8"
+        className="overflow-hidden rounded-2xl border border-white/10 bg-[#1c1917] p-6 text-[#f3efe9] shadow-[0_8px_24px_-8px_rgba(22,19,18,0.18)] sm:p-8"
       >
         <h2
           id="ai-shift-heading"
-          className="font-display text-xl font-semibold tracking-tight text-white"
+          className="font-display text-xl font-normal tracking-[-0.02em] text-white"
         >
           {t.shift.heading}
         </h2>
@@ -106,17 +106,17 @@ export default function AiTransparencyPage() {
 
       {/* Guiding Principles */}
       <section className="space-y-6 border-t border-line pt-10">
-        <h2 className="font-display text-2xl font-semibold tracking-tight text-ink">
+        <h2 className="font-display text-2xl font-normal tracking-[-0.025em] text-ink">
           {t.principlesHeading}
         </h2>
         <div className="grid gap-6 sm:grid-cols-2">
           {t.principles.map((item) => (
             <div
               key={item.title}
-              className="flex flex-col justify-between rounded-2xl border border-line bg-paper-raised p-5 gap-3"
+              className="flex flex-col justify-between rounded-xl border border-line bg-paper-raised p-5 gap-3"
             >
               <div className="space-y-2.5">
-                <h3 className="font-display text-base font-semibold tracking-tight text-ink">
+                <h3 className="font-display text-base font-medium tracking-[-0.015em] text-ink">
                   {item.title}
                 </h3>
                 <p className="text-sm leading-relaxed text-ink-soft">
@@ -141,7 +141,7 @@ export default function AiTransparencyPage() {
 
       {/* Portfolio curation & craft stance */}
       <section className="space-y-4 border-t border-line pt-10">
-        <h2 className="font-display text-2xl font-semibold tracking-tight text-ink">
+        <h2 className="font-display text-2xl font-normal tracking-[-0.025em] text-ink">
           {t.portfolioStance.heading}
         </h2>
         <div className="space-y-4 text-base leading-relaxed text-ink/90">
@@ -166,7 +166,7 @@ export default function AiTransparencyPage() {
 
       {/* Concrete traces in projects */}
       <section className="space-y-6 border-t border-line pt-10">
-        <h2 className="font-display text-2xl font-semibold tracking-tight text-ink">
+        <h2 className="font-display text-2xl font-normal tracking-[-0.025em] text-ink">
           {t.practiceHeading}
         </h2>
         <div className="divide-y divide-line border-y border-line">

@@ -12,7 +12,7 @@ export const UI = {
   home: {
     worksTitle: "Prosjekter",
     filterAll: "Alle",
-    filterIndependent: "Egne og samarbeid",
+    filterIndependent: "Egne",
     filterSchool: "Skoleprosjekter",
     spotlit: "Valgt av AI",
     detailsOpen: "Skjul",

@@ -38,7 +38,7 @@ Alle prosjekter defineres samlet i `src/data/projects.ts` og vises gjennom den g
   slug: "nytt-prosjekt",
   title: "Nytt Prosjekt",
   year: "2026",
-  category: "independent", // "independent" (Egne og samarbeid) eller "school" (Skoleprosjekter)
+  category: "independent", // "independent" (Egne) eller "school" (Skoleprosjekter)
   accent: "#3b82f6",
   ground: "#0f172a",
   media: {
