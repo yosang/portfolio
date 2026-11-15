@@ -119,7 +119,7 @@ function buildSystemInstruction(page?: ViewportPageContext): string {
   ).join("\n");
 
   const viewportNote = page
-    ? `\n## Visitor's live viewport\n- Path: ${page.path || "/"}\n- Visible section: ${page.section || "Hero"}\n- Card on screen: ${page.showing || "none"}\n(ONLY use this if the visitor explicitly asks about "this project", "this page", or asks for a tour. Never mention what they are looking at unprompted.)`
+    ? `\n## Visitor's live viewport\n- Path: ${page.path || "/"}\n- Visible section: ${page.section || "Hero"}\n- Card on screen: ${page.showing || "none"}\n(ONLY use this if the visitor explicitly asks about "this project" or "this page". Never skip earlier projects when giving a project tour, and never mention what they are looking at unprompted.)`
     : "";
 
   return `${persona}
@@ -436,6 +436,7 @@ export async function POST(req: NextRequest) {
         const ttsEmitterPromise = (async () => {
           let cursor = 0;
           let emittedAudioCount = 0;
+          let emittedStepCount = 0;
           while (true) {
             while (cursor < ttsJobs.length) {
               const job = ttsJobs[cursor++];
@@ -446,12 +447,23 @@ export async function POST(req: NextRequest) {
                     audio: wav,
                     bubbleIndex: job.index,
                     ...(job.tour ? { tour: job.tour } : {}),
-                    ...(emittedAudioCount > 0 ? { pauseBefore: 0.24 } : {}),
+                    ...(emittedStepCount > 0 ? { pauseBefore: 0.24 } : {}),
                     mode: voiceModeLabel,
                     remainingVoiceQuota: ttsState.voiceBudget?.remaining ?? 0,
                   })
                 );
                 emittedAudioCount += 1;
+                emittedStepCount += 1;
+              } else if (job.tour) {
+                controller.enqueue(
+                  sseFrame({
+                    audioSkipped: true,
+                    bubbleIndex: job.index,
+                    tour: job.tour,
+                    ...(emittedStepCount > 0 ? { pauseBefore: 0.24 } : {}),
+                  })
+                );
+                emittedStepCount += 1;
               }
             }
             if (streamFinishedForTts && cursor >= ttsJobs.length) break;
@@ -491,6 +503,15 @@ export async function POST(req: NextRequest) {
               rawStreamBuffer = work.slice(work.length - trailingNl) + rawStreamBuffer;
               work = work.slice(0, work.length - trailingNl);
             }
+          }
+
+          work = work.replace(/\n([ \t]*\[TOUR:[^\]]+\])/gi, "\n\n$1");
+          if (
+            currentBubbleTour &&
+            currentBubbleText.trim().length > 0 &&
+            /^[ \t]*\[TOUR:([^\]]+)\]/i.test(work)
+          ) {
+            work = "\n\n" + work.trimStart();
           }
 
           const parts = work.split(/(\n{2,})/);

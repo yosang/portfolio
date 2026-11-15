@@ -161,7 +161,7 @@ export default function HomePage() {
                   {t.filterIndependent}
                 </h3>
               )}
-              <div className="grid gap-x-8 gap-y-12 md:grid-cols-2">
+              <div className="grid items-start gap-x-8 gap-y-12 md:grid-cols-2">
                 {INDEPENDENT_ITEMS.map((item, idx) => (
                   <WorkShowcaseItem
                     key={item.slug}
@@ -185,7 +185,7 @@ export default function HomePage() {
                 </h3>
               )}
 
-              <div className="grid gap-x-8 gap-y-12 md:grid-cols-2">
+              <div className="grid items-start gap-x-8 gap-y-12 md:grid-cols-2">
                 {SCHOOL_ITEMS.map((item) => (
                   <WorkShowcaseItem
                     key={item.slug}
@@ -416,10 +416,9 @@ const WorkShowcaseItem = memo(function WorkShowcaseItem({
   return (
     <article
       data-project-slug={item.slug}
+      data-spotlit={spotlit ? "true" : undefined}
       data-viewport-item={`${item.title} (${item.subtitle})`}
-      className={`work-card group scroll-mt-24 transition-shadow duration-300 ${
-        spotlit ? "rounded-[26px] ring-2 ring-trail ring-offset-6 ring-offset-paper" : ""
-      }`}
+      className="work-card group scroll-mt-24"
     >
       <ProjectMedia item={item} priority={priority} />
 
@@ -471,7 +470,11 @@ const WorkShowcaseItem = memo(function WorkShowcaseItem({
         }`}
       >
         <div className="overflow-hidden">
-          <div className="space-y-3 rounded-xl border border-line bg-paper-raised p-4 text-sm">
+          <div
+            className={`space-y-3 rounded-2xl border bg-paper-raised p-4 text-sm transition-colors duration-200 ${
+              spotlit ? "border-trail/65" : "border-line"
+            }`}
+          >
             <p className="leading-relaxed text-ink">{item.summary}</p>
             <ul className="space-y-1.5 text-ink-soft">
               {item.highlights.map((h, i) => (

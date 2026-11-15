@@ -21,6 +21,8 @@ class PortfolioAudioEngine {
   private activeSourceCount = 0;
   private playbackGen = 0;
   private queueChain: Promise<void> = Promise.resolve();
+  private resumePromise: Promise<void> | null = null;
+  private audioTimedOut = false;
 
   private ensureContext(): AudioContext | null {
     if (typeof window === "undefined") return null;
@@ -33,8 +35,16 @@ class PortfolioAudioEngine {
         this.ctx = new AudioCtx();
       }
     }
-    if (this.ctx && this.ctx.state === "suspended") {
-      this.ctx.resume().catch(() => {});
+    if (this.ctx && this.ctx.state === "suspended" && !this.resumePromise) {
+      this.resumePromise = this.ctx
+        .resume()
+        .then(() => {
+          this.audioTimedOut = false;
+        })
+        .catch(() => {})
+        .finally(() => {
+          this.resumePromise = null;
+        });
     }
     return this.ctx;
   }
@@ -89,6 +99,44 @@ class PortfolioAudioEngine {
     this.emit({ energy: 0, viseme: "rest", speaking: false });
   }
 
+  private scheduleWallClockStep(
+    durationSec: number,
+    pauseBeforeSec = 0,
+    onStart?: () => void
+  ): void {
+    const nowSec = performance.now() / 1000;
+    const earliest = nowSec + 0.02;
+    const targetStart =
+      this.nextFallbackWallTime > earliest
+        ? this.nextFallbackWallTime + pauseBeforeSec
+        : earliest + pauseBeforeSec;
+    this.nextFallbackWallTime = targetStart + durationSec;
+    if (onStart) {
+      const leadSec = Math.min(pauseBeforeSec, 0.22);
+      const fireInMs = Math.max(0, (targetStart - leadSec - nowSec) * 1000);
+      let stopped = false;
+      const timer = setTimeout(() => {
+        if (!stopped) onStart();
+      }, fireInMs);
+      this.activeStoppers.push(() => {
+        stopped = true;
+        clearTimeout(timer);
+      });
+    }
+  }
+
+  private syncAudioClockFromFallback(ctx: AudioContext): void {
+    if (this.nextFallbackWallTime <= 0) return;
+    const remainingWall = this.nextFallbackWallTime - performance.now() / 1000;
+    if (remainingWall > 0) {
+      this.nextStartTime = Math.max(
+        this.nextStartTime,
+        ctx.currentTime + remainingWall
+      );
+    }
+    this.nextFallbackWallTime = 0;
+  }
+
   private scheduleBufferOnAnalyser(
     ctx: AudioContext,
     audioBuffer: AudioBuffer,
@@ -96,27 +144,11 @@ class PortfolioAudioEngine {
     onStart?: () => void
   ): void {
     if (ctx.state !== "running") {
-      const nowSec = performance.now() / 1000;
-      const earliest = nowSec + 0.02;
-      const targetStart =
-        this.nextFallbackWallTime > earliest
-          ? this.nextFallbackWallTime + pauseBeforeSec
-          : earliest + pauseBeforeSec;
-      this.nextFallbackWallTime = targetStart + audioBuffer.duration;
-      if (onStart) {
-        const leadSec = Math.min(pauseBeforeSec, 0.22);
-        const fireInMs = Math.max(0, (targetStart - leadSec - nowSec) * 1000);
-        let stopped = false;
-        const timer = setTimeout(() => {
-          if (!stopped) onStart();
-        }, fireInMs);
-        this.activeStoppers.push(() => {
-          stopped = true;
-          clearTimeout(timer);
-        });
-      }
+      this.scheduleWallClockStep(audioBuffer.duration, pauseBeforeSec, onStart);
       return;
     }
+
+    this.syncAudioClockFromFallback(ctx);
 
     if (!this.streamAnalyser) {
       const analyser = ctx.createAnalyser();
@@ -225,6 +257,24 @@ class PortfolioAudioEngine {
     source.start(targetStart);
   }
 
+  private async waitForContextReady(ctx: AudioContext): Promise<void> {
+    if (ctx.state !== "suspended" || this.audioTimedOut) return;
+    const resumeTask = this.resumePromise ?? ctx.resume().catch(() => {});
+    let timedOut = false;
+    await Promise.race([
+      resumeTask,
+      new Promise<void>((r) =>
+        setTimeout(() => {
+          timedOut = true;
+          r();
+        }, 1500)
+      ),
+    ]);
+    if (timedOut && (ctx.state as AudioContextState) !== "running") {
+      this.audioTimedOut = true;
+    }
+  }
+
   private decodeAndSchedule(
     getBuffer: () => ArrayBuffer,
     pauseBeforeSec: number,
@@ -236,15 +286,10 @@ class PortfolioAudioEngine {
         if (gen !== this.playbackGen) return;
         const ctx = this.ensureContext();
         if (!ctx) {
-          onStart?.();
+          this.scheduleWallClockStep(3.2, pauseBeforeSec, onStart);
           return;
         }
-        if (ctx.state === "suspended") {
-          await Promise.race([
-            ctx.resume().catch(() => {}),
-            new Promise<void>((r) => setTimeout(r, 250)),
-          ]);
-        }
+        await this.waitForContextReady(ctx);
         if (gen !== this.playbackGen) return;
 
         const audioBuffer = await ctx.decodeAudioData(getBuffer());
@@ -252,8 +297,63 @@ class PortfolioAudioEngine {
         this.scheduleBufferOnAnalyser(ctx, audioBuffer, pauseBeforeSec, onStart);
       })
       .catch(() => {
-        if (gen === this.playbackGen) onStart?.();
+        if (gen === this.playbackGen) {
+          this.scheduleSilentOnActiveClock(3.2, pauseBeforeSec, onStart);
+        }
       });
+  }
+
+  private scheduleSilentOnActiveClock(
+    durationSec: number,
+    pauseBeforeSec: number,
+    onStart?: () => void
+  ): void {
+    const ctx = this.ctx;
+    if (ctx && ctx.state === "running") {
+      this.syncAudioClockFromFallback(ctx);
+      const earliest = ctx.currentTime + 0.02;
+      const targetStart =
+        this.nextStartTime > earliest
+          ? this.nextStartTime + pauseBeforeSec
+          : earliest + pauseBeforeSec;
+      this.nextStartTime = targetStart + durationSec;
+      if (onStart) {
+        const leadSec = Math.min(pauseBeforeSec, 0.22);
+        const fireInMs = Math.max(
+          0,
+          (targetStart - leadSec - ctx.currentTime) * 1000
+        );
+        let stopped = false;
+        const timer = setTimeout(() => {
+          if (!stopped) onStart();
+        }, fireInMs);
+        this.activeStoppers.push(() => {
+          stopped = true;
+          clearTimeout(timer);
+        });
+      }
+      return;
+    }
+    this.scheduleWallClockStep(durationSec, pauseBeforeSec, onStart);
+  }
+
+  public enqueueSilentStep(
+    durationSec: number,
+    pauseBeforeSec = 0,
+    onStart?: () => void
+  ): void {
+    const gen = this.playbackGen;
+    this.queueChain = this.queueChain
+      .then(async () => {
+        if (gen !== this.playbackGen) return;
+        const ctx = this.ensureContext();
+        if (ctx) {
+          await this.waitForContextReady(ctx);
+        }
+        if (gen !== this.playbackGen) return;
+        this.scheduleSilentOnActiveClock(durationSec, pauseBeforeSec, onStart);
+      })
+      .catch(() => {});
   }
 
   public enqueueWavBase64(

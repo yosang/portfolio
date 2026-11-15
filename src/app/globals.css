@@ -138,6 +138,12 @@ body {
   outline-color: var(--card-accent, transparent);
 }
 
+.work-card[data-spotlit="true"] .work-stage {
+  transform: translate3d(0, -3px, 0);
+  outline: 2.5px solid var(--accent);
+  outline-offset: 3px;
+}
+
 .work-card .work-stage__media {
   transform: scale3d(1, 1, 1);
   transition: transform 520ms cubic-bezier(0.16, 1, 0.3, 1);

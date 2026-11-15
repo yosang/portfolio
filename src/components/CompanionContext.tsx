@@ -15,8 +15,11 @@ import type { AvatarMood } from "@/lib/avatarEngine";
 import { PROJECT_TOUR_STEPS } from "@/data/portfolio";
 import { UI } from "@/data/ui";
 
+const SPECIFIC_TOUR_TARGET_RE =
+  /\b(bordtennis|ember|medcare|cinemorra|cv|skoleprosjekt)/i;
+
 const INSTANT_TOUR_RE =
-  /^(?:kan du\s+)?vis(?:e)?\s+meg\s+(?:rundt(?:\s+i\s+prosjektene(?:\s+dine)?)?|prosjektene(?:\s+dine)?)[.!?]*$/i;
+  /^(?:hei[,!\s]+)?(?:ai\s+yosmel[,!\s]+|yosmel[,!\s]+)?(?:kan du\s+|vil du\s+)?(?:vis(?:e)?(?:\s+fram|\s+frem)?(?:\s+meg)?|ta\s+meg\s+(?:med\s+)?(?:gjennom|rundt(?:\s+i)?)|gi\s+meg\s+en\s+(?:runde|omvisning)(?:\s+i|\s+gjennom)?)\s+(?:litt\s+)?(?:rundt(?:\s+i\s+(?:dine\s+)?prosjekt(?:er|ene)(?:\s+dine)?)?|(?:dine\s+|alle\s+)?prosjekt(?:er|ene)(?:\s+dine|\s+du\s+har\s+laget)?|porteføljen(?:\s+din)?)[.!?]*$/i;
 
 export interface ChatAttachment {
   href: string;
@@ -125,8 +128,9 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
   const voiceEnabledRef = useRef(true);
   const pathnameRef = useRef(pathname);
   const spotlightSlugRef = useRef<string | null>(null);
-  const tourCancelledRef = useRef(false);
+  const autoScrollCancelledRef = useRef(false);
   const hasStartedTourScrollRef = useRef(false);
+  const tourStartedAtRef = useRef(0);
   const tourTimersRef = useRef<Array<ReturnType<typeof setTimeout>>>([]);
   const abortRef = useRef<AbortController | null>(null);
 
@@ -146,9 +150,14 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
+    const cancelOnWheel = () => {
+      if (!hasStartedTourScrollRef.current) return;
+      if (performance.now() - tourStartedAtRef.current < 500) return;
+      autoScrollCancelledRef.current = true;
+    };
     const cancelIfTouring = () => {
       if (!hasStartedTourScrollRef.current) return;
-      tourCancelledRef.current = true;
+      autoScrollCancelledRef.current = true;
     };
     const onKeyDown = (e: KeyboardEvent) => {
       const tag = document.activeElement?.tagName;
@@ -165,11 +174,11 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
         cancelIfTouring();
       }
     };
-    window.addEventListener("wheel", cancelIfTouring, { passive: true });
+    window.addEventListener("wheel", cancelOnWheel, { passive: true });
     window.addEventListener("touchmove", cancelIfTouring, { passive: true });
     window.addEventListener("keydown", onKeyDown);
     return () => {
-      window.removeEventListener("wheel", cancelIfTouring);
+      window.removeEventListener("wheel", cancelOnWheel);
       window.removeEventListener("touchmove", cancelIfTouring);
       window.removeEventListener("keydown", onKeyDown);
       clearTourTimers();
@@ -231,7 +240,6 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
 
   const triggerSpotlight = useCallback(
     (slug: string) => {
-      if (tourCancelledRef.current) return;
       const prevSlug = spotlightSlugRef.current;
       spotlightSlugRef.current = slug;
       setSpotlightSlug(slug);
@@ -241,8 +249,10 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
         setIsOpen(false);
       }
 
+      if (autoScrollCancelledRef.current) return;
+
       const scrollAndHighlight = () => {
-        if (tourCancelledRef.current) return;
+        if (autoScrollCancelledRef.current) return;
         const el = document.querySelector<HTMLElement>(
           `[data-project-slug="${slug}"]`
         );
@@ -274,8 +284,9 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
       abortRef.current = abortController;
 
       clearTourTimers();
-      tourCancelledRef.current = false;
+      autoScrollCancelledRef.current = false;
       hasStartedTourScrollRef.current = false;
+      tourStartedAtRef.current = performance.now();
 
       portfolioAudio.unlock();
       portfolioAudio.stopAll();
@@ -303,12 +314,20 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
       const pageContext = inspectViewportContext(pathnameRef.current);
       const wantVoice = voiceEnabledRef.current;
 
-      if (INSTANT_TOUR_RE.test(trimmed)) {
+      if (!SPECIFIC_TOUR_TARGET_RE.test(trimmed) && INSTANT_TOUR_RE.test(trimmed)) {
         prevInteractionIdRef.current = null;
         setMood("happy");
 
+        const finishStreamingState = () => {
+          if (abortRef.current === abortController && isStreamingRef.current) {
+            isStreamingRef.current = false;
+            setIsStreaming(false);
+          }
+        };
+
         const revealTourStep = (stepIdx: number) => {
           if (abortController.signal.aborted) return;
+          finishStreamingState();
           const visibleBubbles = PROJECT_TOUR_STEPS.slice(0, stepIdx + 1).map(
             (s) => s.bubble
           );
@@ -325,16 +344,13 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
 
         const runMutedFallbackFrom = (startIdx: number) => {
           for (let i = startIdx; i < PROJECT_TOUR_STEPS.length; i++) {
-            const delay = i === startIdx ? 80 : (i - startIdx) * 3800;
+            const delay = i === startIdx ? 60 : (i - startIdx) * 3800;
             const id = setTimeout(() => {
               revealTourStep(i);
             }, delay);
             tourTimersRef.current.push(id);
           }
         };
-
-        isStreamingRef.current = false;
-        setIsStreaming(false);
 
         if (wantVoice) {
           setVoiceMode("replicated");
@@ -404,10 +420,17 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
         const pendingTourSteps = new Map<number, string>();
         const scheduledTourIndices = new Set<number>();
         let fallbackStepCount = 0;
+        let hasQueuedAudio = false;
 
         const scheduleFallbackTourStep = (bubbleIdx: number, slug: string) => {
           if (scheduledTourIndices.has(bubbleIdx)) return;
           scheduledTourIndices.add(bubbleIdx);
+          if (hasQueuedAudio && voiceEnabledRef.current) {
+            portfolioAudio.enqueueSilentStep(3.5, 0.24, () =>
+              triggerSpotlight(slug)
+            );
+            return;
+          }
           const delay = fallbackStepCount === 0 ? 120 : fallbackStepCount * 3800;
           fallbackStepCount += 1;
           const id = setTimeout(() => {
@@ -417,7 +440,10 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
         };
 
         const flushUnscheduledTourSteps = () => {
-          for (const [idx, slug] of pendingTourSteps.entries()) {
+          const ordered = [...pendingTourSteps.entries()].sort(
+            (a, b) => a[0] - b[0]
+          );
+          for (const [idx, slug] of ordered) {
             if (!scheduledTourIndices.has(idx)) {
               scheduleFallbackTourStep(idx, slug);
             }
@@ -469,15 +495,6 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
               pendingTourSteps.set(index, slug);
               if (!voiceEnabledRef.current || isDemoStream) {
                 scheduleFallbackTourStep(index, slug);
-              }
-            } else if (
-              typeof data.tour === "string" &&
-              data.tour &&
-              typeof data.audio !== "string"
-            ) {
-              pendingTourSteps.set(0, data.tour);
-              if (!voiceEnabledRef.current || isDemoStream) {
-                scheduleFallbackTourStep(0, data.tour);
               }
             }
 
@@ -553,6 +570,7 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
                 if (tourSlug && bubbleIdx >= 0) {
                   scheduledTourIndices.add(bubbleIdx);
                 }
+                hasQueuedAudio = true;
                 portfolioAudio.enqueueWavBase64(
                   data.audio,
                   pause,
@@ -560,6 +578,27 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
                 );
               } else if (tourSlug && bubbleIdx >= 0) {
                 scheduleFallbackTourStep(bubbleIdx, tourSlug);
+              }
+            } else if (data.audioSkipped === true) {
+              const bubbleIdx =
+                typeof data.bubbleIndex === "number" ? data.bubbleIndex : -1;
+              const tourSlug =
+                typeof data.tour === "string" && data.tour
+                  ? data.tour
+                  : bubbleIdx >= 0
+                    ? pendingTourSteps.get(bubbleIdx)
+                    : undefined;
+              if (tourSlug && bubbleIdx >= 0) {
+                if (voiceEnabledRef.current && hasQueuedAudio) {
+                  scheduledTourIndices.add(bubbleIdx);
+                  const pause =
+                    typeof data.pauseBefore === "number" ? data.pauseBefore : 0.24;
+                  portfolioAudio.enqueueSilentStep(3.5, pause, () =>
+                    triggerSpotlight(tourSlug)
+                  );
+                } else {
+                  scheduleFallbackTourStep(bubbleIdx, tourSlug);
+                }
               }
             }
 
@@ -602,7 +641,7 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
   const resetChat = useCallback(() => {
     abortRef.current?.abort();
     clearTourTimers();
-    tourCancelledRef.current = false;
+    autoScrollCancelledRef.current = false;
     hasStartedTourScrollRef.current = false;
     spotlightSlugRef.current = null;
     setSpotlightSlug(null);

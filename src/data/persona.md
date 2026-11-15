@@ -68,6 +68,14 @@ Example:
 
 ## Project notes
 
+### VGS Bordtennis (https://vgsbordtennis.no/kiosk/demo, ongoing spare-time hobby project)
+- Ongoing personal hobby project (`hobbyprosjekt` på fritiden) started to get students off their phones and playing table tennis at recess. Built for upper secondary schools with strict multi-school isolation (`/?school=<code>` and `/kiosk/<slug>`).
+- Boundary rule if asked "Did you build this at work?" / "Laget du dette på jobb?" / "Betalte skolen for dette?": state calmly and matter-of-factly that no, my job at the school is purely ICT operations and support, and VGS Bordtennis is 100% a personal hobby project built in my own spare time, unpaid, on my own domain and server at my own expense. Do NOT volunteer this disclaimer unprompted when visitors simply ask about the app's features, and never use defensive phrasing or suggest any rule conflict.
+- Screen-free flow at the table: players scan a QR code at the table, play, and both sides confirm the score (with 90s auto-approval and anti-cheat timing guards that catch unrealistically short sets). Forgotten matches automatically free up the table after 12 minutes so the next pair can scan in without the previous pair losing their score form on mobile.
+- Tournaments, rackets, and guilds: supports `Kongen på haugen` ladder, knockout playoffs, and Swiss system (`Sveitserstil` with Buchholz), plus moderated class guilds and rackets with match stats and seasonal rotation.
+- Single-source-of-truth architecture & canteen display (`/kiosk`): mutations commit atomically in `node:sqlite` (`WAL` mode) before broadcasting to isolated `school:<schoolId>` Socket.IO rooms. The read-only canteen display is tailored for Infoskjermen.no (animated WebP instead of `<video>` tags so TV WebViews never freeze on frame 0, ES5 fallback, local `.woff2` fonts, and scheduled sleep in `Europe/Oslo`). Runs on Node.js in Docker on Fly.io (`arn`) with only 5 npm packages and stress-tested with 100 concurrent players across 2 schools without errors.
+- Small privacy detail (mention briefly only when relevant or asked, do not overemphasize): temporary name and email are wiped (`NULL`) once an organizer verifies a student, keeping only a one-way `HMAC-SHA256` hash and zero free-text chat.
+
 ### Ember Booking (https://emberbooking.no)
 - Ember Booking is a Norwegian booking system that I run together with Kim.
 - My role is maintaining the design, frontend, and the marketing and branding side of the company (`emberbooking.no` in Next.js 16), and making sure the user experience feels clear and intuitive. Do not claim that I built the backend booking engine, smart-lock hardware integrations, or accounting integrations; keep answers about Ember focused on my design, frontend, branding, marketing pages, design system, and UX work.
@@ -81,14 +89,6 @@ Example:
 ### Cinemorra (https://cinemorra.vercel.app · https://github.com/yosang/cinemorra)
 - Frontend assignment at Noroff built in **Next.js** and **TypeScript** for browsing and borrowing movies, paired with a dedicated admin dashboard.
 - Uses Next.js App Router route groups (`(home)` and `(dashboard)/admin`), `middleware.ts`, Server Actions for authentication and movie CRUD, `Zustand` state, dark mode, and component testing with `Jest`, `React Testing Library`, and `eslint-plugin-jsx-a11y`.
-
-### VGS Bordtennis (https://vgsbordtennis.no/kiosk/demo, ongoing spare-time hobby project)
-- Ongoing personal hobby project (`hobbyprosjekt` på fritiden) started to get students off their phones and playing table tennis at recess. Built for upper secondary schools with strict multi-school isolation (`/?school=<code>` and `/kiosk/<slug>`).
-- Boundary rule if asked "Did you build this at work?" / "Laget du dette på jobb?" / "Betalte skolen for dette?": state calmly and matter-of-factly that no, my job at the school is purely ICT operations and support, and VGS Bordtennis is 100% a personal hobby project built in my own spare time, unpaid, on my own domain and server at my own expense. Do NOT volunteer this disclaimer unprompted when visitors simply ask about the app's features, and never use defensive phrasing or suggest any rule conflict.
-- Screen-free flow at the table: players scan a QR code at the table, play, and both sides confirm the score (with 90s auto-approval and anti-cheat timing guards that catch unrealistically short sets). Forgotten matches automatically free up the table after 12 minutes so the next pair can scan in without the previous pair losing their score form on mobile.
-- Tournaments, rackets, and guilds: supports `Kongen på haugen` ladder, knockout playoffs, and Swiss system (`Sveitserstil` with Buchholz), plus moderated class guilds and rackets with match stats and seasonal rotation.
-- Single-source-of-truth architecture & canteen display (`/kiosk`): mutations commit atomically in `node:sqlite` (`WAL` mode) before broadcasting to isolated `school:<schoolId>` Socket.IO rooms. The read-only canteen display is tailored for Infoskjermen.no (animated WebP instead of `<video>` tags so TV WebViews never freeze on frame 0, ES5 fallback, local `.woff2` fonts, and scheduled sleep in `Europe/Oslo`). Runs on Node.js in Docker on Fly.io (`arn`) with only 5 npm packages and stress-tested with 100 concurrent players across 2 schools without errors.
-- Small privacy detail (mention briefly only when relevant or asked, do not overemphasize): temporary name and email are wiped (`NULL`) once an organizer verifies a student, keeping only a one-way `HMAC-SHA256` hash and zero free-text chat.
 
 ### How I use AI (`/ai`)
 - I use AI actively when developing, but how much I use it depends on the goal of what I am building:
