@@ -127,13 +127,13 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     tags: ["Next.js 16", "Three.js Worker", "Gemini TTS", "AI-assistert"],
     repoUrl: "https://github.com/yosang/portfolio",
     subtitle:
-      "Samtalestyrt portefølje med 3D-skannet avatar, stemmekloning og visuell prosjektvisning.",
+      "Samtalestyrt grensesnitt med 3D-skannet avatar, stemmekloning og visuell navigasjon.",
     summary:
-      "Et forsøk på en moderne bruk av AI i en portefølje: i stedet for at du må klikke og lete rundt selv, kan du snakke direkte med en AI versjon av meg som i et intervju eller en kort videosamtale.",
+      "Laget for at du kan snakke med en AI versjon av meg som i et intervju mens den viser deg rundt på siden. Samtidig er oppsettet en praktisk demonstrasjon av hvordan sanntids tale, visuell styring og forankring i egne fagdata kan løse reelle oppgaver innen helse, utdanning, bygg og anlegg, og kundeservice.",
     highlights: [
       "Laget for å hjelpe besøkende gjennom innholdet med mindre klikking: AI Yosmel tar deg gjennom en visuell tour av prosjekter, detaljer, svarer på spørsmål og henter frem CV.",
-      "3D-skannet T2-modell med ansikts-blendshapes som kjører på Three.js i en egen OffscreenCanvas Web Worker på 60 fps, med sanntids munnsynk fra 17 sekunder klonet stemme.",
-      "Prosjektet der jeg for alvor tok i bruk strukturert AI-assistert utvikling høsten 2026, styrt av faste rammer i AGENTS.md for slank kode og naturlig språk.",
+      "Overførbart til helse, skole, anlegg og handel: samme motor kan gi eldre og pårørende muntlig veiledning i helsetjenester, brukes til muntlig trening i skolen, eller gi maskinførere svar fra HMS-rutiner og maskinmanualer uten å bla i tunge PDF-er.",
+      "3D-skannet T2-modell med ansikts-blendshapes i en egen OffscreenCanvas Web Worker på 60 fps og klonet stemme, bygget høsten 2026 med faste rammer i AGENTS.md.",
     ],
     aiNote:
       "Bygget høsten 2026 med faste rammer i AGENTS.md, kanso og mimesis.",
@@ -143,8 +143,8 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
         "Her er selve porteføljen du er på nå, laget for at du kan snakke med en AI versjon av meg som viser deg rundt.",
     },
     aiContext: [
-      "Denne porteføljen (`yosmel.no`, kildekode på `github.com/yosang/portfolio`) er laget for å utforske hvordan AI faktisk kan gjøre en portefølje mer nyttig for den som besøker siden.",
-      "Målet er at man kan snakke direkte med AI Yosmel omtrent som i et intervju eller en videosamtale, slik at AI-en tar leseren gjennom en visuell tour av prosjektene, åpner detaljer, svarer på spørsmål og henter frem CV uten at man må klikke og lete rundt selv.",
+      "Denne porteføljen (`yosmel.no`, kildekode på `github.com/yosang/portfolio`) utforsker hvordan AI kan gjøre et grensesnitt enklere å bruke: man snakker med AI Yosmel som i et intervju eller en videosamtale, mens den tar leseren gjennom en visuell tour av prosjekter, åpner detaljer, svarer på spørsmål og henter frem CV uten at man må klikke og lete rundt selv.",
+      "Hva teknologien kan brukes til utenfor en portefølje (viktig når ledere, bedriftseiere eller rekrutterere spør hva dette kan løse i praksis): arkitekturen kombinerer sanntids tale, visuell tilstedeværelse, styring av skjermbildet (`[TOUR]`, `[GO]`, `[FILE]`) og streng forankring i bedriftens egne godkjente dokumenter. Det gjør den svært nyttig i fire sektorer: 1. **Bygg, anlegg og maskin:** Maskinførere og fagarbeidere ute i felt kan spørre med stemmen om HMS-rutiner, sjekklister, feilkoder eller vedlikehold på en konkret maskin og få riktig sjekkliste eller tegning rett opp på skjermen, uten å måtte ta av seg hanskene og lete i 200-siders PDF-manualer. 2. **Helse og eldreomsorg:** Eldre, pårørende eller nyansatte i helsetjenesten kan få rolig, muntlig veiledning og riktig skjema vist frem steg for steg på skjermen, strengt låst til kommunens eller sykehusets egne kvalitetssikrede rutiner. 3. **Skole og utdanning:** Elever kan få muntlig mengdetrening i språk og fag, eller øve på muntlige eksamener og praksissamtaler i trygge rammer. 4. **Handel og kundeservice:** En visuell rådgiver eller telefonlinje som hjelper kunder med å finne riktig produkt og svarer på spørsmål basert på bedriftens egne data.",
       "Samtidig var dette prosjektet der jeg høsten 2026 for alvor utfordret meg selv på strukturert AI-assistert utvikling, med egne regler i `AGENTS.md` (`kanso` for slank kode og `mimesis` for naturlig språk).",
       "Teknisk kjører 3D-skanningen (T2-modell med blendshapes for munnsynk, blunking og uttrykk) på Three.js i en egen `OffscreenCanvas` Web Worker på 60 fps, mens svar og klonet stemme (fra 17 sekunder opptak) strømmes fra Gemini over SSE.",
     ],

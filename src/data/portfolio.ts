@@ -81,9 +81,13 @@ export const PROMPTS: string[] = [
 ];
 
 export const FOLLOW_UP_PROMPTS: Array<{ text: string; match?: RegExp }> = [
+  {
+    text: "Hva kan denne 3D og stemmeteknologien brukes til i praksis?",
+    match: /3d|worker|portefølje|cinemorra|stemme/i,
+  },
   { text: "Hva gjør du i Ember Booking?", match: /prosjekt|frontend|design|figma/i },
   { text: "Hvordan er MedCare Clinical bygget?", match: /ember|backend|noroff|eksamen/i },
-  { text: "Hvordan bruker du AI i programvareutvikling?", match: /3d|worker|gemini|utvikling|stack/i },
+  { text: "Hvordan bruker du AI i programvareutvikling?", match: /handel|helse|opplæring|gemini|utvikling|stack/i },
   { text: "Hva gjorde du før utvikling?", match: /noroff|rolle|utdanning|medcare/i },
   { text: "Hva slags rolle ser du etter?", match: /ekornes|pt|trener|cuba|erfaring/i },
   { text: "Hva er en svakhet du har?", match: /rolle|remote|hybrid|samarbeid/i },
