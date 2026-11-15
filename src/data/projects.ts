@@ -132,7 +132,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
       "Laget for at du kan snakke med en AI versjon av meg i en vanlig samtale mens den viser deg rundt på siden. Samtidig er oppsettet en praktisk demonstrasjon av hvordan sanntids tale, visuell styring og forankring i egne fagdata kan løse reelle oppgaver innen helse, utdanning og kundeservice.",
     highlights: [
       "Laget for å hjelpe besøkende gjennom innholdet med mindre klikking: AI Yosmel tar deg gjennom en visuell tour av prosjekter, detaljer, svarer på spørsmål og henter frem CV.",
-      "Overførbart til helse, skole og handel: samme teknologi kan gi eldre og pårørende muntlig veiledning i helsetjenester, brukes til muntlig trening i skolen, eller fungere som visuell kundeservice i en nettbutikk.",
+      "Overførbart til helse, skole og næringsliv: samme teknologi kan gi eldre og pårørende muntlig veiledning i helsetjenester, brukes til muntlig trening i skolen, eller fungere som visuell kundeservice for en bedrift.",
       "3D-skannet T2-modell med ansikts-blendshapes i en egen OffscreenCanvas Web Worker på 60 fps og klonet stemme, bygget høsten 2026 med faste rammer i AGENTS.md og skills.",
     ],
     aiNote:
@@ -144,7 +144,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     },
     aiContext: [
       "Denne porteføljen (`yosmel.no`, kildekode på `github.com/yosang/portfolio`) utforsker hvordan AI kan gjøre et grensesnitt enklere å bruke: man snakker med AI Yosmel i en vanlig samtale, mens den tar leseren gjennom en visuell tour av prosjekter, åpner detaljer, svarer på spørsmål og henter frem CV uten at man må klikke og lete rundt selv.",
-      "Hva teknologien kan brukes til utenfor en portefølje: tanken er å komme nærmere en vanlig samtale der den prater med stemme, henter opp riktig sted på skjermen så du slipper å lete selv, og holder seg kun til godkjente fakta. En nettbutikk kan bruke det i kundeservice eller på telefon for å hjelpe kunder, skoler kan bruke det til muntlig trening, og i helsevesenet kan det gi eldre og pasienter enkel veiledning.",
+      "Hva teknologien kan brukes til utenfor en portefølje: tanken er å komme nærmere en vanlig samtale der den prater med stemme, henter opp riktig sted på skjermen så du slipper å lete selv, og holder seg kun til godkjente fakta. En bedrift kan bruke slik teknologi i kundeservice eller på telefon for å hjelpe kunder, skoler kan bruke det til muntlig trening, og i helsevesenet kan det gi eldre og pasienter enkel veiledning.",
       "Samtidig var dette prosjektet der jeg høsten 2026 for alvor utfordret meg selv på strukturert AI-assistert utvikling, med egne regler i `AGENTS.md` og `github.com/yosang/skills` (`ui-craft`, `natural-copy` og `lean-architecture`).",
       "Teknisk kjører 3D-skanningen (T2-modell med blendshapes for munnsynk, blunking og uttrykk) på Three.js i en egen `OffscreenCanvas` Web Worker på 60 fps, mens svar og klonet stemme (fra 17 sekunder opptak) strømmes fra Gemini over SSE.",
     ],

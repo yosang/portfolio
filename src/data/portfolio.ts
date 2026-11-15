@@ -83,7 +83,7 @@ export const USE_CASE_STEPS: Array<{ audioSrc: string; bubble: string }> = [
   {
     audioSrc: "/audio/usecase-1.mp3",
     bubble:
-      "En nettbutikk kan bruke det i kundeservice eller på telefon for å hjelpe kunder, skoler kan bruke det til muntlig trening, og i helsevesenet kan det gi eldre og pasienter enkel veiledning.",
+      "En bedrift kan bruke slik teknologi i kundeservice eller på telefon for å hjelpe kunder, skoler kan bruke det til muntlig trening, og i helsevesenet kan det gi eldre og pasienter enkel veiledning.",
   },
 ];
 
