@@ -56,9 +56,25 @@ export function ChatDock() {
   }, []);
 
   useEffect(() => {
-    return portfolioAudio.subscribe((st) => {
-      setAudioSpeaking((prev) => (prev === st.speaking ? prev : st.speaking));
+    let settleTimer: ReturnType<typeof setTimeout> | null = null;
+    const unsub = portfolioAudio.subscribe((st) => {
+      if (st.sessionActive) {
+        if (settleTimer) {
+          clearTimeout(settleTimer);
+          settleTimer = null;
+        }
+        setAudioSpeaking((prev) => (prev ? prev : true));
+      } else if (!settleTimer) {
+        settleTimer = setTimeout(() => {
+          settleTimer = null;
+          setAudioSpeaking(false);
+        }, 550);
+      }
     });
+    return () => {
+      if (settleTimer) clearTimeout(settleTimer);
+      unsub();
+    };
   }, []);
 
   useEffect(() => {

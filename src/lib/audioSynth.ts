@@ -6,6 +6,7 @@ export interface SpeechFrameState {
   energy: number;
   viseme: VisemeHint;
   speaking: boolean;
+  sessionActive: boolean;
 }
 
 type FrameListener = (state: SpeechFrameState) => void;
@@ -96,7 +97,7 @@ class PortfolioAudioEngine {
     this.nextStartTime = 0;
     this.nextFallbackWallTime = 0;
     this.activeSourceCount = 0;
-    this.emit({ energy: 0, viseme: "rest", speaking: false });
+    this.emit({ energy: 0, viseme: "rest", speaking: false, sessionActive: false });
   }
 
   private scheduleWallClockStep(
@@ -206,7 +207,12 @@ class PortfolioAudioEngine {
           !this.streamAnalyser
         ) {
           this.rafId = null;
-          this.emit({ energy: 0, viseme: "rest", speaking: false });
+          this.emit({
+            energy: 0,
+            viseme: "rest",
+            speaking: false,
+            sessionActive: false,
+          });
           return;
         }
         this.streamAnalyser.getByteTimeDomainData(timeData);
@@ -233,7 +239,12 @@ class PortfolioAudioEngine {
           else viseme = "aa";
         }
 
-        this.emit({ energy, viseme, speaking: energy > 0.03 });
+        this.emit({
+          energy,
+          viseme,
+          speaking: energy > 0.03,
+          sessionActive: true,
+        });
         this.rafId = requestAnimationFrame(tick);
       };
       this.rafId = requestAnimationFrame(tick);
@@ -250,7 +261,12 @@ class PortfolioAudioEngine {
             cancelAnimationFrame(this.rafId);
             this.rafId = null;
           }
-          this.emit({ energy: 0, viseme: "rest", speaking: false });
+          this.emit({
+            energy: 0,
+            viseme: "rest",
+            speaking: false,
+            sessionActive: false,
+          });
         }
       }
     };
