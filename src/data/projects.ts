@@ -110,6 +110,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     },
     aiContext: [
       "Ember Booking er et norsk bookingsystem jeg driver sammen med Kim.",
+      "Slik jobber Kim og jeg sammen: vi tar et statusmøte sammen i ny og ne der vi prater om veien videre for bedriften, legger strategi og noterer hva som må jobbes med, og så blir vi enige om hvem som har ansvaret for hva.",
       "Min rolle er å vedlikeholde og videreutvikle designet, frontenden, merkevaren og markedsføringssidene på `emberbooking.no` (bygget i Next.js 16), og sørge for at brukeropplevelsen er enkel og ryddig. Ikke si at jeg har bygget selve backend-motoren, smartlås-styringen eller regnskapsintegrasjonene; hold svarene om Ember fokusert på mitt arbeid med design, frontend, merkevare, landingssider, designsystem og brukeropplevelse.",
     ],
   },
@@ -211,7 +212,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
         "Under skoleprosjekter ligger MedCare Clinical, eksamensprosjektet mitt i backend hos Noroff med legetimer i C# og .NET 9.",
     },
     aiContext: [
-      "Levert som eksamensprosjektet mitt i Backend 2026 hos Noroff.",
+      "Levert som eksamensprosjektet mitt i Backend 2026 hos Noroff (jeg fikk karakter A på eksamen, nevn kun karakteren hvis noen spør om karakter eller hvordan det gikk på eksamen).",
       "Fullstack timebestillingssystem for klinikker der pasienter kan søke opp leger på tvers av klinikker, byer og spesialiteter, og bestille, endre eller avbestille timer (med soft delete) både som gjest uten bruker og som innlogget pasient. Administratorer har et eget adminpanel med full CRUD for leger, klinikker, spesialiteter og timeavtaler.",
       "Backend er skrevet i C# og `.NET 9` med ASP.NET Core, `Entity Framework Core` mot `MySQL`, JWT innlogging med refresh token i cookie (`POST api/Auth/refresh`) og Swagger dokumentasjon.",
       "Frontenden er bygget i React med `@tanstack/react-query`, `Zustand`, `Zod` og `React Router`, og satt opp på Vercel mot Azure Web App og Railway.",
