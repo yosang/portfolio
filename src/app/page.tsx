@@ -46,7 +46,7 @@ export default function HomePage() {
       const heroEl = document.getElementById("hero-ai-studio");
       if (heroEl) {
         const r = heroEl.getBoundingClientRect();
-        if (r.bottom > 120 && r.top < window.innerHeight) {
+        if (r.height > 0 && r.bottom > 120 && r.top < window.innerHeight) {
           sendMessage(prompt);
           return;
         }
@@ -71,10 +71,10 @@ export default function HomePage() {
 
   return (
     <div className="page-enter">
-      {/* HERO: Clean, low-noise intro + 3D AI Twin Studio */}
+      {/* HERO: Clean, low-noise intro + desktop 3D AI Twin Studio */}
       <section
         data-viewport-section="Hero"
-        className="mx-auto max-w-5xl px-4 pt-10 pb-20 sm:px-6 md:pt-14 md:pb-24"
+        className="mx-auto max-w-5xl px-4 pt-8 pb-12 sm:px-6 sm:pt-10 sm:pb-16 lg:pt-14 lg:pb-24"
       >
         <div className="grid gap-10 lg:grid-cols-[1fr_420px] lg:items-center lg:gap-14">
           <div className="space-y-6">
@@ -217,11 +217,20 @@ const HeroAiStudio = memo(function HeroAiStudio() {
     resetChat,
   } = useCompanion();
   const ui = UI;
+  const [isDesktop, setIsDesktop] = useState(false);
   const [infoPinned, setInfoPinned] = useState(false);
   const [infoHovered, setInfoHovered] = useState(false);
   const infoOpen = infoPinned || infoHovered;
   const infoRef = useRef<HTMLDivElement | null>(null);
   const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px)");
+    const sync = () => setIsDesktop(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
 
   const openHover = useCallback(() => {
     if (hoverTimerRef.current) {
@@ -268,7 +277,7 @@ const HeroAiStudio = memo(function HeroAiStudio() {
   return (
     <div
       id="hero-ai-studio"
-      className="relative overflow-hidden rounded-[24px] border border-white/12 text-white shadow-[0_24px_56px_-18px_rgba(16,17,18,0.34)]"
+      className="relative hidden overflow-hidden rounded-[24px] border border-white/12 text-white shadow-[0_24px_56px_-18px_rgba(16,17,18,0.34)] lg:block"
       style={{
         background:
           "radial-gradient(circle at 18% 14%, rgba(228, 70, 31, 0.2), transparent 48%), radial-gradient(circle at 84% 22%, rgba(128, 201, 255, 0.14), transparent 50%), #212325",
@@ -376,7 +385,9 @@ const HeroAiStudio = memo(function HeroAiStudio() {
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_38%,rgba(255,231,201,0.14),transparent_65%)]"
         />
         <div className="absolute inset-0">
-          <AvatarStage mood={mood} variant="hero" className="h-full w-full" />
+          {isDesktop && (
+            <AvatarStage mood={mood} variant="hero" className="h-full w-full" />
+          )}
         </div>
       </div>
 

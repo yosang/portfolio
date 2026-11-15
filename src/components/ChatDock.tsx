@@ -31,6 +31,8 @@ export function ChatDock() {
   const t = UI.chat;
 
   const [heroScrolledOut, setHeroScrolledOut] = useState(false);
+  const [hasOpenedOnce, setHasOpenedOnce] = useState(false);
+  const [scrolledPastTop, setScrolledPastTop] = useState(false);
   const [infoOpen, setInfoOpen] = useState(false);
   const [audioSpeaking, setAudioSpeaking] = useState(false);
   const [portalHost, setPortalHost] = useState<HTMLDivElement | null>(null);
@@ -38,6 +40,20 @@ export function ChatDock() {
   const floatingSlotRef = useRef<HTMLSpanElement | null>(null);
   const headerSlotRef = useRef<HTMLDivElement | null>(null);
   const parkingRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (isOpen) setHasOpenedOnce(true);
+  }, [isOpen]);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const past = window.scrollY > 160;
+      setScrolledPastTop((prev) => (prev === past ? prev : past));
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     return portfolioAudio.subscribe((st) => {
@@ -48,24 +64,38 @@ export function ChatDock() {
   useEffect(() => {
     if (pathname !== "/") return;
     const heroEl = document.getElementById("hero-ai-studio");
-    if (!heroEl) return;
+    const mq = window.matchMedia("(min-width: 1024px)");
 
     const check = () => {
+      if (!mq.matches || !heroEl) {
+        setHeroScrolledOut(true);
+        return;
+      }
       const r = heroEl.getBoundingClientRect();
-      setHeroScrolledOut(r.bottom <= 72);
+      setHeroScrolledOut(r.height === 0 || r.bottom <= 72);
     };
     check();
 
-    const io = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        if (!entry) return;
-        setHeroScrolledOut(!entry.isIntersecting && entry.boundingClientRect.top < 0);
-      },
-      { threshold: 0.1 }
-    );
-    io.observe(heroEl);
-    return () => io.disconnect();
+    const io = heroEl
+      ? new IntersectionObserver(
+          (entries) => {
+            if (!mq.matches) {
+              setHeroScrolledOut(true);
+              return;
+            }
+            const entry = entries[0];
+            if (!entry) return;
+            setHeroScrolledOut(!entry.isIntersecting && entry.boundingClientRect.top < 0);
+          },
+          { threshold: 0.1 }
+        )
+      : null;
+    if (heroEl && io) io.observe(heroEl);
+    mq.addEventListener("change", check);
+    return () => {
+      io?.disconnect();
+      mq.removeEventListener("change", check);
+    };
   }, [pathname]);
 
   const isOnChatPage = pathname === "/chat";
@@ -112,6 +142,8 @@ export function ChatDock() {
   }, [isOpen, setIsOpen]);
 
   const isActiveVoice = audioSpeaking || isStreaming;
+  const showMobileHint =
+    !hasOpenedOnce && messages.length === 0 && !scrolledPastTop && !isActiveVoice;
 
   return (
     <>
@@ -133,16 +165,22 @@ export function ChatDock() {
           onClick={() => setIsOpen(true)}
           aria-label={t.dock}
           title={t.dock}
-          className="group fixed right-4 bottom-4 z-40 flex items-center gap-2.5 cursor-pointer focus-visible:outline-none sm:right-6 sm:bottom-6"
+          className="group fixed right-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-40 flex items-center gap-2.5 cursor-pointer focus-visible:outline-none sm:right-6 sm:bottom-6"
         >
-          <span className="glass-capsule pointer-events-none hidden translate-x-1 rounded-full px-3 py-1.5 text-xs font-medium text-ink opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100 sm:inline-block">
+          <span
+            className={`glass-capsule pointer-events-none rounded-full px-3 py-1.5 text-xs font-medium text-ink transition-all duration-200 ${
+              showMobileHint
+                ? "translate-x-0 opacity-100 lg:translate-x-1 lg:opacity-0 lg:group-hover:translate-x-0 lg:group-hover:opacity-100"
+                : "hidden translate-x-1 opacity-0 sm:inline-block sm:group-hover:translate-x-0 sm:group-hover:opacity-100"
+            }`}
+          >
             {t.dock}
           </span>
 
           <span
             ref={floatingSlotRef}
             style={{ background: STUDIO_BG }}
-            className={`pointer-events-none relative block h-[78px] w-[70px] overflow-hidden rounded-[22px] border border-white/15 shadow-[0_18px_38px_-10px_rgba(16,17,18,0.45)] transition-transform duration-200 group-hover:-translate-y-0.5 sm:h-[88px] sm:w-[78px] ${
+            className={`pointer-events-none relative block h-[74px] w-[66px] overflow-hidden rounded-[20px] border border-white/15 shadow-[0_18px_38px_-10px_rgba(16,17,18,0.45)] transition-transform duration-200 group-hover:-translate-y-0.5 sm:h-[88px] sm:w-[78px] sm:rounded-[22px] ${
               isActiveVoice ? "ring-2 ring-[#e4461f]/80" : ""
             }`}
           />
