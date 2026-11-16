@@ -58,7 +58,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     tags: ["Node.js", "node:sqlite", "Socket.IO", "Pågår"],
     liveUrl: "https://vgsbordtennis.no/kiosk/demo",
     subtitle:
-      "Sanntids turneringer og kantineskjerm for videregående skoler.",
+      "Sanntids turneringer og poengtavle for videregående skoler.",
     summary:
       "Pågående prosjekt ved Nord-Gudbrandsdal VGS som får elevene opp fra mobilen i friminuttet, med QR kode ved bordet og live storskjerm i kantina.",
     highlights: [
