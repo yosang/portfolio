@@ -81,7 +81,7 @@ export default function OpenGraphImage() {
                 maxWidth: "690px",
               }}
             >
-              Som programvareutvikler er jeg opptatt av ryddig arkitektur, tydelig design og løsninger som faktisk blir brukt.
+              Jeg utvikler nettsider og systemer med fokus på ryddig arkitektur, tydelig design og løsninger som folk faktisk tar i bruk.
             </div>
           </div>
 
