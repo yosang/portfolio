@@ -415,30 +415,48 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
       role: "Fullstackutvikler (Eksamensprosjekt i Backend 2026 hos Noroff)",
       status: "Fullført eksamensprosjekt · Åpen kildekode",
       intro:
-        "MedCare Clinical ble bygget som avsluttende eksamensprosjekt på det toårige studiet i backendutvikling hos Noroff. Oppgaven var å designe og levere et komplett timebestillingssystem for helseklinikker med et REST API i C# og .NET 9, relasjonsdatabase i MySQL og en tilhørende klient i React.",
+        "MedCare Clinical ble bygget over fem uker som avsluttende eksamensprosjekt på det toårige studiet i backendutvikling hos Noroff. Oppgaven var å planlegge, modellere og utvikle et komplett timebestillingssystem for helseklinikker i C# og .NET 9 med MySQL og en tilhørende klient i React.",
       sections: [
         {
-          title: "Domene og brukerflyt for pasienter og klinikker",
+          title: "Uke 1: Normalisering (3NF), skjemasjekk og CI fra dag en",
           paragraphs: [
-            "Løsningen dekker hele løpet fra en pasient søker etter ledig lege på tvers av byer, klinikker og medisinske spesialiteter, til timen er gjennomført eller endret. For å gjøre terskelen lav i en travel hverdag støtter systemet både hurtigbestilling som gjest uten brukerkonto og full pasientprofil for registrerte brukere.",
-            "På innsiden har klinikkadministrasjonen et eget administrasjonspanel med full CRUD-håndtering av klinikker, spesialiteter, leger, åpningstider og timeavtaler.",
-          ],
-        },
-        {
-          title: "Backend-arkitektur i C# og .NET 9",
-          paragraphs: [
-            "Kjernen i prosjektet er et lagdelt ASP.NET Core Web API i .NET 9 med Entity Framework Core mot MySQL. API-et er dokumentert i Swagger / OpenAPI og sikret med rollebasert tilgangskontroll mellom pasienter og administratorer.",
+            "Før jeg skrev en eneste linje C#, brukte jeg de første dagene på å gå gjennom kravspesifikasjonen, repetere normalisering og tegne ut ER-diagrammet i tredje normalform (3NF). Blant annet skilte jeg ut byer (City), kategorier og statuser (Status) som egne tabeller knyttet til klinikker og timeavtaler.",
+            "Da modellene og relasjonene var satt opp i Entity Framework Core, ville jeg være helt sikker på at C#-koden ga den databasestrukturen jeg hadde planlagt. Jeg kjørte derfor mysqldump fra MySQL og importerte skjemaet tilbake i dbdiagram.io for å kontrollere at tabeller, fremmednøkler og unike skranker stemte 1-til-1 med ER-diagrammet.",
           ],
           bullets: [
-            "Autentisering med JWT og Refresh Token: Kortlivede access tokens kombinert med sikre refresh tokens i HTTP-only cookies (POST api/Auth/refresh).",
-            "Historikk og dataintegritet: Avbestilte timer håndteres med soft delete slik at klinikken beholder sporbarhet og historikk uten at tidspunktet blokkerer nye bestillinger.",
-            "Validering mot dobbeltbooking: Server-side kontroll av legens arbeidstid og eksisterende avtaler før en ny reservasjon skrives til databasen.",
+            "GlobalExceptionHandler: Satte opp sentral feilhåndtering tidlig i uke 1 slik at tjenestelaget slapp gjentakende try/catch-blokker i hver metode.",
+            "Swagger med XML-dokumentasjon: Konfigurerte Swagger på /doc med XML-kommentarer, eksempeldata og responskoder for hvert endepunkt.",
+            "GitHub Actions CI: La inn automatisk byggesjekk ved hver push helt fra starten, slik at ingen commit kunne brekke byggeprosessen i det stille.",
           ],
         },
         {
-          title: "Klient og utrulling",
+          title: "Uke 2: Egne mappere fremfor AutoMapper og oppdagelsen med .Select og .Include",
           paragraphs: [
-            "Frontenden er bygget i React og TypeScript med TanStack Query for mellomlagring og synkronisering av server-state, Zustand for klient-state og Zod for skjemavalidering. Løsningen ble satt opp med frontend på Vercel, .NET-API på Azure Web App og MySQL-database på Railway.",
+            "Etter hvert som antallet entiteter og DTO-er vokste, ble manuell mapping i tjenestelaget rotete. Jeg vurderte biblioteker som AutoMapper og Mapperly, men valgte å skrive egne C# extension-metoder (som ToAppointmentWithDetailsDTO og ToClinicDTO) kombinert med en UpdateWith-hjelpemetode for delvise oppdateringer. Det holdt tjenestene svært lesbare uten ekstra pakkeavhengigheter.",
+            "Denne refaktoreringen avdekket en viktig detalj i hvordan EF Core bygger SQL: så lenge mappingen lå direkte inne i et .Select(a => new DTO { Doctor = ... })-uttrykk, skjønte EF Core at den måtte hente relasjonen til Doctor automatisk. Da jeg byttet til .Select(a => a.ToAppointmentWithDetailsDTO()), klarte ikke EF Core lenger å lese uttrykkstreet og kastet feil fordi relaterte data manglet. Løsningen var å legge inn eksplisitte .Include()-kall i spørringene.",
+            "Samme uke endret jeg fødselsnummer (NationalIdentityNumber) fra int til string på 11 tegn, siden norske fødselsnumre kan starte med 0 og aldri brukes til utregninger.",
+          ],
+        },
+        {
+          title: "Overlappende legetimer (tegnet på papir) og duplikatsjekk for gjester",
+          paragraphs: [
+            "For å hindre dobbeltbooking la jeg først inn sammensatte unike indekser i databasen på DoctorId + AppointmentDate og PatientId + AppointmentDate. Under testing oppdaget jeg at indeksen kun stoppet to timer som startet på nøyaktig samme minutt, men ikke hindret en ny bestilling klokken 10:15 hvis legen allerede hadde en 30-minutters time fra 10:00 til 10:30.",
+            "Jeg måtte sette meg ned med penn og papir og tegne opp tidsaksene for å være 100 prosent sikker på at datokontrollen fanget alle varianter av overlapp, både ved ny bestilling og når en registrert pasient endrer en eksisterende avtale.",
+          ],
+          bullets: [
+            "Gjenbruk av pasientprofil ved gjestebooking: Uregistrerte pasienter kan bestille time med navn, fødselsdato, telefon og epost. Hvis samme person bestiller igjen senere eller oppretter full brukerkonto, gjenbruker og oppgraderer backenden den eksisterende pasientraden i stedet for å lage duplikater.",
+            "Soft delete ved avbestilling: Avbestilte timer beholdes med status i databasen for historikk, uten å blokkere tidspunktet for nye pasienter.",
+          ],
+        },
+        {
+          title: "Uke 4 og 5: Fra Zustand til TanStack Query, minnebasert JWT og RBAC",
+          paragraphs: [
+            "I starten av frontend-arbeidet brukte jeg Zustand til alt, inkludert å hente lister med leger og timeavtaler. Det ga mye gjentakende kode og unødvendige useEffect-kall. Selv om jeg lå etter skjema etter en runde med influensa midt i prosjektet, valgte jeg å skrive om datahentingen til TanStack Query (useQuery, useMutation og useInfiniteQuery med paginering i backend), mens Zustand kun beholdt ren klient-state som aktivt token og tema.",
+          ],
+          bullets: [
+            "Kortlivet Access Token i minnet + httpOnly Refresh Cookie: Access token (1 til 15 minutter) holdes kun i minnet. Når et beskyttet endepunkt svarer med 401, kaller klienten automatisk POST /api/Auth/refresh med en 7-dagers httpOnly-cookie og fornyer tilgangen uten at brukeren merker det.",
+            "Rollebasert tilgangskontroll (RBAC): For at vanlige innloggede pasienter ikke skulle kunne endre oppslagstabeller som klinikker, byer og spesialiteter, la jeg til en egen Role-tabell (Patient og Admin) og låste skriveendepunktene med [Authorize(Roles = \"Admin\")].",
+            "Innspurt og optimalisering: Brukte react-scan for å rydde bort unødvendige re-renders, samlet duplisert JWT-oppsett i JWTTokenValidationParameters, flyttet CORS-innstillinger ut i appsettings.json, og flyttet all sortering og filtrering av timeavtaler fra frontend-tabellen over til backend.",
           ],
         },
       ],
@@ -449,10 +467,9 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
         "Under skoleprosjekter ligger MedCare Clinical, eksamensprosjektet mitt i backend hos Noroff med legetimer i C# og .NET 9.",
     },
     aiContext: [
-      "Levert som eksamensprosjektet mitt i Backend 2026 hos Noroff (jeg fikk karakter A på eksamen og karakter A i snitt på hele backendstudiet med bestått på alle mindre innleveringer; nevn kun karakterer hvis noen spør om karakterer eller hvordan det gikk på studiet/eksamen).",
+      "Levert som eksamensprosjektet mitt i Backend 2026 hos Noroff over fem uker (jeg fikk karakter A på eksamen og karakter A i snitt på hele backendstudiet med bestått på alle mindre innleveringer; nevn kun karakterer hvis noen spør om karakterer eller hvordan det gikk på studiet/eksamen).",
       "Fullstack timebestillingssystem for klinikker der pasienter kan søke opp leger på tvers av klinikker, byer og spesialiteter, og bestille, endre eller avbestille timer (med soft delete) både som gjest uten bruker og som innlogget pasient. Administratorer har et eget adminpanel med full CRUD for leger, klinikker, spesialiteter og timeavtaler.",
-      "Backend er skrevet i C# og `.NET 9` med ASP.NET Core, `Entity Framework Core` mot `MySQL`, JWT innlogging med refresh token i cookie (`POST api/Auth/refresh`) og Swagger dokumentasjon.",
-      "Frontenden er bygget i React med `@tanstack/react-query`, `Zustand`, `Zod` og `React Router`, og satt opp på Vercel mot Azure Web App og Railway.",
+      "Viktige tekniske valg og feilsøking underveis (fra changelog.md): 1) Designet databasen i 3. normalform (3NF) og brukte mysqldump + dbdiagram.io for å revers-sjekke at EF Core-migrasjonene i MySQL stemte 1-til-1 med ER-diagrammet. 2) Valgte egne C# extension-metoder (og UpdateWith for delvise oppdateringer) fremfor AutoMapper, og oppdaget at EF Core krevde eksplisitte .Include()-kall når mappingen ble flyttet ut av inline .Select()-uttrykk. 3) Oppdaget at unike indekser kun stoppet timer på nøyaktig samme minutt, så jeg tegnet opp tidsaksene på papir for å lage overlappssjekk på start- og sluttid. 4) Gjenbruker eksisterende gjestepasienter (navn + fødselsdato + epost) når de bestiller på nytt eller registrerer konto. 5) Migrerte datahenting i frontend fra Zustand + useEffect over til TanStack Query (med useInfiniteQuery og paginering/sortering/filtrering i backend), la til RBAC med egen Role-tabell (Patient/Admin), og satte opp kortlivede JWT access tokens i minnet med 7-dagers httpOnly refresh cookie.",
     ],
   },
   {
