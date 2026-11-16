@@ -217,34 +217,58 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     repoNote:
       "Privat repo (kommersielt produkt i drift). Jeg viser gjerne frem koden og designsystemet i en samtale.",
     caseStudy: {
-      role: "Medgründer · Ansvar for design, frontend, merkevare og brukeropplevelse",
+      role: "Medgründer · Ansvar for merkevare, design, copy, frontend og brukeropplevelse",
       status: "I kommersiell drift på emberbooking.no",
       intro:
-        "Ember Booking er et norsk bookingsystem jeg driver sammen med en annen utvikler. Der har jeg ansvaret for frontend, designsystemet, merkevaren og brukeropplevelsen for norske bedrifter som trenger enklere og mer automatiserte booking og utleiesystemer.",
+        "Ember Booking er et norsk bookingsystem jeg driver sammen med Kim for bedrifter innen badstue, treningsstudio og utleie. Der har jeg ansvaret for merkevaren, posisjoneringen, tekstene, designsystemet og frontenden på emberbooking.no.",
+      wideImage: {
+        src: "/projects/ember/casestudy-ronny.jpg",
+        alt: "Kundehistorie på emberbooking.no med Honndalen Gym og Sauna som sparer 5 til 7 timer i måneden.",
+        caption:
+          "Kundehistorier på emberbooking.no viser konkret hvordan pilotkunder som Honndalen Gym og Sauna sparer 5 til 7 timer hver måned.",
+        width: 1600,
+        height: 1016,
+      },
       sections: [
         {
-          title: "Samarbeidet og min rolle",
+          title: "Målgruppe og innsikt: Hvem vi faktisk bygger for",
           paragraphs: [
-            "Kim og jeg bygger Ember Booking sammen med en tydelig arbeidsdeling. Vi tar jevnlige statusmøter der vi går gjennom veien videre for bedriften, prioriterer hva som må på plass, og fordeler oppgavene mellom oss.",
-            "Mitt ansvar er alt som møter brukeren visuelt og i frontenden: designsystemet, merkevaren, markedsføringssidene i Next.js 16 og flyten i grensesnittet.",
-          ],
-        },
-        {
-          title: "Designsystem og brukeropplevelse",
-          paragraphs: [
-            "Mange systemer for utleie, treningssentre og lokaler bærer preg av tette skjemaer og visuell støy. Da jeg lagde designsystemet for Ember Booking, var målet å lage rolige og oversiktlige sider med god lesbarhet og komponenter som fungerer like godt på mobil som på PC.",
-            "Fargepaletten, kortene og avstandene følger faste rammer slik at vi kan legge til nye funksjoner og seksjoner uten at sidene mister strukturen.",
-          ],
-        },
-        {
-          title: "Frontend og ytelse på emberbooking.no",
-          paragraphs: [
-            "Markedsføringssidene på emberbooking.no kjører på Next.js 16 og TypeScript med fokus på rask innlasting, søkemotoroptimalisering og en ryddig gjennomgang av hvordan systemet fungerer i hverdagen.",
+            "Da Kim og jeg skulle forme merkevaren og budskapet for Ember Booking, startet arbeidet med å definere hvem den ideelle kunden vår er, og like viktig hvem vi venter med i første omgang. Målgruppen vår er travle eiere av små og mellomstore bedrifter som har mange baller i luften, og som vil bruke minst mulig tid på administrasjon og mest mulig tid på kundene sine, kampanjer og drift.",
+            "To konkrete kundeprofiler og smertepunkter la føringene for både posisjonering, tekst og struktur på nettsiden:",
           ],
           bullets: [
-            "Komponentstruktur: Gjenbrukbare seksjoner for funksjonsvisning, prisoversikt og kundehistorier i en oversiktlig kodebase.",
-            "Accessibility og lesbarhet: Tastaturnavigering, semantisk HTML og tydelig typografi.",
-            "Løpende forbedring: Jevnlig justering av tekst, struktur og brukerflyt basert på tilbakemeldinger fra kunder.",
+            "Ronny (Honndalen Gym og Sauna): Driver treningsstudio, gruppetimer og badstue. Før Ember gikk det med opptil en hel arbeidsdag i måneden på å hente ut rapporter, kryssjekke Vipps betalinger i Excel og føre bilag manuelt inn i Tripletex.",
+            "Deving (ATV utleie og naturopplevelser på Vestlandet): Frustrert over etablerte utleiesystemer (som Periode.no, Gibbs og Sharefox) som markedsfører seg som enkle, men som i praksis krever lang opplæring og er fulle av funksjoner bedriften ikke trenger.",
+          ],
+        },
+        {
+          title: "Posisjonering og budskap: Tre løfter uten fyllprat",
+          paragraphs: [
+            "Innsikten fra bedriftseierne gjorde det enkelt å skrelle bort vag markedsføringssjargong. Når noen spør hva som skiller Ember Booking fra eldre systemer, koker posisjoneringen og copyen på nettsiden ned til tre konkrete løfter:",
+          ],
+          bullets: [
+            "Vipps registrering på sekunder uten lange skjemaer: Mange systemer tvinger gjesten til å fylle ut lange skjemaer og opprette passord bare for å bestille en time. Med Vipps eller kort (Stripe og PayPal) er kunden registrert og ferdig betalt på sekunder.",
+            "Ferdig avstemt regnskap: Alle transaksjoner avstemmes automatisk mot Tripletex og Fiken, og systemet sender ut SMS og epost ved hver reservasjon. Bedriftseieren trenger kun å se over tallene i stedet for å føre manuelt.",
+            "Klar til bruk på en dag uten opplæringskurs: Systemet inneholder kun funksjonaliteten utleiebedrifter faktisk bruker i hverdagen, uten overflødige moduler som gjør oppsettet tungvint.",
+          ],
+        },
+        {
+          title: "Informasjonsarkitektur og tillitsreisen på emberbooking.no",
+          paragraphs: [
+            "Selve oppbyggingen av emberbooking.no (bygget i Next.js 16) er strukturert for å svare på spørsmålene og tvilen en bedriftseier sitter med før de tar steget og bytter system:",
+          ],
+          bullets: [
+            "Over folden (Hero): Tydelig verdiforslag ('Ett bookingsystem for alle dine ressurser'), kort forklaring av hvordan booking, betaling og regnskap henger sammen, primær handlingsknapp og lav terskel ('Ingen bindingstid').",
+            "Hvorfor Ember (3 raske kort under Hero): Viser forskjellen fra tunge konkurrenter ved første øyekast med hurtig Vipps utsjekk, spisset funksjonalitet og automatisert arbeidshverdag.",
+            "Fra smertepunkt til løsning: Setter først ord på frustrasjonen med Excel ark, manuell eksport og import og tungvinte systemer, før løsningen presenteres med automatisk regnskap, rask betaling og ressursstyring.",
+            "Bruksområder og sosial tillit (Social Proof): Bransjekort (som badstue med planlagt styring av ovn og belysning, treningssenter og ATV og bilutleie) og kundehistorier fra reelle pilotkunder som sparer 5 til 7 timer i måneden er spredt naturlig nedover siden.",
+            "Åpne priser og FAQ: Tydelige pakker uten skjulte kostnader og svar på de vanligste spørsmålene om regnskapsintegrasjon, oppsett og bindingstid før avsluttende handlingsknapp.",
+          ],
+        },
+        {
+          title: "Designsystem og samarbeid i hverdagen",
+          paragraphs: [
+            "Kim og jeg tar jevnlige statusmøter der vi går gjennom veien videre for bedriften, legger strategi og fordeler oppgavene mellom oss. Mitt ansvar er alt som møter brukeren visuelt og i frontenden: merkevaren, designsystemet, markedsføringssidene og at brukeropplevelsen holder seg rolig, lesbar og ryddig på både mobil og PC.",
           ],
         },
       ],
@@ -255,9 +279,10 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
         "Videre har vi Ember Booking, et norsk bookingsystem jeg driver sammen med Kim der jeg har ansvaret for design og frontend.",
     },
     aiContext: [
-      "Ember Booking er et norsk bookingsystem jeg driver sammen med Kim.",
+      "Ember Booking er et norsk bookingsystem jeg driver sammen med Kim for blant annet badstue, treningsstudio og utleie (som ATV og bilutleie).",
       "Slik jobber Kim og jeg sammen: vi tar et statusmøte sammen i ny og ne der vi prater om veien videre for bedriften, legger strategi og noterer hva som må jobbes med, og så blir vi enige om hvem som har ansvaret for hva.",
-      "Min rolle er å vedlikeholde og videreutvikle designet, frontenden, merkevaren og markedsføringssidene på `emberbooking.no` (bygget i Next.js 16), og sørge for at brukeropplevelsen er enkel og ryddig. Ikke si at jeg har bygget selve backend motoren, smartlås styringen eller regnskapsintegrasjonene; hold svarene om Ember fokusert på mitt arbeid med design, frontend, merkevare, landingssider, designsystem og brukeropplevelse.",
+      "Min rolle er å vedlikeholde og videreutvikle merkevaren, posisjoneringen, copy, designet, frontenden og markedsføringssidene på `emberbooking.no` (bygget i Next.js 16), og sørge for at brukeropplevelsen er enkel og ryddig. Ikke si at jeg har bygget selve backend motoren, smartlås styringen eller regnskapsintegrasjonene; hold svarene om Ember fokusert på mitt arbeid med merkevare, målgruppeinnsikt, copy, designsystem, landingssider, frontend og brukeropplevelse.",
+      "Fra merkevare og landingssidearbeidet vårt: vi spisset målgruppen mot travle bedriftseiere (som Ronny på Honndalen Gym og Sauna som tidligere brukte en hel arbeidsdag på å avstemme Vipps, Excel og Tripletex manuelt og nå sparer 5 til 7 timer i måneden, og Deving innen ATV utleie på Vestlandet som var lei av innviklede systemer). Ut fra dette bygde jeg opp budskapet og informasjonsarkitekturen på emberbooking.no rundt tre løfter: 1) lynrask registrering og betaling med Vipps uten lange skjemaer, 2) automatisk avstemt regnskap mot Tripletex og Fiken, og 3) et enkelt system som er klart på en dag uten unødvendige funksjoner.",
     ],
   },
   {
