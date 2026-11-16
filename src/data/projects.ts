@@ -84,7 +84,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     subtitle:
       "Sanntids turneringer og poengtavle for videregående skoler.",
     summary:
-      "Pågående prosjekt ved Nord-Gudbrandsdal VGS som får elevene opp fra mobilen i friminuttet, med QR kode ved bordet og live storskjerm i kantina.",
+      "Pågående prosjekt ved Nord-Gudbrandsdal VGS laget for å inkludere flere elever i miljøet rundt bordtennisbordene i friminuttet, med QR kode ved bordet og live storskjerm i kantina.",
     highlights: [
       "Kampflyt: Enkel flyt ved bordet med QR kode der begge spillerne bekrefter resultatet, med sjekk mot juks og automatisk frigjøring av glemte bord.",
       "Storskjerm: Live tavle i kantina via Socket.IO, tilpasset Infoskjermen.no på eldre TV skjermer med animert WebP og ES5 støtte.",
@@ -98,7 +98,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
       role: "Design, arkitektur og fullstackutvikling (eget fritidsprosjekt)",
       status: "I aktiv utprøving ved Nord-Gudbrandsdal VGS",
       intro:
-        "VGS Bordtennis startet som et forsøk på å lage noe artig som får elevene til å legge bort telefonen i friminuttet og samle seg rundt bordtennisbordene i kantina. Løsningen er et sanntidssystem i Node.js laget for turneringer og poengtavle på storskjerm, med QR kode ved bordet.",
+        "VGS Bordtennis startet som et forsøk på inkludering i friminuttet: å lage noe artig som gjorde det enklere for flere elever å bli med i miljøet rundt bordtennisbordene og være fysisk aktive sammen. Løsningen er et sanntidssystem i Node.js laget for turneringer og poengtavle på storskjerm, med QR kode ved bordet.",
       wideImage: {
         src: "/projects/vgs/kiosk.jpg",
         alt: "Storskjermen i VGS Bordtennis med pallplasser, live poengtavle, rekkerter og BOSS markeringer.",
@@ -134,8 +134,8 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
         {
           title: "Bakgrunn og motivasjon",
           paragraphs: [
-            "Til daglig jobber jeg med IKT drift og support på Nord-Gudbrandsdal VGS. I friminuttene så jeg stadig det samme bildet: mange satt alene med blikket festet i mobilen, samtidig som bordtennisbordene i kantina ofte ble stående ubrukte.",
-            "Som tidligere videospillnerd fikk jeg lyst til å bygge et system på fritiden som tok mekanikker fra spillverdenen inn i friminuttet. Når elevene kan klatre på en felles tabell, låse opp egne rekkerter, utfordre lærere og se navnet sitt live på storskjermen i kantina, blir terskelen for å bli med mye lavere.",
+            "Til daglig jobber jeg med IKT drift og support på Nord-Gudbrandsdal VGS. I friminuttene så vi at det allerede var mye liv og aktivitet rundt bordtennisbordene i kantina, samtidig som det var en gjeng med elever som ikke helt greide å komme seg inn i miljøet og derfor endte opp med å sitte på telefonen i stedet.",
+            "Prosjektet startet som et forsøk på inkludering og å skape enda mer engasjement rundt bordene. Som tidligere videospillnerd ville jeg lage noe artig som senket terskelen for å bli med, og som forsterket elevenes eget ønske om å delta aktivt og fysisk i en felles aktivitet i friminuttet.",
           ],
         },
         {
@@ -184,7 +184,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
         "Vi starter med VGS Bordtennis, et hobbyprosjekt på fritiden med QR kode ved bordet og live storskjerm i kantina.",
     },
     aiContext: [
-      "Pågående hobbyprosjekt jeg bygger på fritiden for å få elevene opp fra mobilen og til å spille bordtennis i friminuttet. Flere skoler kan bruke samme løsning med hvert sitt adskilte område (`/?school=<code>` og `/kiosk/<slug>`). Hvis noen spør om favorittprosjektet mitt, si gjerne at jeg har storkost meg med VGS Bordtennis i det siste, både fordi det er gøy å se elevene legge vekk mobilen i friminuttet, og fordi det som tidligere videospillnerd vekket mye nostalgi og engasjement i meg.",
+      "Pågående hobbyprosjekt jeg bygger på fritiden. Bakgrunnen var at vi så mye aktivitet rundt bordtennisbordene i kantina, samtidig som en gjeng med elever ikke helt greide å komme seg inn i miljøet og derfor havnet på telefonen. Prosjektet startet som et forsøk på inkludering og å lage noe artig som senket terskelen for å bli med og forsterket elevenes ønske om å delta aktivt og fysisk i friminuttet. Flere skoler kan bruke samme løsning med hvert sitt adskilte område (`/?school=<code>` og `/kiosk/<slug>`).",
       "Viktig grense hvis noen spør 'Laget du dette på jobb?' eller 'Betalte skolen for dette?': svar rolig og rett frem at nei, jobben min på skolen er kun IKT drift og support, og VGS Bordtennis er et rent hobbyprosjekt jeg har laget på egen fritid, ulønnet og på eget domene og server. Ikke nevn dette uoppfordret når folk bare spør vanlig om funksjonene i appen.",
       "Slik fungerer kampene ved bordet: spillerne skanner en QR kode ved bordet, legger vekk mobilen mens de spiller, og begge bekrefter poengsummen etterpå (med automatisk godkjenning etter 90 sekunder og sperre mot unaturlig korte sett). Hvis noen glemmer å fullføre et bord, frigjøres det automatisk etter 12 minutter slik at neste par kan spille videre.",
       "Turneringer og racketer: støtter Kongen på haugen, sluttspill og Sveitserstil (med Buchholz), i tillegg til statistikk på hvilke racketer som vinner mest gjennom sesongen.",
