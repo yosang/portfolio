@@ -2,7 +2,7 @@ export const AI_PAGE = {
   title: "Hvordan jeg bruker AI",
   lead: [
     "Det siste året har jeg egentlig brukt AI ganske minimalt. Den har mest vært en sparringspartner når jeg har diskutert ideer og tenkt høyt rundt prosjekter, uten at jeg har tatt ut potensialet i selve utviklingen.",
-    "Det var først høsten 2026 at jeg bestemte meg for å gi AI-assistert programvareutvikling et ordentlig forsøk med en strukturert metodikk. Når AI tar unna mer av selve skrivingen, får jeg mer tid i begge ender av arbeidet: å legge en skikkelig plan for arkitekturen i starten, og å pusse på detaljene i brukeropplevelsen til slutt.",
+    "Det var først høsten 2026 at jeg bestemte meg for å gi AI assistert programvareutvikling et ordentlig forsøk med en strukturert metodikk. Når AI tar unna mer av selve skrivingen, får jeg mer tid i begge ender av arbeidet: å legge en skikkelig plan for arkitekturen i starten, og å pusse på detaljene i brukeropplevelsen til slutt.",
   ],
   shift: {
     heading: "Hvor tiden min går",
@@ -21,9 +21,9 @@ export const AI_PAGE = {
     caption:
       "Når selve kodeskrivingen går raskere, flyttes mer av arbeidet til starten og slutten. Uten tydelige rammer i forkant og grundig gjennomgang til slutt vokser kodebasen raskt i feil retning.",
   },
-  principlesHeading: "Kjørereglene mine",
+  principlesHeading: "Reglene mine",
   principlesIntro:
-    "Dette er noe jeg fortsatt utforsker og lærer meg underveis, så tanken er på ingen måte å fremstille det som en fasit eller best practice for AI-assistert utvikling. Dette er rett og slett vaner som har fungert godt for meg så langt, og som helt sikkert kommer til å endre seg etter hvert som jeg lærer mer og blir flinkere til å bruke verktøyene.",
+    "Dette er noe jeg fortsatt utforsker og lærer meg underveis, så tanken er på ingen måte å fremstille det som en fasit eller best practice for AI assistert utvikling. Dette er rett og slett vaner som har fungert godt for meg så langt, og som helt sikkert kommer til å endre seg etter hvert som jeg lærer mer og blir flinkere til å bruke verktøyene.",
   principles: [
     {
       title: "Rammer før kode",

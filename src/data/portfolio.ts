@@ -22,7 +22,7 @@ export const PROFILE = {
   location: "Otta",
   heroHeadline: "Hei, Yosmel her",
   heroBio:
-    "Jeg utvikler nettsider og systemer med fokus på ryddig arkitektur, tydelig design og løsninger som folk faktisk tar i bruk. Bla gjerne gjennom prosjektene mine, eller slå av en prat med AI-versjonen av meg.",
+    "Jeg utvikler nettsider og systemer med fokus på ryddig arkitektur, tydelig design og løsninger som folk faktisk tar i bruk. Bla gjerne gjennom prosjektene mine, eller slå av en prat med AI versjonen av meg.",
   socials: [
     { label: "GitHub", href: "https://github.com/yosang" },
     { label: "LinkedIn", href: "https://www.linkedin.com/in/yosmel-chiang/" },
