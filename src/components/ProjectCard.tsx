@@ -26,6 +26,7 @@ export const ProjectCard = memo(function ProjectCard({
 }: ProjectCardProps) {
   const t = UI.home;
   const panelId = `work-${item.slug}`;
+  const caseHref = `/prosjekter/${item.slug}`;
 
   return (
     <article
@@ -39,11 +40,27 @@ export const ProjectCard = memo(function ProjectCard({
       <div className="mt-3.5 space-y-1 px-0.5">
         <div className="flex items-baseline justify-between gap-3">
           <h3 className="font-display text-lg font-medium tracking-[-0.015em] text-ink">
-            {item.title}
+            <Link
+              href={caseHref}
+              className="transition-opacity hover:opacity-75"
+            >
+              {item.title}
+            </Link>
           </h3>
 
           <div className="flex shrink-0 items-center gap-3 text-xs font-medium text-ink-soft">
-            {item.liveUrl && item.repoUrl && (
+            {item.liveUrl && (
+              <a
+                href={item.liveUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-0.5 transition-colors hover:text-ink"
+              >
+                <span>{t.live}</span>
+                <ArrowUpRight className="h-3 w-3" />
+              </a>
+            )}
+            {item.repoUrl && (
               <a
                 href={item.repoUrl}
                 target="_blank"
@@ -71,7 +88,12 @@ export const ProjectCard = memo(function ProjectCard({
           </div>
         </div>
 
-        <p className="text-sm leading-relaxed text-ink-soft">{item.subtitle}</p>
+        <Link
+          href={caseHref}
+          className="block text-sm leading-relaxed text-ink-soft transition-colors hover:text-ink"
+        >
+          {item.subtitle}
+        </Link>
       </div>
 
       <div
@@ -127,7 +149,7 @@ export const ProjectCard = memo(function ProjectCard({
                 </Link>
               </p>
             )}
-            <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
               <div className="flex flex-wrap gap-1.5">
                 {item.tags.map((tag) => (
                   <span
@@ -138,14 +160,23 @@ export const ProjectCard = memo(function ProjectCard({
                   </span>
                 ))}
               </div>
-              <button
-                type="button"
-                tabIndex={open ? undefined : -1}
-                onClick={() => onAsk(t.askAboutPrompt(item.title))}
-                className="text-xs font-medium text-ink underline underline-offset-4 cursor-pointer"
-              >
-                {t.askAbout} →
-              </button>
+              <div className="flex items-center gap-4">
+                <button
+                  type="button"
+                  tabIndex={open ? undefined : -1}
+                  onClick={() => onAsk(t.askAboutPrompt(item.title))}
+                  className="text-xs font-medium text-ink-soft underline underline-offset-4 transition-colors hover:text-ink cursor-pointer"
+                >
+                  {t.askAbout}
+                </button>
+                <Link
+                  href={caseHref}
+                  tabIndex={open ? undefined : -1}
+                  className="text-xs font-medium text-ink underline underline-offset-4 hover:opacity-75"
+                >
+                  {t.readCaseStudy} →
+                </Link>
+              </div>
             </div>
           </div>
         </div>

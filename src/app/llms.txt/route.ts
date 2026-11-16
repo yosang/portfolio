@@ -26,6 +26,7 @@ export async function GET() {
     "",
     ...ITEMS.flatMap((item) => {
       const urls = [
+        `Case: ${SITE_URL}/prosjekter/${item.slug}`,
         item.liveUrl ? `Live: ${item.liveUrl}` : null,
         item.repoUrl ? `Kode: ${item.repoUrl}` : null,
       ]

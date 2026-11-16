@@ -1,5 +1,28 @@
 export type ItemCategory = "independent" | "school";
 
+export interface CaseStudySection {
+  title: string;
+  paragraphs: string[];
+  bullets?: string[];
+}
+
+export interface CaseStudyImage {
+  src: string;
+  alt: string;
+  caption: string;
+  width: number;
+  height: number;
+}
+
+export interface ProjectCaseStudy {
+  role: string;
+  status: string;
+  intro: string;
+  wideImage?: CaseStudyImage;
+  mobileGallery?: CaseStudyImage[];
+  sections: CaseStudySection[];
+}
+
 export interface ProjectItem {
   slug: string;
   title: string;
@@ -20,6 +43,7 @@ export interface ProjectItem {
   highlights: string[];
   repoNote?: string;
   aiNote?: string;
+  caseStudy: ProjectCaseStudy;
   /**
    * 1-sentence spoken intro used during the guided project tour ("Vis meg rundt i prosjektene").
    * `audioSrc` is optional: if a new project does not have a pre-recorded MP3 yet,
@@ -40,7 +64,7 @@ export type IndexItem = ProjectItem;
 /**
  * Single source of truth for all portfolio projects.
  * Adding or updating an entry here automatically updates the home grid, category filters,
- * AI system prompt, guided project tour, SEO JSON-LD, and /llms.txt.
+ * AI system prompt, guided project tour, case study pages, SEO JSON-LD, and /llms.txt.
  */
 const PROJECT_DEFINITIONS: ProjectItem[] = [
   {
@@ -70,6 +94,90 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
       "Privat repo mens løsningen er i aktiv utprøving. Jeg viser gjerne frem kodebasen og arkitekturen i en prat.",
     aiNote:
       "Første versjon gikk fra plan til drift på en uke med Spike and Stabilize.",
+    caseStudy: {
+      role: "Design, arkitektur og fullstackutvikling (eget fritidsprosjekt)",
+      status: "I aktiv utprøving ved Nord-Gudbrandsdal VGS",
+      intro:
+        "VGS Bordtennis startet med et enkelt ønske: å få flere elever til å legge bort telefonen i friminuttet og samle seg rundt bordtennisbordene i kantina. Resultatet ble en sanntids turnerings-, bord- og aktivitetsplattform med QR-skanning ved bordet og live poengtavle på storskjerm.",
+      wideImage: {
+        src: "/projects/vgs/kiosk.jpg",
+        alt: "Storskjermen i VGS Bordtennis med pallplasser, live poengtavle, rekkert-ikoner og BOSS-markeringer.",
+        caption:
+          "Storskjermen (/kiosk) viser pallplasser, pågående kamper og hele tabellen live i kantina.",
+        width: 1600,
+        height: 1055,
+      },
+      mobileGallery: [
+        {
+          src: "/projects/vgs/mobile-turnering.jpg",
+          alt: "Mobilvisning av Turnering-fanen med aktiv kamp, tabell og bunnmeny med Skann QR.",
+          caption: "Turnering: Pågående kamp, tabell med BOSS-utfordringer og hurtigknapp for QR i bunnbaren.",
+          width: 768,
+          height: 1480,
+        },
+        {
+          src: "/projects/vgs/mobile-match.jpg",
+          alt: "Mobilvisning av Match-fanen med oversikt over bordene i kantina og vrimlearealet.",
+          caption: "Match: Sanntidsstatus på bordene (opptatt i kamp eller ledig) og hvem som er bordets vokter.",
+          width: 768,
+          height: 1480,
+        },
+        {
+          src: "/projects/vgs/mobile-profil.jpg",
+          alt: "Mobilvisning av Profil-fanen med valgt rekkert, statistikk, trofeer og kamphistorikk.",
+          caption: "Profil: Spillerens aktive rekkert, seiersprosent, tid ved bordet, trofeer og byttehandel.",
+          width: 768,
+          height: 1480,
+        },
+      ],
+      sections: [
+        {
+          title: "Bakgrunn og motivasjon",
+          paragraphs: [
+            "Til daglig jobber jeg med IKT drift og support på Nord-Gudbrandsdal VGS. I friminuttene så jeg stadig det samme bildet: mange satt alene med blikket festet i mobilen, samtidig som bordtennisbordene i kantina ofte ble stående ubrukte eller uten noen fast struktur.",
+            "Som tidligere videospillnerd fikk jeg lyst til å bygge et system på fritiden som tok de beste mekanikkene fra spillverdenen inn i et fysisk friminutt. Når elevene kan klatre på en felles stige, låse opp egne rekkerter, utfordre lærere i Boss Fight og se navnet sitt klatre live på storskjermen i kantina, blir terskelen for å bli med mye lavere.",
+          ],
+        },
+        {
+          title: "Skjermfri kampflyt ved bordet",
+          paragraphs: [
+            "Hele poenget med løsningen er at elevene skal spille bordtennis fremfor å stå og trykke på en skjerm. Derfor er flyten rundt selve bordet lagt opp slik at telefonen kun brukes i noen sekunder før og etter kampen.",
+            "Når to spillere skanner QR-koden ved samme bord innen 45 sekunder, kobles de sammen og kampen starter automatisk. Telefonen legges i lomma mens settene spilles, og etterpå legger den ene inn resultatet mens motstanderen bekrefter med ett trykk.",
+          ],
+          bullets: [
+            "Automatisk opprydding (Watchdog hvert 5. sekund): Hvis noen glemmer å fullføre en kamp, frigjøres bordet automatisk etter 12 minutter slik at neste par i den virtuelle bordkøen får varsel på telefonen.",
+            "Vern mot juks og avtalt spill: Hvis en kamp rapporteres unaturlig raskt (under 45 sekunder per sett), blokkeres 90-sekunders autogodkjenning og kampen flagges til arrangør. To venner kan heller ikke låse stigen ved å spille tellende stigekamper mot hverandre to ganger på rad (Anti-Bodyguard).",
+            "Lærere og ansatte som Boss Fight: Ansatte kan enten spille uforpliktende kamper utenfor tabellen eller melde seg på stigen med eget BOSS-merke. For å hindre poeng-farming mot samme lærer gis det maks ett tellende Boss-trofe per ansatt per dag.",
+          ],
+        },
+        {
+          title: "Turneringsmotor, rekkerter og Klasse-Guilds",
+          paragraphs: [
+            "Siden ulike skoler og friminutt har forskjellige behov, støtter turneringsmotoren i db.js tre fulle formater: Kongen på haugen (løpende stige der man utfordrer opptil 3 aktive plasser over seg), VM-sluttspill (gruppespill med slange-seeding og innbyrdes minitabell ved poenglikhet etterfulgt av kryss-seedet utslagstablå) og Sveitserstil (faste runder med Buchholz-utregning uten at noen ryker ut).",
+            "For å skape samhold på tvers av trinn og klasser har systemet egne Klasse-Guilds og digitale StatTrak-rekkerter med lokalt VGS- og Innlandet-preg. Hver rekkert teller antall kamper, seire, Boss-seire og tidligere eiere. Hver tredje fullførte turnering roterer skolen til en ny sesongpakke, og ved skoleårsavslutning for VG3 flyttes opplåste rekkerter over i skolens Premiehvelv slik at arven lever videre på skolen.",
+          ],
+        },
+        {
+          title: "Storskjermen i kantina og erfaringer med Infoskjermen.no",
+          paragraphs: [
+            "En av de mest lærerike tekniske utfordringene dukket opp da poengtavlen (/kiosk) skulle kjøre hele skoledagen gjennom Infoskjermen.no på eldre Samsung Tizen- og LG webOS-skjermer. På vanlig mobil og PC fungerte alt på første forsøk, men inne i låste signage-WebViews oppførte nettleseren seg helt annerledes.",
+            "I slike TV-nettlesere krever systemet et fysisk brukerklikk før en <video>-tag får spille. Kaller man video.play() i en iframe uten klikk, kaster ikke nettleseren en feilmelding: promiset blir bare stående uavklart for alltid, slik at videoen fryser på første bilde. I tillegg struper Chromium timere i kryss-domene iframes til hele minuttgrenser.",
+          ],
+          bullets: [
+            "24 fps animert WebP fremfor <video>: Alle animasjoner på storskjermen genereres med ffmpeg som 24 fps animert WebP i en <picture>-tag med GIF-fallback, håndhevet automatisk av testsuiten.",
+            "Tre synkroniserte visningslag: Storskjermen leveres først som ferdig SSR-HTML fra serveren, oppgraderes til sanntids Socket.IO i moderne nettlesere, og har en egen håndskrevet ES5-fallback (uten piler, template literals eller optional chaining) for eldre Smart-TV-er.",
+            "Tidsstyrt dvalemodus: Utenfor skolens åpningstid (Europe/Oslo) kobler storskjermen automatisk ned sanntidstrafikken og våkner igjen ved skolestart neste morgen.",
+          ],
+        },
+        {
+          title: "Arkitektur, drift og innebygd personvern (GDPR)",
+          paragraphs: [
+            "Hele plattformen er bygget i Node.js (>= 22.5) med den innebygde node:sqlite-modulen i WAL-modus og kun 5 direkte npm-avhengigheter (express, socket.io, dotenv, qrcode og web-push). Flere skoler kjører isolert på samme instans via school_id på tvers av 22 SQLite-tabeller og adskilte Socket.IO-rom, på en Docker-instans hos Fly.io i Stockholm med persistent SSD-volum og automatisk VACUUM INTO-backup ved nye utgivelser.",
+            "Fordi løsningen brukes av skoleelever, er personvern bygget inn i datamodellen etter prinsippet om dataminimering (Verify & Purge). Så snart en arrangør på skolen har bekreftet eleven (eller automatisk etter 14 dager), overskrives fullt navn og epost permanent med NULL i databasen. Kun en enveis HMAC-SHA256-hash beholdes for innlogging og duplikatsjekk, og plattformen har ingen fritekst-chat eller tredjepartssporing. Før utrulling ble løsningen stresstestet med 100 samtidige spillere uten feil.",
+          ],
+        },
+      ],
+    },
     tour: {
       audioSrc: "/audio/tour/0.mp3",
       bubble:
@@ -108,6 +216,39 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     ],
     repoNote:
       "Privat repo (kommersielt produkt i drift). Jeg viser gjerne frem koden og designsystemet i en samtale.",
+    caseStudy: {
+      role: "Medgründer · Ansvar for design, frontend, merkevare og brukeropplevelse",
+      status: "I kommersiell drift på emberbooking.no",
+      intro:
+        "Ember Booking er et norsk bookingsystem jeg driver sammen med Kim. Mitt hovedansvar er den visuelle identiteten, frontenden, markedsføringssidene på emberbooking.no og at brukeropplevelsen føles ryddig og enkel å forstå.",
+      sections: [
+        {
+          title: "Samarbeidet og min rolle",
+          paragraphs: [
+            "Kim og jeg bygger Ember Booking sammen med en tydelig arbeidsdeling. Vi tar jevnlige statusmøter der vi går gjennom veien videre for bedriften, prioriterer hva som må på plass, og fordeler oppgavene mellom oss.",
+            "Mitt bord er alt som møter brukeren visuelt og i frontenden: designsystemet, merkevaren, landingssidene i Next.js 16 og flyten i grensesnittet.",
+          ],
+        },
+        {
+          title: "Designsystem og visuelt uttrykk",
+          paragraphs: [
+            "Mange bookingsystemer for utleie, treningssentre og lokaler bærer preg av tette skjemaer og visuell støy. Da jeg utformet uttrykket for Ember Booking, var målet å skape en rolig, tillitvekkende flate med tydelig typografisk hierarki, gode kontraster og komponenter som fungerer like godt på mobil som på desktop.",
+            "Fargepaletten, kortstrukturen og avstandene er bygget opp etter faste rammer slik at nye funksjoner og seksjoner kan legges til uten at helhetsinntrykket sprekker opp.",
+          ],
+        },
+        {
+          title: "Frontend og ytelse på emberbooking.no",
+          paragraphs: [
+            "Markedsføringssidene på emberbooking.no er bygget i Next.js 16 med fokus på rask innlasting, god søkemotoroptimalisering og tydelig presentasjon av hvordan systemet løser hverdagen for utleiere.",
+          ],
+          bullets: [
+            "Komponentstruktur: Gjenbrukbare seksjoner for funksjonsvisning, prisoversikt og kundehistorier med lav kompleksitet i kodebasen.",
+            "Tilgjengelighet og lesbarhet: Tastaturnavigering, semantisk HTML og typografi tilpasset rask skimming.",
+            "Løpende forbedring: Jevnlig iterasjon på tekst, struktur og brukerflyt basert på tilbakemeldinger.",
+          ],
+        },
+      ],
+    },
     tour: {
       audioSrc: "/audio/tour/1.mp3",
       bubble:
@@ -135,7 +276,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     subtitle:
       "Samtalestyrt grensesnitt med 3D-skannet avatar, stemmekloning og visuell navigasjon.",
     summary:
-      "Laget for at du kan snakke med en AI versjon av meg i en vanlig samtale mens den viser deg rundt på siden. Samtidig er oppsettet en praktisk demonstrasjon av hvordan sanntids tale, visuell styring og forankring i egne fagdata kan løse reelle oppgaver innen helse, utdanning og kundeservice.",
+      "Laget for at du kan snakke med en AI-versjon av meg i en vanlig samtale mens den viser deg rundt på siden. Samtidig er oppsettet en praktisk demonstrasjon av hvordan sanntids tale, visuell styring og forankring i egne fagdata kan løse reelle oppgaver innen helse, utdanning og kundeservice.",
     highlights: [
       "Samtalegrensesnitt: AI Yosmel tar besøkende gjennom en visuell omvisning i prosjektene, svarer med stemme og henter frem CV ved behov.",
       "Bruksområder: Samme oppsett kan gi eldre og pasienter muntlig veiledning i helsevesenet, brukes til muntlig trening i skolen eller løse kundeservice for bedrifter.",
@@ -143,10 +284,43 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     ],
     aiNote:
       "Bygget høsten 2026 med faste rammer i AGENTS.md og skills.",
+    caseStudy: {
+      role: "Design, 3D-integrasjon og fullstackutvikling",
+      status: "I produksjon på yosmel.no (åpen kildekode)",
+      intro:
+        "Denne porteføljen utforsker hvordan et nettsidegrensesnitt fungerer når du kan snakke direkte med det. I stedet for at besøkende må lete gjennom menyer på egen hånd, kan AI-versjonen av meg ta deg med på en visuell omvisning, åpne prosjekter på skjermen, svare muntlig med klonet stemme og hente frem CV ved behov.",
+      sections: [
+        {
+          title: "Mer enn en portefølje: praktiske bruksområder",
+          paragraphs: [
+            "Tanken bak oppsettet var å teste hvor nær en vanlig muntlig samtale man kommer på web når modellen snakker med naturlig stemme, styrer det du ser på skjermen, og samtidig holder seg strengt til godkjente fakta.",
+            "Den samme arkitekturen har tydelig nytteverdi langt utenfor en personlig portefølje: i helsevesenet kan et slikt grensesnitt gi eldre og pasienter rolig muntlig veiledning gjennom skjemaer og forberedelser, i skolen kan elever øve muntlig i trygge rammer, og i kundeservice kan bedrifter veilede brukere visuelt gjennom en sak uten at modellen finner på egne svar.",
+          ],
+        },
+        {
+          title: "3D-avatar i egen Web Worker på 60 fps",
+          paragraphs: [
+            "Avataren er en 3D-skanning av meg med 52 ARKit-blendshapes for munnsynk, blunking, hodebevegelser og ansiktsuttrykk. For at 3D-rendringen aldri skal blokkere hovedtråden eller gjøre rulling på siden treg, overføres lerretet til en egen OffscreenCanvas Web Worker (avatar.worker.ts).",
+            "Selve Three.js-motoren startes først ved brukerinteraksjon eller etter at første bildeopptegning er ferdig, og pauser automatisk via IntersectionObserver når seksjonen ruller ut av synsfeltet.",
+          ],
+        },
+        {
+          title: "Synkronisert stemmekloning, tale-til-tekst og sikkerhet",
+          paragraphs: [
+            "Stemmen er klonet fra et 17 sekunders lydopptak og strømmes i sanntid over Server-Sent Events (SSE) fra /api/chat. Når lyden er skrudd på, venter chatboblen med å vises til første lydpakke faktisk starter avspilling i Web Audio API, slik at tekst, stemme og leppebevegelser treffer likt.",
+          ],
+          bullets: [
+            "Tale-til-tekst (/api/transcribe): Besøkende kan snakke direkte inn via mikrofonen i chatten, med en egen fagordliste for prosjektnavn og tekniske uttrykk.",
+            "Streng faktaforankring: Systemprompten bygges dynamisk fra samme datakilde som selve nettsiden (projects.ts og portfolio.ts), med klare grenser for hva modellen skal svare på og når den skal henvise videre på epost.",
+            "Misbruksvern og kostnadskontroll: Endepunktene er sikret med Origin- og Sec-Fetch-Site-sjekk, størrelsesgrenser på nyttelast, samt både IP-baserte og globale minutt- og dagskvoter.",
+          ],
+        },
+      ],
+    },
     tour: {
       audioSrc: "/audio/tour/portfolio.mp3",
       bubble:
-        "Her er selve porteføljen du er på nå, laget for at du kan snakke med en AI versjon av meg som viser deg rundt.",
+        "Her er selve porteføljen du er på nå, laget for at du kan snakke med en AI-versjon av meg som viser deg rundt.",
     },
     aiContext: [
       "Denne porteføljen (`yosmel.no`, kildekode på `github.com/yosang/portfolio`) utforsker hvordan AI kan gjøre et grensesnitt enklere å bruke: man snakker med AI Yosmel i en vanlig samtale, mens den tar leseren gjennom en visuell tour av prosjekter, åpner detaljer, svarer på spørsmål og henter frem CV uten at man må klikke og lete rundt selv.",
@@ -179,6 +353,32 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     ],
     aiNote:
       "Brukes på tvers av denne porteføljen og andre egne prosjekter.",
+    caseStudy: {
+      role: "Forfatter og vedlikeholder (Open Source)",
+      status: "Offentlig repo på github.com/yosang/skills",
+      intro:
+        "Når man bruker kodeagenter uten tydelige rammer, ender man raskt opp med overkomplisert kode, lilla glødeeffekter i grensesnittet og stive maskinoversatte tekster. Agent Skills er mitt åpne bibliotek med SKILL.md-moduler og AGENTS.md-regler som holder arkitektur, design og språk på plass på tvers av prosjekter.",
+      sections: [
+        {
+          title: "Hvorfor jeg samlet reglene i et eget repo",
+          paragraphs: [
+            "Da jeg høsten 2026 gikk inn for å bruke AI-assistert programvareutvikling mer systematisk, merket jeg raskt at kvaliteten står og faller på rammene man setter i forkant. Uten faste begrensninger legger språkmodeller gjerne til unødvendige abstraksjoner, defensiv kode som skjuler feil, og visuell støy.",
+            "Ved å samle kjørereglene i et eget repo etter Agent Skills-standarden (kompatibelt med Claude Code, Cursor, Antigravity og Gemini CLI), kan jeg koble nøyaktig samme kvalitetskrav rett inn i hvert nytt prosjekt.",
+          ],
+        },
+        {
+          title: "De tre kjernemodulene",
+          paragraphs: [
+            "Biblioteket er delt inn i tre fokuserte moduler slik at hver oppgave kun laster inn den konteksten som faktisk trengs:",
+          ],
+          bullets: [
+            "ui-craft: Bygger på Matt D. Smiths 3P-rammeverk (Purpose, Principles, Personality) og 60-30-10-fargeregelen. Kutter ut tilfeldige radial-gradients og overdimensjonerte kort til fordel for matte flater, OKLCH-nøytraler, flytende typografi (Utopia.fyi) og et 8pt avstandssystem.",
+            "lean-architecture: Holder kontekstvinduet under 40 % og tvinger frem planlegging før kode. Kombinerer prinsipper om én kilde til sannhet, fjerning av død kode og Dan Norths Spike and Stabilize-mønster.",
+            "natural-copy: Fjerner typiske AI-markører i både norsk og engelsk tekst, som tankestreker, tomme superlativer og stive ord-for-ord-oversettelser av etablerte tekniske uttrykk.",
+          ],
+        },
+      ],
+    },
     tour: {
       audioSrc: "/audio/tour/skills.mp3",
       bubble:
@@ -211,6 +411,38 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
       "Sikkerhet og flyt: JWT innlogging med refresh token i cookie, gjestebooking, pasientprofil og eget adminpanel med full CRUD.",
       "Frontend og drift: React med TanStack Query, Zustand og Zod, satt opp på Vercel mot Azure Web App og Railway.",
     ],
+    caseStudy: {
+      role: "Fullstackutvikler (Eksamensprosjekt i Backend 2026 hos Noroff)",
+      status: "Fullført eksamensprosjekt · Åpen kildekode",
+      intro:
+        "MedCare Clinical ble bygget som avsluttende eksamensprosjekt på det toårige studiet i backendutvikling hos Noroff. Oppgaven var å designe og levere et komplett timebestillingssystem for helseklinikker med et REST API i C# og .NET 9, relasjonsdatabase i MySQL og en tilhørende klient i React.",
+      sections: [
+        {
+          title: "Domene og brukerflyt for pasienter og klinikker",
+          paragraphs: [
+            "Løsningen dekker hele løpet fra en pasient søker etter ledig lege på tvers av byer, klinikker og medisinske spesialiteter, til timen er gjennomført eller endret. For å gjøre terskelen lav i en travel hverdag støtter systemet både hurtigbestilling som gjest uten brukerkonto og full pasientprofil for registrerte brukere.",
+            "På innsiden har klinikkadministrasjonen et eget administrasjonspanel med full CRUD-håndtering av klinikker, spesialiteter, leger, åpningstider og timeavtaler.",
+          ],
+        },
+        {
+          title: "Backend-arkitektur i C# og .NET 9",
+          paragraphs: [
+            "Kjernen i prosjektet er et lagdelt ASP.NET Core Web API i .NET 9 med Entity Framework Core mot MySQL. API-et er dokumentert i Swagger / OpenAPI og sikret med rollebasert tilgangskontroll mellom pasienter og administratorer.",
+          ],
+          bullets: [
+            "Autentisering med JWT og Refresh Token: Kortlivede access tokens kombinert med sikre refresh tokens i HTTP-only cookies (POST api/Auth/refresh).",
+            "Historikk og dataintegritet: Avbestilte timer håndteres med soft delete slik at klinikken beholder sporbarhet og historikk uten at tidspunktet blokkerer nye bestillinger.",
+            "Validering mot dobbeltbooking: Server-side kontroll av legens arbeidstid og eksisterende avtaler før en ny reservasjon skrives til databasen.",
+          ],
+        },
+        {
+          title: "Klient og utrulling",
+          paragraphs: [
+            "Frontenden er bygget i React og TypeScript med TanStack Query for mellomlagring og synkronisering av server-state, Zustand for klient-state og Zod for skjemavalidering. Løsningen ble satt opp med frontend på Vercel, .NET-API på Azure Web App og MySQL-database på Railway.",
+          ],
+        },
+      ],
+    },
     tour: {
       audioSrc: "/audio/tour/2.mp3",
       bubble:
@@ -246,6 +478,31 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
       "Funksjonalitet: Server Actions for innlogging og håndtering av filmer, sammen med søk, mørk modus og state i Zustand.",
       "Kvalitetssikring: Komponenttester med Jest og React Testing Library, pluss sjekk av accessibility med eslint-plugin-jsx-a11y.",
     ],
+    caseStudy: {
+      role: "Frontendutvikler (Skoleprosjekt hos Noroff)",
+      status: "Fullført skoleprosjekt · Live demo og åpen kildekode",
+      intro:
+        "Cinemorra er en filmkatalog og utlånsplattform bygget som skoleoppgave på frontendstudiet hos Noroff. Prosjektet fokuserer på rutestruktur i Next.js App Router, Server Actions, skjemavalidering og automatisert komponenttesting.",
+      sections: [
+        {
+          title: "Rutestruktur og App Router-oppsett",
+          paragraphs: [
+            "Applikasjonen er delt inn i tydelige rutegrupper i Next.js App Router: en åpen publikumsdel ((home)) der besøkende kan utforske sjangre, søke i katalogen, se trailere og lese anmeldelser, og en beskyttet administrasjonsdel ((dashboard)/admin) for å legge til, redigere og slette filmer.",
+            "Tilgangskontroll håndteres i middleware.ts, og hver rute har egne loading- og error-states slik at overganger og feilsituasjoner håndteres ryddig i grensesnittet.",
+          ],
+        },
+        {
+          title: "State, Server Actions og testing",
+          paragraphs: [
+            "Innlogging og mutasjoner mot filmkatalogen kjører via Next.js Server Actions, mens klient-state som filtre, utlånsstatus og temavalg (lys og mørk visning) holdes i Zustand.",
+          ],
+          bullets: [
+            "Komponenttester: Sentrale visninger og interaksjoner er dekket med Jest og React Testing Library.",
+            "Tilgjengelighet (Accessibility): Koden sjekkes med eslint-plugin-jsx-a11y, med semantiske skjemaelementer og tastaturstøtte.",
+          ],
+        },
+      ],
+    },
     tour: {
       audioSrc: "/audio/tour/3.mp3",
       bubble:
@@ -276,6 +533,10 @@ export const PROJECTS: ProjectItem[] = [
 ];
 
 export const ITEMS: IndexItem[] = PROJECTS;
+
+export function getProjectBySlug(slug: string): ProjectItem | undefined {
+  return PROJECTS.find((p) => p.slug === slug);
+}
 
 export const PROJECT_TOUR_STEPS: Array<{
   slug: string;

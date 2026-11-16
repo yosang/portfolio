@@ -1,9 +1,16 @@
 import type { MetadataRoute } from "next";
-import { SITE_URL } from "@/data/portfolio";
+import { ITEMS, SITE_URL } from "@/data/portfolio";
 
-const LAST_MODIFIED = new Date("2026-11-15");
+const LAST_MODIFIED = new Date("2026-11-16");
 
 export default function sitemap(): MetadataRoute.Sitemap {
+  const projectRoutes: MetadataRoute.Sitemap = ITEMS.map((item) => ({
+    url: `${SITE_URL}/prosjekter/${item.slug}`,
+    lastModified: LAST_MODIFIED,
+    changeFrequency: "monthly",
+    priority: 0.85,
+  }));
+
   return [
     {
       url: SITE_URL,
@@ -11,6 +18,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 1.0,
     },
+    ...projectRoutes,
     {
       url: `${SITE_URL}/about`,
       lastModified: LAST_MODIFIED,

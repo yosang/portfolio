@@ -63,7 +63,7 @@ export function Navbar() {
     {
       href: "/#prosjekter",
       label: UI.nav.projects,
-      active: pathname === "/" && projectsActive,
+      active: (pathname === "/" && projectsActive) || pathname.startsWith("/prosjekter"),
       kind: "projects" as const,
     },
     { href: "/about", label: UI.nav.about, active: pathname === "/about", kind: "page" as const },

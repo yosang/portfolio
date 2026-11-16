@@ -2,16 +2,24 @@
 
 import React, { useCallback, useRef, useState } from "react";
 import Image from "next/image";
-import { ArrowUpRight } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import type { IndexItem } from "@/data/portfolio";
 import { UI } from "@/data/ui";
 
 interface ProjectMediaProps {
   item: IndexItem;
   priority?: boolean;
+  linkToCase?: boolean;
+  fullWidth?: boolean;
 }
 
-export function ProjectMedia({ item, priority = false }: ProjectMediaProps) {
+export function ProjectMedia({
+  item,
+  priority = false,
+  linkToCase = true,
+  fullWidth = false,
+}: ProjectMediaProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [playing, setPlaying] = useState(false);
   const t = UI.home;
@@ -34,9 +42,6 @@ export function ProjectMedia({ item, priority = false }: ProjectMediaProps) {
     video.pause();
   }, []);
 
-  const primaryHref = item.liveUrl ?? item.repoUrl;
-  const pillLabel = item.liveUrl ? t.openLive : t.openCode;
-
   const stageContent = (
     <div
       onPointerEnter={handlePointerEnter}
@@ -55,7 +60,11 @@ export function ProjectMedia({ item, priority = false }: ProjectMediaProps) {
           alt={item.media.alt}
           width={1200}
           height={900}
-          sizes="(min-width: 1024px) 464px, (min-width: 768px) 45vw, 92vw"
+          sizes={
+            fullWidth
+              ? "(min-width: 1024px) 1024px, 96vw"
+              : "(min-width: 1024px) 464px, (min-width: 768px) 45vw, 92vw"
+          }
           priority={priority}
           className="h-full w-full object-cover select-none"
         />
@@ -76,31 +85,29 @@ export function ProjectMedia({ item, priority = false }: ProjectMediaProps) {
         )}
       </div>
 
-      {primaryHref && (
+      {linkToCase && (
         <span
           aria-hidden="true"
           className="work-stage__pill pointer-events-none absolute right-3 bottom-3 z-10 inline-flex items-center gap-1 rounded-full border border-white/15 bg-[#181514]/88 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm"
         >
-          <span>{pillLabel}</span>
-          <ArrowUpRight className="h-3.5 w-3.5" />
+          <span>{t.openCase}</span>
+          <ArrowRight className="h-3.5 w-3.5" />
         </span>
       )}
     </div>
   );
 
-  if (!primaryHref) {
+  if (!linkToCase) {
     return stageContent;
   }
 
   return (
-    <a
-      href={primaryHref}
-      target="_blank"
-      rel="noreferrer"
-      aria-label={`${pillLabel}: ${item.title}`}
+    <Link
+      href={`/prosjekter/${item.slug}`}
+      aria-label={`${t.openCase}: ${item.title}`}
       className="block rounded-[14px]"
     >
       {stageContent}
-    </a>
+    </Link>
   );
 }
