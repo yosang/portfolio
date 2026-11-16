@@ -52,7 +52,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     ground: "#17211e",
     media: {
       poster: "/projects/vgs-bordtennis-poster.jpg",
-      video: "/projects/vgs-bordtennis.mp4?v=mobile-nav",
+      video: "/projects/vgs-bordtennis.mp4?v=qr-bottom",
       alt: "Storskjerm med poengtavle og mobilvisning i VGS Bordtennis.",
     },
     tags: ["Node.js", "node:sqlite", "Socket.IO", "Pågår"],
