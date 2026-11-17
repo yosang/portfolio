@@ -5,7 +5,7 @@ export async function GET() {
   const lines: string[] = [
     `# ${PROFILE.name} (@${PROFILE.handle})`,
     "",
-    `> Fullstackutvikler bosatt i Gudbrandsdalen (${PROFILE.location}). Fullført toårig utdanning i Backend Development ved Noroff School of Technology and Digital Media (2024 til 2026, karakter A i gjennomsnitt), og tar nå Frontend Development på deltid ved Noroff. Medgründer av Ember Booking, med bakgrunn fra montering av møbler og programmering av Motoman industriroboter og som avdelingsleder med personalansvar, driftsplanlegging og kvalitetskontroll på Ekornes. Trives med å bidra med mer enn bare kode i møte med kunder, forstå forretning og drift, og ta del i juridiske vurderinger og større valg.`,
+    `> Fullstackutvikler bosatt i Gudbrandsdalen (${PROFILE.location}). Fullført toårig utdanning i Backend Development ved Noroff School of Technology and Digital Media (2024 til 2026, karakter A i gjennomsnitt), og tar nå Frontend Development på deltid ved Noroff. Medgründer av Ember Booking, med bakgrunn fra montering av møbler og programmering av Motoman industriroboter og som avdelingsleder med personalansvar, driftsplanlegging og kvalitetskontroll på Ekornes. Trives med å bidra med mer enn bare kode, sette seg inn i forretning og drift, og ta del i juridiske vurderinger og større valg.`,
     "",
     "## Kort oversikt",
     `- Nettside: ${SITE_URL}`,
@@ -15,7 +15,7 @@ export async function GET() {
     `- CV (PDF): ${SITE_URL}/Yosmel_Chiang_CV.pdf`,
     "- Språk: Norsk (morsmål), spansk (morsmål), engelsk (flytende)",
     "- Daglig arbeid: IKT drift og brukerstøtte ved Nord-Gudbrandsdal VGS, samt medgründer (merkevare, UX og frontend) i Ember Booking.",
-    "- Ønsket arbeidsform: Åpen for utvikler og konsulentroller innen fullstack, backend eller frontend (fysisk kontor i Gudbrandsdalen/nærområdet, fagdager/kundemøter og hybrid i Innlandet, eller remote/hybrid).",
+    "- Ønsket arbeidsform: Åpen for roller som utvikler eller konsulent innen fullstack, backend eller frontend (fysisk kontor i Gudbrandsdalen/nærområdet, fagdager/kundemøter og hybrid i Innlandet, eller remote/hybrid).",
     "",
     "## Teknisk verktøykasse",
     ...PROFILE.about.stackGroups.map(

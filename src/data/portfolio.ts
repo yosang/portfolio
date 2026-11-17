@@ -60,7 +60,7 @@ export const PROFILE = {
       [
         "Til daglig jobber jeg med IKT drift og brukerstøtte på Nord-Gudbrandsdal VGS, og ved siden av driver jeg ",
         { label: "Ember Booking", href: "https://emberbooking.no" },
-        " sammen med Kim. Der snakker vi direkte med norske bedriftseiere og former både forretningsmodell, merkevare, designsystem og frontend. Jeg trives godt med det jeg gjør i dag, og er åpen for spennende utvikler og konsulentroller innen fullstack, backend eller frontend. Siden jeg er fast etablert her i Gudbrandsdalen, stiller jeg gjerne fysisk på kontor i nærområdet eller på fagdager og kundemøter i Innlandet, og jobber like godt hybrid eller remote.",
+        " sammen med Kim. Der snakker vi direkte med norske bedriftseiere og former både forretningsmodell, merkevare, designsystem og frontend. Jeg trives godt med det jeg gjør i dag, og er åpen for spennende roller som utvikler eller konsulent innen fullstack, backend eller frontend. Siden jeg er fast etablert her i Gudbrandsdalen, stiller jeg gjerne fysisk på kontor i nærområdet eller på fagdager og kundemøter i Innlandet, og jobber like godt hybrid eller remote.",
       ],
     ] as AboutSegment[][],
     outdoors: {
