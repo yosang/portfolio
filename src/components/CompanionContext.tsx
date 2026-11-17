@@ -24,6 +24,9 @@ const INSTANT_TOUR_NO_RE =
 const INSTANT_TOUR_EN_RE =
   /^(?:hi[,!\s]+|hello[,!\s]+|hey[,!\s]+)?(?:ai\s+yosmel[,!\s]+|yosmel[,!\s]+)?(?:can you\s+|could you\s+|would you\s+)?(?:show\s+me(?:\s+around(?:\s+in|\s+your)?)?|take\s+me\s+(?:around|through|on\s+a\s+tour\s+of)|give\s+me\s+a\s+tour\s+of|walk\s+me\s+through)\s*(?:your\s+|the\s+|all\s+)?(?:projects|portfolio|work)?[.!?]*$/i;
 
+const INSTANT_CASE_TOUR_RE =
+  /\b(gjennom\s+caset|gjennomgang\s+av\s+caset|les(?:e)?\s+(?:gjennom\s+)?caset|walk\s+(?:me\s+)?(?:briefly\s+)?through\s+the\s+.*case|through\s+the\s+case\s+study|read\s+the\s+case\s+study)\b/i;
+
 export interface ChatAttachment {
   href: string;
   filename: string;
@@ -391,6 +394,9 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
         !SPECIFIC_TOUR_TARGET_RE.test(trimmed) && INSTANT_TOUR_NO_RE.test(trimmed);
       const isInstantTour = isEnglishTour || isNorwegianTour;
 
+      let instantSteps: Array<{ slug?: string; audioSrc?: string; bubble: string }> | null =
+        null;
+
       if (isInstantTour) {
         const tourLocale = isEnglishTour
           ? "en"
@@ -399,8 +405,44 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
               ? "no"
               : localeRef.current
             : localeRef.current;
-        const steps: Array<{ slug?: string; audioSrc?: string; bubble: string }> =
-          getLocalizedData(tourLocale).tourSteps;
+        instantSteps = getLocalizedData(tourLocale).tourSteps;
+      } else if (INSTANT_CASE_TOUR_RE.test(trimmed)) {
+        const isEnCase =
+          /\b(walk|briefly|through|case\s+study|read)\b/i.test(trimmed) &&
+          !/\b(ta\s+meg|gjennom|caset)\b/i.test(trimmed);
+        const caseLocale = isEnCase
+          ? "en"
+          : /\b(ta\s+meg|gjennom|caset)\b/i.test(trimmed)
+            ? "no"
+            : localeRef.current;
+        const localizedProjects = getLocalizedData(caseLocale).projects;
+        const lowerMsg = trimmed.toLowerCase();
+        const matchedProject =
+          localizedProjects.find(
+            (p) =>
+              lowerMsg.includes(p.slug) ||
+              lowerMsg.includes(p.title.toLowerCase()) ||
+              (p.slug === "interaktiv-portefolje" &&
+                (lowerMsg.includes("interaktiv portefølje") ||
+                  lowerMsg.includes("interactive portfolio")))
+          ) ||
+          (pathnameRef.current.startsWith("/prosjekter/")
+            ? localizedProjects.find(
+                (p) => `/prosjekter/${p.slug}` === pathnameRef.current
+              )
+            : undefined);
+
+        if (matchedProject) {
+          instantSteps = matchedProject.caseStudy.sections.map((sec, idx) => ({
+            slug: `${matchedProject.slug}#${idx}`,
+            audioSrc: sec.tour.audioSrc,
+            bubble: sec.tour.bubble,
+          }));
+        }
+      }
+
+      if (instantSteps) {
+        const steps = instantSteps;
         setMood("happy");
 
         const finishStreamingState = () => {

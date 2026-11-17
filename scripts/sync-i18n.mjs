@@ -154,18 +154,21 @@ function extractTourEntries() {
     path.join(ROOT, "src", "data", "projects.ts"),
     "utf8"
   );
-  const entries = [];
-  const tourRegex =
-    /slug:\s*"([^"]+)"[\s\S]*?tour:\s*\{\s*(?:audioSrc:\s*"([^"]+)",\s*)?bubble:\s*\n?\s*"([^"]+)"/g;
+  const homeEntries = [];
+  const caseEntries = [];
+  const blockRegex =
+    /tour:\s*\{\s*audioSrc:\s*"([^"]+)",\s*bubble:\s*\n?\s*"([^"]+)"/g;
   let m;
-  while ((m = tourRegex.exec(content)) !== null) {
-    entries.push({
-      slug: m[1],
-      audioSrc: m[2] || "",
-      noBubble: m[3],
-    });
+  while ((m = blockRegex.exec(content)) !== null) {
+    const audioSrc = m[1];
+    const noBubble = m[2];
+    if (audioSrc.startsWith("/audio/tour/")) {
+      homeEntries.push({ audioSrc, noBubble });
+    } else if (audioSrc.startsWith("/audio/cases/")) {
+      caseEntries.push({ audioSrc, noBubble });
+    }
   }
-  return entries;
+  return { homeEntries, caseEntries };
 }
 
 function extractWavBase64(res) {
@@ -230,9 +233,67 @@ ${JSON.stringify(strings, null, 2)}`;
 function cleanEnglishTourForSpeech(text) {
   return text
     .replace(/\bVGS Bordtennis\b/gi, "my high school table tennis project")
+    .replace(/\bNord-Gudbrandsdal VGS\b/gi, "North Gudbrandsdal High School")
+    .replace(/\bInfoskjermen\.no\b/gi, "the info screen platform")
+    .replace(/\bC#/g, "C sharp")
+    .replace(/\bWebP\b/gi, "Web P")
+    .replace(/\bES5\b/gi, "E S five")
+    .replace(/\b3NF\b/gi, "third normal form")
+    .replace(/[`*_~]+/g, "")
+    .trim();
+}
+
+function cleanNorwegianTourForSpeech(text) {
+  return text
     .replace(/\bC#/g, "C sharp")
     .replace(/[`*_~]+/g, "")
     .trim();
+}
+
+async function generateMp3File(ttsAi, voiceId, speechText, language, outAudioPath) {
+  fs.mkdirSync(path.dirname(outAudioPath), { recursive: true });
+  const ttsRes = await ttsAi.interactions.create(
+    {
+      model: "gemini-3.8-flash-tts",
+      input: [
+        {
+          type: "user_input",
+          content: [{ type: "text", text: speechText }],
+        },
+      ],
+      response_format: { type: "audio" },
+      generation_config: {
+        speech_config: [{ voice: voiceId, language }],
+      },
+      store: false,
+    },
+    { maxRetries: 0, timeout: 15000 }
+  );
+  const b64 = extractWavBase64(ttsRes);
+  if (!b64) return false;
+  const wavBuf = Buffer.from(b64, "base64");
+  const tmpWav = `${outAudioPath}.tmp.wav`;
+  fs.writeFileSync(tmpWav, wavBuf);
+  try {
+    execFileSync(
+      "ffmpeg",
+      [
+        "-y",
+        "-i",
+        tmpWav,
+        "-codec:a",
+        "libmp3lame",
+        "-qscale:a",
+        "4",
+        outAudioPath,
+      ],
+      { stdio: "ignore" }
+    );
+    fs.unlinkSync(tmpWav);
+  } catch {
+    fs.renameSync(tmpWav, outAudioPath);
+  }
+  return true;
 }
 
 async function main() {
@@ -298,14 +359,16 @@ async function main() {
     }
   }
 
-  // Check English tour audio files
-  const tourEntries = extractTourEntries();
+  // Check tour and case study audio files
+  const { homeEntries, caseEntries } = extractTourEntries();
   fs.mkdirSync(EN_AUDIO_DIR, { recursive: true });
 
   if (apiKey && voiceId) {
     const ttsAi = new GoogleGenAI({ apiKey, apiVersion: "v1beta" });
-    for (const entry of tourEntries) {
-      if (!entry.audioSrc) continue;
+    let rateLimited = false;
+
+    for (const entry of homeEntries) {
+      if (rateLimited || !entry.audioSrc) continue;
       const baseName = path.basename(entry.audioSrc);
       const outAudioPath = path.join(EN_AUDIO_DIR, baseName);
       const enBubble = prunedTranslations[entry.noBubble] || entry.noBubble;
@@ -318,53 +381,91 @@ async function main() {
 
       try {
         console.log(
-          `[sync-i18n] Generating English tour audio for ${entry.slug} (${baseName}): "${speechText}"`
+          `[sync-i18n] Generating English tour audio (${baseName}): "${speechText}"`
         );
-        const ttsRes = await ttsAi.interactions.create(
-          {
-            model: "gemini-3.8-flash-tts",
-            input: [
-              {
-                type: "user_input",
-                content: [{ type: "text", text: speechText }],
-              },
-            ],
-            response_format: { type: "audio" },
-            generation_config: {
-              speech_config: [{ voice: voiceId }],
-            },
-          },
-          { maxRetries: 0, timeout: 20000 }
+        const ok = await generateMp3File(
+          ttsAi,
+          voiceId,
+          speechText,
+          "en-US",
+          outAudioPath
         );
-        const b64 = extractWavBase64(ttsRes);
-        if (b64) {
-          const wavBuf = Buffer.from(b64, "base64");
-          const tmpWav = path.join(EN_AUDIO_DIR, `_tmp_${baseName}.wav`);
-          fs.writeFileSync(tmpWav, wavBuf);
-          try {
-            execFileSync("ffmpeg", [
-              "-y",
-              "-i",
-              tmpWav,
-              "-codec:a",
-              "libmp3lame",
-              "-qscale:a",
-              "4",
-              outAudioPath,
-            ], { stdio: "ignore" });
-            fs.unlinkSync(tmpWav);
-          } catch {
-            // If ffmpeg is unavailable on build server, rename WAV directly (decodeAudioData handles both)
-            fs.renameSync(tmpWav, outAudioPath);
-          }
+        if (ok) {
           tourAudioHashes[baseName] = h;
           console.log(`[sync-i18n] Saved ${outAudioPath}`);
         }
       } catch (err) {
-        console.warn(
-          `[sync-i18n] Could not generate tour audio for ${baseName}:`,
-          err?.message || err
-        );
+        const msg = err?.message || String(err);
+        console.warn(`[sync-i18n] Could not generate tour audio for ${baseName}:`, msg);
+        if (msg.includes("429") || msg.includes("Rate limit")) {
+          rateLimited = true;
+        }
+      }
+    }
+
+    for (const entry of caseEntries) {
+      if (rateLimited || !entry.audioSrc) break;
+      const relNo = entry.audioSrc.replace(/^\//, "");
+      const outNoPath = path.join(ROOT, "public", relNo);
+      const noSpeech = cleanNorwegianTourForSpeech(entry.noBubble);
+      const hNo = sha256(noSpeech);
+
+      if (!(tourAudioHashes[relNo] === hNo && fs.existsSync(outNoPath))) {
+        try {
+          console.log(`[sync-i18n] Generating NO case audio (${relNo})...`);
+          const ok = await generateMp3File(
+            ttsAi,
+            voiceId,
+            noSpeech,
+            "nb-NO",
+            outNoPath
+          );
+          if (ok) {
+            tourAudioHashes[relNo] = hNo;
+            console.log(`[sync-i18n] Saved ${outNoPath}`);
+          }
+        } catch (err) {
+          const msg = err?.message || String(err);
+          console.warn(`[sync-i18n] Skipping remaining TTS generation (quota/rate limit):`, msg);
+          if (msg.includes("429") || msg.includes("Rate limit")) {
+            rateLimited = true;
+            break;
+          }
+        }
+      }
+
+      if (rateLimited) break;
+
+      const relEn = entry.audioSrc
+        .replace("/audio/cases/", "/audio/cases/en/")
+        .replace(/^\//, "");
+      const outEnPath = path.join(ROOT, "public", relEn);
+      const enBubble = prunedTranslations[entry.noBubble] || entry.noBubble;
+      const enSpeech = cleanEnglishTourForSpeech(enBubble);
+      const hEn = sha256(enSpeech);
+
+      if (!(tourAudioHashes[relEn] === hEn && fs.existsSync(outEnPath))) {
+        try {
+          console.log(`[sync-i18n] Generating EN case audio (${relEn})...`);
+          const ok = await generateMp3File(
+            ttsAi,
+            voiceId,
+            enSpeech,
+            "en-US",
+            outEnPath
+          );
+          if (ok) {
+            tourAudioHashes[relEn] = hEn;
+            console.log(`[sync-i18n] Saved ${outEnPath}`);
+          }
+        } catch (err) {
+          const msg = err?.message || String(err);
+          console.warn(`[sync-i18n] Skipping remaining TTS generation (quota/rate limit):`, msg);
+          if (msg.includes("429") || msg.includes("Rate limit")) {
+            rateLimited = true;
+            break;
+          }
+        }
       }
     }
   }

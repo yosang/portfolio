@@ -25,6 +25,9 @@ export function localizeValue<T>(val: T, locale: Locale): T {
     if (val.startsWith("/audio/tour/") && !val.startsWith("/audio/tour/en/")) {
       return val.replace("/audio/tour/", "/audio/tour/en/") as unknown as T;
     }
+    if (val.startsWith("/audio/cases/") && !val.startsWith("/audio/cases/en/")) {
+      return val.replace("/audio/cases/", "/audio/cases/en/") as unknown as T;
+    }
     return (EN_MAP[val] || val) as unknown as T;
   }
   if (Array.isArray(val)) {

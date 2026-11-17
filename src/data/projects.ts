@@ -4,6 +4,10 @@ export interface CaseStudySection {
   title: string;
   paragraphs: string[];
   bullets?: string[];
+  tour: {
+    bubble: string;
+    audioSrc: string;
+  };
 }
 
 export interface CaseStudyImage {
@@ -137,6 +141,11 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
             "Til daglig jobber jeg med IKT drift og support på Nord-Gudbrandsdal VGS. I friminuttene så vi at det allerede var mye liv og aktivitet rundt bordtennisbordene i kantina, samtidig som det var en gjeng med elever som ikke helt greide å komme seg inn i miljøet og derfor endte opp med å sitte på telefonen i stedet.",
             "Prosjektet startet som et forsøk på inkludering og å skape enda mer engasjement rundt bordene. Som tidligere videospillnerd ville jeg lage noe artig som senket terskelen for å bli med, og som forsterket elevenes eget ønske om å delta aktivt og fysisk i en felles aktivitet i friminuttet.",
           ],
+          tour: {
+            audioSrc: "/audio/cases/vgs-bordtennis/0.mp3",
+            bubble:
+              "Prosjektet startet fordi vi ville gjøre det enklere for flere elever å bli med rundt bordtennisbordene i friminuttet i stedet for å bli sittende på telefonen.",
+          },
         },
         {
           title: "Lavterskel gjestespill og rask kampflyt ved bordet",
@@ -150,6 +159,11 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
             "Sesjonsbro mellom kamera og hjemskjerm (PWA): Siden iOS skiller lagring mellom vanlig Safari og apper på hjemskjermen, synkroniseres økten via manifestet slik at elevene forblir innlogget når de skanner QR koden med mobilkameraet.",
             "Valideringslogikk mot juks og Boss Fight: Lovlige resultater godkjennes automatisk etter 60 sekunder, mens unaturlig raske kamper (under 45 sekunder per sett) stoppes og flagges til arrangør. Samme spillerpar kan ikke låse tabellen ved å spille mot hverandre to ganger på rad (maks 2 tellende kamper per par per dag), og ansatte kan delta som Boss Fight med maks ett tellende trofe per ansatt per dag.",
           ],
+          tour: {
+            audioSrc: "/audio/cases/vgs-bordtennis/1.mp3",
+            bubble:
+              "Ved bordet skanner to spillere QR koden innen 45 sekunder, legger vekk mobilen mens de spiller, og kan til og med samle opptil tre seire på vent som gjest før de lager profil.",
+          },
         },
         {
           title: "Turneringer, rekkerter og klasselag",
@@ -157,6 +171,11 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
             "Siden ulike skoler og friminutt har forskjellige behov, støtter turneringsmotoren tre oppsett: Kongen på haugen (åpen poengstige med 3 poeng per seier og automatisk påmelding ved bordet der alle kan møte hverandre på kryss og tvers), sluttspill med gruppespill og utslagsrunder, og Sveitserstil med faste runder der alle får spille helt til slutt.",
             "For å skape samhold på tvers av trinn og klasser har systemet egne klasselag og digitale rekkerter med lokalt preg fra skolen og Innlandet. Hver rekkert teller antall kamper, seire og tidligere eiere. Hver tredje fullførte turnering bytter skolen til en ny sesongpakke, og ved skoleårsavslutning for VG3 flyttes opplåste rekkerter over i skolens premiehvelv.",
           ],
+          tour: {
+            audioSrc: "/audio/cases/vgs-bordtennis/2.mp3",
+            bubble:
+              "Turneringsmotoren støtter både åpen poengstige, sluttspill og sveitserstil, kombinert med klasselag og digitale rekkerter med lokalt preg.",
+          },
         },
         {
           title: "Storskjermen i kantina og erfaringer med Infoskjermen.no",
@@ -169,6 +188,11 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
             "Tre synkroniserte visningslag og TV testing: Storskjermen leveres først som ferdig HTML fra serveren (SSR), oppgraderes til sanntids Socket.IO i moderne nettlesere, og har en egen klient i ren ES5 (med 3 sekunders polling og måling av faktisk medgått tid) for eldre TV skjermer. Reservevisningene kan testes direkte i vanlig nettleser med ?mode=es5 og ?mode=ssr.",
             "Diagnosestempel og tidsstyrt dvale: Nederst til høyre viser skjermen aktiv modus (LIVE, POLL, ES5 eller SSR) og laster seg selv inn på nytt automatisk når en ny versjon rulles ut. Utenfor skolens åpningstid går storskjermen i dvale og våkner igjen ved skolestart neste morgen.",
           ],
+          tour: {
+            audioSrc: "/audio/cases/vgs-bordtennis/3.mp3",
+            bubble:
+              "På eldre TV skjermer i kantina frøs vanlig HTML video i iframes, så storskjermen bruker animert WebP og tre visningslag med egen ES5 reserve.",
+          },
         },
         {
           title: "Arkitektur, drift og personvern",
@@ -176,6 +200,11 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
             "Løsningen er bygget i Node.js med innebygd node:sqlite i WAL modus og kun 5 npm pakker (express, socket.io, dotenv, qrcode og web-push). Flere skoler kjører adskilt på samme instans via school_id i databasen og egne Socket.IO rom, i en lukket Docker container på Fly.io i Stockholm med fast lagringsvolum, CalVer versjonering og automatisk sikkerhetskopi (VACUUM INTO) ved nye utgivelser. Før utrulling ble systemet stresstestet med 100 samtidige spillere fordelt på to skoler uten feil.",
             "Fordi løsningen brukes av skoleelever, er personvern (GDPR art. 25) bygget rett inn i datamodellen. Så snart en arrangør på skolen har bekreftet eleven, slettes midlertidig navn og epost permanent med NULL i databasen (og uverifiserte data vaskes automatisk etter 14 dager, mens tomme gjesteøkter vaskes etter 24 timer). Kun en enveis HMAC-SHA256 hash beholdes for innlogging, elevene kan slette egen konto på stedet, og arrangør kan hente ut en anonymisert aktivitetsrapport for skolen med ukentlig puls, hverdagsrytme og tidslinje (A4 og Excel generert uten eksterne pakker).",
           ],
+          tour: {
+            audioSrc: "/audio/cases/vgs-bordtennis/4.mp3",
+            bubble:
+              "Backenden kjører i Node.js med innebygd SQLite og bare fem npm pakker, stresstestet med hundre samtidige spillere og bygget slik at navn og epost slettes etter godkjenning.",
+          },
         },
         {
           title: "Milepæl fra produksjon: Evaluering og tiltak på dag 2",
@@ -189,6 +218,11 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
             "Kallenavnmoderering med 24 timers varsel: Siden tenåringer er raske til å finne kreative ordspill som går rundt vanlige ordfiltre på storskjermen, fikk arrangør verktøy for å endre upassende kallenavn direkte uten å slette spillerens poeng. Eleven kan fortsatt logge inn med sitt gamle kallenavn, ser et varsel i 24 timer om hvorfor navnet ble endret, og er sperret fra å bytte tilbake til det utestengte navnet.",
             "Motstanderbekreftelse ved modusbytte i kamp: For å hindre at en spiller alene skrur en tellende kamp over til fritt spill når de ligger under, krever bytte mellom turnering og fritt spill nå bekreftelse fra motstanderen før resultatet kan sendes inn. Ved uenighet om resultat går kampen stille til konflikt i arrangørpanelet uten at bordet blokkeres for neste par.",
           ],
+          tour: {
+            audioSrc: "/audio/cases/vgs-bordtennis/5.mp3",
+            bubble:
+              "Allerede på dag to i kantina økte aktiviteten til 21 kamper før lunsjen var ferdig, og vi la inn timeplanstyring for bordene og enkel moderering av kallenavn.",
+          },
         },
       ],
     },
@@ -255,6 +289,11 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
             "Ronny (Honndalen Gym og Sauna): Driver treningsstudio, gruppetimer og badstue. Før Ember gikk det med opptil en hel arbeidsdag i måneden på å hente ut rapporter, kryssjekke Vipps betalinger i Excel og føre bilag manuelt inn i Tripletex.",
             "Deving (ATV utleie og naturopplevelser på Vestlandet): Frustrert over etablerte utleiesystemer (som Periode.no, Gibbs og Sharefox) som markedsfører seg som enkle, men som i praksis krever lang opplæring og er fulle av funksjoner bedriften ikke trenger.",
           ],
+          tour: {
+            audioSrc: "/audio/cases/ember-booking/0.mp3",
+            bubble:
+              "Arbeidet med Ember Booking startet med innsikt fra travle bedriftseiere som brukte altfor mye tid på å avstemme Vipps, Excel og regnskap manuelt.",
+          },
         },
         {
           title: "Posisjonering og budskap: Tre løfter uten fyllprat",
@@ -266,6 +305,11 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
             "Ferdig avstemt regnskap: Alle transaksjoner avstemmes automatisk mot Tripletex og Fiken, og systemet sender ut SMS og epost ved hver reservasjon. Bedriftseieren trenger kun å se over tallene i stedet for å føre manuelt.",
             "Klar til bruk på en dag uten opplæringskurs: Systemet inneholder kun funksjonaliteten utleiebedrifter faktisk bruker i hverdagen, uten overflødige moduler som gjør oppsettet tungvint.",
           ],
+          tour: {
+            audioSrc: "/audio/cases/ember-booking/1.mp3",
+            bubble:
+              "Ut fra dette spisset jeg budskapet rundt tre konkrete løfter: rask betaling med Vipps uten lange skjemaer, ferdig avstemt regnskap mot Tripletex og Fiken, og oppsett på en dag.",
+          },
         },
         {
           title: "Informasjonsarkitektur og tillitsreisen på emberbooking.no",
@@ -279,12 +323,22 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
             "Bruksområder og sosial tillit (Social Proof): Bransjekort (som badstue med planlagt styring av ovn og belysning, treningssenter og ATV og bilutleie) og kundehistorier fra reelle pilotkunder som sparer 5 til 7 timer i måneden er spredt naturlig nedover siden.",
             "Åpne priser og FAQ: Tydelige pakker uten skjulte kostnader og svar på de vanligste spørsmålene om regnskapsintegrasjon, oppsett og bindingstid før avsluttende handlingsknapp.",
           ],
+          tour: {
+            audioSrc: "/audio/cases/ember-booking/2.mp3",
+            bubble:
+              "Landingssiden i Next.js 16 er bygget opp steg for steg fra konkrete smertepunkter til kundehistorier fra pilotkunder som sparer fem til sju timer i måneden.",
+          },
         },
         {
           title: "Designsystem og samarbeid i hverdagen",
           paragraphs: [
             "Kim og jeg tar jevnlige statusmøter der vi går gjennom veien videre for bedriften, legger strategi og fordeler oppgavene mellom oss. Mitt ansvar er alt som møter brukeren visuelt og i frontenden: merkevaren, designsystemet, markedsføringssidene og at brukeropplevelsen holder seg rolig, lesbar og ryddig på både mobil og PC.",
           ],
+          tour: {
+            audioSrc: "/audio/cases/ember-booking/3.mp3",
+            bubble:
+              "I hverdagen har jeg ansvaret for designsystemet, merkevaren og frontenden, slik at hele plattformen holder seg ryddig og enkel å bruke.",
+          },
         },
       ],
     },
@@ -336,6 +390,11 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
             "Tanken bak oppsettet var å teste hvor nær en vanlig muntlig samtale man kommer på web når modellen snakker med naturlig stemme, styrer det du ser på skjermen, og samtidig holder seg strengt til godkjente fakta.",
             "Samme oppsett har tydelig nytteverdi i andre bransjer: i helsevesenet kan det gi eldre og pasienter rolig muntlig veiledning gjennom skjemaer og forberedelser, i skolen kan elever øve muntlig i trygge rammer, og i kundeservice kan bedrifter hjelpe brukere visuelt gjennom en sak uten at modellen finner på egne svar.",
           ],
+          tour: {
+            audioSrc: "/audio/cases/interaktiv-portefolje/0.mp3",
+            bubble:
+              "Målet med porteføljen var å teste hvordan en muntlig samtale som styrer skjermen ut fra faste fakta også kan brukes i helsevesenet, skolen og kundeservice.",
+          },
         },
         {
           title: "Delt 3D modell i egen Web Worker på 60 fps",
@@ -343,6 +402,11 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
             "Avataren er en 3D skanning av meg med 20 blendshapes for munnsynk, blunking og ansiktsuttrykk, kombinert med skjelettstyring av nakke og hode. For at 3D visningen aldri skal blokkere hovedtråden eller gjøre rulling på siden treg, kjører lerretet i en egen OffscreenCanvas Web Worker (avatar.worker.ts).",
             "En og samme WebGL og Worker instans flyttes direkte via en DOM portal mellom seksjonen på forsiden, det flytende hjørnepanelet og fullskjermssiden (/chat), slik at modellen kun lastes inn en gang i minnet. Three.js starter ved første interaksjon og pauser automatisk via IntersectionObserver når avataren er ute av synsfeltet.",
           ],
+          tour: {
+            audioSrc: "/audio/cases/interaktiv-portefolje/1.mp3",
+            bubble:
+              "Selv om 3D figuren har tjue blendshapes for munnsynk og uttrykk, kjører den i en egen OffscreenCanvas Web Worker som gjenbrukes på tvers av hele siden på 60 fps.",
+          },
         },
         {
           title: "Synkronisert stemmekloning og tale til tekst",
@@ -353,6 +417,11 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
             "Tale til tekst (/api/transcribe): Besøkende kan snakke direkte inn via mikrofonen i chatten, med en egen ordliste for prosjektnavn og faguttrykk.",
             "Streng faktaforankring: Systemprompten bygges dynamisk fra samme datakilde som selve nettsiden (projects.ts og portfolio.ts), med klare grenser for hva modellen skal svare på og når den skal henvise videre på epost.",
           ],
+          tour: {
+            audioSrc: "/audio/cases/interaktiv-portefolje/2.mp3",
+            bubble:
+              "Stemmen er klonet fra sytten sekunder lydopptak, og chatboblene venter på Web Audio API slik at tekst, tale og leppebevegelser starter helt likt.",
+          },
         },
         {
           title: "Sikring mot prompt injection i praksis",
@@ -365,6 +434,11 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
             "Fast liste over lovlige handlinger: [GO:<sti>] sjekkes mot en fast liste av gyldige sider på både server og klient før router.push kjører, så modellen aldri kan sende noen til eksterne nettsider. [FILE:cv] peker til en fast PDF fil og slippes kun gjennom når du faktisk ber om CV.",
             "Ingen lagring og faste kvoter: Alle kall for chat, stemme og tale til tekst sendes med store: false, sammen med sjekk av Origin, Sec-Fetch-Site og faste grenser per minutt og per dag i minnet.",
           ],
+          tour: {
+            audioSrc: "/audio/cases/interaktiv-portefolje/3.mp3",
+            bubble:
+              "For å sikre mot prompt injection renses alle meldinger utenfra i en egen TypeScript vaktmodul, og alle tagger som styrer siden sjekkes mot faste lister på server og klient.",
+          },
         },
       ],
     },
@@ -417,6 +491,11 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
             "Da jeg høsten 2026 gikk inn for å bruke AI assistert programvareutvikling mer systematisk, merket jeg raskt at kvaliteten står og faller på rammene man setter i forkant. Uten faste begrensninger legger språkmodeller gjerne til unødvendige abstraksjoner, defensiv kode som skjuler feil, og visuell støy.",
             "Ved å samle reglene i et eget repo som følger Agent Skills standarden (kompatibelt med Claude Code, Cursor, Antigravity og Gemini CLI), kan jeg bruke de samme kravene i hvert nytt prosjekt.",
           ],
+          tour: {
+            audioSrc: "/audio/cases/skills/0.mp3",
+            bubble:
+              "Jeg samlet reglene mine i et eget repo fordi kvaliteten når man bruker kodeagenter står og faller på at man låser rammene på forhånd.",
+          },
         },
         {
           title: "De tre modulene",
@@ -428,6 +507,11 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
             "lean-architecture: Holder konteksten kort og krever planlegging før kode. Fokuserer på en felles datakilde, sletting av død kode, små commits og Dan Norths Spike and Stabilize.",
             "natural-copy: Fjerner typiske AI uvaner i både norsk og engelsk tekst, som tankestreker, unødvendige bindestreker, tomme klisjeer og stive oversettelser av tekniske uttrykk.",
           ],
+          tour: {
+            audioSrc: "/audio/cases/skills/1.mp3",
+            bubble:
+              "Repoet er delt i tre moduler som styrer rolige flater og farger i grensesnittet, slank arkitektur med kort kontekst, og naturlig språk uten klisjeer.",
+          },
         },
       ],
     },
@@ -480,6 +564,11 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
             "Swagger med XML dokumentasjon: Konfigurerte Swagger på /doc med XML kommentarer, eksempeldata og responskoder for hvert endepunkt.",
             "GitHub Actions CI: La inn automatisk byggesjekk ved hver push helt fra starten, slik at ingen commit kunne brekke byggeprosessen i det stille.",
           ],
+          tour: {
+            audioSrc: "/audio/cases/medcare-clinical/0.mp3",
+            bubble:
+              "I uke en tegnet jeg databasen i tredje normalform og eksporterte skjemaet fra MySQL tilbake til dbdiagram for å sjekke at migrasjonene i EF Core stemte på prikken.",
+          },
         },
         {
           title: "Uke 2: Egne mappere fremfor AutoMapper og oppdagelsen med .Select og .Include",
@@ -488,6 +577,11 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
             "Denne oppryddingen viste en viktig detalj i hvordan EF Core bygger SQL: så lenge mappingen lå direkte inne i et .Select(a => new DTO { Doctor = ... }) uttrykk, skjønte EF Core at den måtte hente relasjonen til Doctor automatisk. Da jeg byttet til .Select(a => a.ToAppointmentWithDetailsDTO()), klarte ikke EF Core lenger å lese uttrykkstreet og kastet feil fordi relaterte data manglet. Løsningen var å legge inn eksplisitte kall til .Include() i spørringene.",
             "Samme uke endret jeg fødselsnummer (NationalIdentityNumber) fra int til string på 11 tegn, siden norske fødselsnumre kan starte med 0 og aldri brukes til utregninger.",
           ],
+          tour: {
+            audioSrc: "/audio/cases/medcare-clinical/1.mp3",
+            bubble:
+              "I uke to skrev jeg egne extension mappere i C# i stedet for AutoMapper, og lærte at EF Core krever eksplisitte Include kall så snart mappingen flyttes ut av Select.",
+          },
         },
         {
           title: "Overlappende legetimer (tegnet på papir) og duplikatsjekk for gjester",
@@ -499,6 +593,11 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
             "Gjenbruk av pasientprofil ved gjestebooking: Pasienter uten konto kan bestille time med navn, fødselsdato, telefon og epost. Hvis samme person bestiller igjen senere eller oppretter full brukerkonto, gjenbruker og oppgraderer backenden den eksisterende pasientraden i stedet for å lage duplikater.",
             "Soft delete ved avbestilling: Avbestilte timer beholdes med status i databasen for historikk, uten å blokkere tidspunktet for nye pasienter.",
           ],
+          tour: {
+            audioSrc: "/audio/cases/medcare-clinical/2.mp3",
+            bubble:
+              "For å hindre dobbeltbooking tegnet jeg opp tidsaksene på papir så kontrollen fanger alle delvise overlapp mellom legetimer, samtidig som gjestebooking gjenbruker eksisterende pasientrader.",
+          },
         },
         {
           title: "Uke 4 og 5: Fra Zustand til TanStack Query, minnebasert JWT og RBAC",
@@ -510,6 +609,11 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
             "Rollebasert tilgangskontroll (RBAC): For at vanlige innloggede pasienter ikke skulle kunne endre oppslagstabeller som klinikker, byer og spesialiteter, la jeg til en egen Role tabell (Patient og Admin) og låste skriveendepunktene med [Authorize(Roles = \"Admin\")].",
             "Innspurt og optimalisering: Brukte react-scan for å rydde bort unødvendige oppdateringer av visningen, samlet duplisert JWT oppsett i JWTTokenValidationParameters, flyttet CORS innstillinger ut i appsettings.json, og flyttet all sortering og filtrering av timeavtaler fra tabellen i frontend over til backend.",
           ],
+          tour: {
+            audioSrc: "/audio/cases/medcare-clinical/3.mp3",
+            bubble:
+              "Til slutt skrev jeg om datahentingen i React fra Zustand til TanStack Query med paginering i backend, kortlivede JWT tokens i minnet og rollebasert tilgang for admin.",
+          },
         },
       ],
     },
@@ -559,6 +663,11 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
             "Applikasjonen er delt inn i tydelige rutegrupper i Next.js App Router: en åpen del ((home)) der besøkende kan utforske sjangre, søke i katalogen, se trailere og lese anmeldelser, og et beskyttet adminpanel ((dashboard)/admin) for å legge til, redigere og slette filmer.",
             "Tilgangskontroll håndteres i middleware.ts, og hver rute har egne loading og error states slik at overganger og feilsituasjoner håndteres ryddig i grensesnittet.",
           ],
+          tour: {
+            audioSrc: "/audio/cases/cinemorra/0.mp3",
+            bubble:
+              "I Cinemorra er App Router delt i egne rutegrupper for den åpne filmkatalogen og et beskyttet adminpanel styrt via middleware.",
+          },
         },
         {
           title: "State, Server Actions og testing",
@@ -569,6 +678,11 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
             "Komponenttester: Sentrale visninger og interaksjoner testes med Jest og React Testing Library.",
             "Accessibility: Koden sjekkes med eslint-plugin-jsx-a11y, med semantiske skjemaelementer og tastaturstøtte.",
           ],
+          tour: {
+            audioSrc: "/audio/cases/cinemorra/1.mp3",
+            bubble:
+              "Innlogging og filmendringer går gjennom Server Actions med klientstate i Zustand, og sentrale visninger testes med Jest og React Testing Library.",
+          },
         },
       ],
     },
