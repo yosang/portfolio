@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -12,12 +18,23 @@ import { portfolioAudio } from "@/lib/audioSynth";
 import { useLocalizedData } from "@/lib/i18n";
 
 const STUDIO_BG = "#17211e";
+let sharedPortalEl: HTMLDivElement | null = null;
+const emptySubscribe = () => () => {};
+const getServerPortalSnapshot = () => null;
+function getPortalSnapshot(): HTMLDivElement {
+  if (!sharedPortalEl) {
+    sharedPortalEl = document.createElement("div");
+    sharedPortalEl.className = "h-full w-full";
+  }
+  return sharedPortalEl;
+}
 
 export function ChatDock() {
   const pathname = usePathname();
   const {
     messages,
     isOpen,
+    hasOpenedOnce,
     setIsOpen,
     mood,
     isStreaming,
@@ -25,24 +42,27 @@ export function ChatDock() {
     setVoiceEnabled,
     voiceCapped,
     resetChat,
+    heroAvatarSlot,
+    chatPageAvatarSlot,
   } = useCompanion();
   const { ui: UI, profile: PROFILE } = useLocalizedData();
   const t = UI.chat;
 
   const [heroScrolledOut, setHeroScrolledOut] = useState(false);
-  const [hasOpenedOnce, setHasOpenedOnce] = useState(false);
   const [scrolledPastTop, setScrolledPastTop] = useState(false);
   const [infoOpen, setInfoOpen] = useState(false);
   const [audioSpeaking, setAudioSpeaking] = useState(false);
-  const [portalHost, setPortalHost] = useState<HTMLDivElement | null>(null);
+  const portalHost = useSyncExternalStore(
+    emptySubscribe,
+    getPortalSnapshot,
+    getServerPortalSnapshot
+  );
 
   const floatingSlotRef = useRef<HTMLSpanElement | null>(null);
   const headerSlotRef = useRef<HTMLDivElement | null>(null);
   const parkingRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    if (isOpen) setHasOpenedOnce(true);
-  }, [isOpen]);
+  const dialogRef = useRef<HTMLElement | null>(null);
+  const prevFocusRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     const onScroll = () => {
@@ -102,7 +122,7 @@ export function ChatDock() {
             if (!entry) return;
             setHeroScrolledOut(!entry.isIntersecting && entry.boundingClientRect.top < 0);
           },
-          { threshold: 0.1 }
+          { threshold: 0.05 }
         )
       : null;
     if (heroEl && io) io.observe(heroEl);
@@ -111,48 +131,85 @@ export function ChatDock() {
       io?.disconnect();
       mq.removeEventListener("change", check);
     };
-  }, [pathname]);
+  }, [pathname, heroAvatarSlot]);
 
   const isOnChatPage = pathname === "/chat";
   const belowFoldOrSubpage = pathname !== "/" || heroScrolledOut;
   const showFloatingAvatar = !isOnChatPage && !isOpen;
-  const shouldActivate = !isOnChatPage && (isOpen || belowFoldOrSubpage);
 
-  useEffect(() => {
-    if (!shouldActivate || portalHost) return;
-    const host = document.createElement("div");
-    host.className = "h-full w-full";
-    setPortalHost(host);
-  }, [shouldActivate, portalHost]);
+  const activeVariant = isOnChatPage
+    ? "hero"
+    : isOpen
+      ? "head"
+      : pathname === "/" && !heroScrolledOut && heroAvatarSlot
+        ? "hero"
+        : "bust";
 
   useLayoutEffect(() => {
     if (!portalHost) return;
     let target: HTMLElement | null = parkingRef.current;
-    if (!isOnChatPage) {
-      if (isOpen && headerSlotRef.current) {
-        target = headerSlotRef.current;
-      } else if (showFloatingAvatar && belowFoldOrSubpage && floatingSlotRef.current) {
-        target = floatingSlotRef.current;
-      }
+    if (isOnChatPage) {
+      if (chatPageAvatarSlot) target = chatPageAvatarSlot;
+    } else if (isOpen && headerSlotRef.current) {
+      target = headerSlotRef.current;
+    } else if (pathname === "/" && !heroScrolledOut && heroAvatarSlot) {
+      target = heroAvatarSlot;
+    } else if (showFloatingAvatar && belowFoldOrSubpage && floatingSlotRef.current) {
+      target = floatingSlotRef.current;
     }
     if (target && portalHost.parentElement !== target) {
       target.appendChild(portalHost);
     }
-  }, [portalHost, isOnChatPage, isOpen, showFloatingAvatar, belowFoldOrSubpage]);
+  }, [
+    portalHost,
+    pathname,
+    isOnChatPage,
+    isOpen,
+    heroScrolledOut,
+    showFloatingAvatar,
+    belowFoldOrSubpage,
+    heroAvatarSlot,
+    chatPageAvatarSlot,
+  ]);
 
   useEffect(() => {
     if (!isOpen) return;
+    prevFocusRef.current = document.activeElement as HTMLElement | null;
     const prevOverflow = document.documentElement.style.overflow;
     if (window.innerWidth < 640) {
       document.documentElement.style.overflow = "hidden";
     }
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setIsOpen(false);
+      if (e.key === "Escape") {
+        setIsOpen(false);
+        return;
+      }
+      if (e.key === "Tab" && dialogRef.current) {
+        const focusables = dialogRef.current.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusables.length === 0) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        const active = document.activeElement as HTMLElement | null;
+        if (e.shiftKey) {
+          if (!active || active === first || !dialogRef.current.contains(active)) {
+            e.preventDefault();
+            last.focus();
+          }
+        } else if (active === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => {
       document.documentElement.style.overflow = prevOverflow;
       window.removeEventListener("keydown", onKey);
+      if (prevFocusRef.current && document.contains(prevFocusRef.current)) {
+        prevFocusRef.current.focus();
+      }
     };
   }, [isOpen, setIsOpen]);
 
@@ -168,7 +225,7 @@ export function ChatDock() {
         createPortal(
           <AvatarStage
             mood={mood}
-            variant={isOpen ? "head" : "bust"}
+            variant={activeVariant}
             className="h-full w-full"
           />,
           portalHost
@@ -213,6 +270,7 @@ export function ChatDock() {
             className="absolute inset-0 bg-black/35 cursor-default"
           />
           <aside
+            ref={dialogRef}
             role="dialog"
             aria-modal="true"
             aria-label={t.title}
@@ -224,7 +282,7 @@ export function ChatDock() {
                   ref={headerSlotRef}
                   style={{ background: STUDIO_BG }}
                   className={`relative h-14 w-14 shrink-0 overflow-hidden rounded-2xl border border-ink/10 dark:border-white/15 ${
-                    isActiveVoice ? "ring-1.5 ring-[#1b6b57]/75 dark:ring-[#7dc4b0]/75" : ""
+                    isActiveVoice ? "ring-[1.5px] ring-[#1b6b57]/75 dark:ring-[#7dc4b0]/75" : ""
                   }`}
                 />
                 <span className="text-xs text-ink-soft">

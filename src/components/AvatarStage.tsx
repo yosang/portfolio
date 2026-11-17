@@ -11,7 +11,7 @@ import type {
 
 export type { AvatarMood, AvatarVariant };
 
-const MODEL_URL = "/avatar/yosmel.glb?v=gant-check-2";
+const MODEL_URL = "/avatar/yosmel.glb?v=gant-check-3";
 let userHasInteracted = false;
 
 interface AvatarStageProps {
@@ -23,7 +23,7 @@ interface AvatarStageProps {
 
 export function AvatarStage({
   mood = "neutral",
-  variant = "widget",
+  variant = "bust",
   className = "",
   onClick,
 }: AvatarStageProps) {
@@ -195,7 +195,7 @@ export function AvatarStage({
       bootTimer = setTimeout(bootEngine, 3500);
     };
 
-    if (userHasInteracted || variant === "head" || variant === "widget") {
+    if (userHasInteracted || variant === "head") {
       bootEngine();
     } else {
       window.addEventListener("pointermove", onFirstInteraction, { passive: true, once: true });

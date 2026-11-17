@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import type { IndexItem } from "@/data/portfolio";
-import { UI } from "@/data/ui";
+import { useLocalizedData } from "@/lib/i18n";
 
 interface ProjectMediaProps {
   item: IndexItem;
@@ -22,6 +22,7 @@ export function ProjectMedia({
 }: ProjectMediaProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [playing, setPlaying] = useState(false);
+  const { ui: UI } = useLocalizedData();
   const t = UI.home;
 
   const handlePointerEnter = useCallback(() => {
@@ -47,14 +48,9 @@ export function ProjectMedia({
       onPointerEnter={handlePointerEnter}
       onPointerLeave={handlePointerLeave}
       className="work-stage aspect-[4/3] w-full"
-      style={
-        {
-          backgroundColor: item.ground,
-          "--card-accent": item.accent,
-        } as React.CSSProperties
-      }
+      style={{ backgroundColor: item.ground }}
     >
-      <div className="work-stage__media relative h-full w-full">
+      <div className="relative h-full w-full">
         <Image
           src={item.media.poster}
           alt={item.media.alt}

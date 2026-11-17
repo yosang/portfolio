@@ -12,8 +12,11 @@ import React, {
 import { usePathname, useRouter } from "next/navigation";
 import { portfolioAudio } from "@/lib/audioSynth";
 import type { AvatarMood } from "@/lib/avatarEngine";
-import { SPECIFIC_TOUR_TARGET_RE } from "@/data/portfolio";
+import { ITEMS, SPECIFIC_TOUR_TARGET_RE } from "@/data/portfolio";
+import { isAllowedGoPath } from "@/lib/apiGuard";
 import { getLocalizedData, useLocalizedData } from "@/lib/i18n";
+
+const VALID_SLUGS = new Set(ITEMS.map((i) => i.slug));
 
 const INSTANT_TOUR_NO_RE =
   /^(?:hei[,!\s]+)?(?:ai\s+yosmel[,!\s]+|yosmel[,!\s]+)?(?:kan du\s+|vil du\s+)?(?:vis(?:e)?(?:\s+fram|\s+frem)?(?:\s+meg)?|ta\s+meg\s+(?:med\s+)?(?:gjennom|rundt(?:\s+i)?)|gi\s+meg\s+en\s+(?:runde|omvisning)(?:\s+i|\s+gjennom)?)\s+(?:litt\s+)?(?:rundt(?:\s+i\s+(?:dine\s+)?prosjekt(?:er|ene)(?:\s+dine)?)?|(?:dine\s+|alle\s+)?prosjekt(?:er|ene)(?:\s+dine|\s+du\s+har\s+laget)?|porteføljen(?:\s+din)?)[.!?]*$/i;
@@ -36,23 +39,24 @@ export interface ChatTurn {
   attachment?: ChatAttachment;
 }
 
-export type ActiveVoiceMode = "replicated" | "preset";
-
 interface CompanionContextValue {
   messages: ChatTurn[];
   mood: AvatarMood;
   isStreaming: boolean;
   isOpen: boolean;
+  hasOpenedOnce: boolean;
   setIsOpen: (open: boolean) => void;
   voiceEnabled: boolean;
   setVoiceEnabled: (v: boolean) => void;
-  voiceMode: ActiveVoiceMode;
   voiceCapped: boolean;
-  isDemoMode: boolean;
   spotlightSlug: string | null;
   clearSpotlight: () => void;
   sendMessage: (text: string) => Promise<void>;
   resetChat: () => void;
+  heroAvatarSlot: HTMLElement | null;
+  setHeroAvatarSlot: (el: HTMLElement | null) => void;
+  chatPageAvatarSlot: HTMLElement | null;
+  setChatPageAvatarSlot: (el: HTMLElement | null) => void;
 }
 
 interface CompanionPortfolioValue {
@@ -116,14 +120,21 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
   const [messages, setMessages] = useState<ChatTurn[]>([]);
   const [mood, setMood] = useState<AvatarMood>("neutral");
   const [isStreaming, setIsStreaming] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpenState] = useState(false);
+  const [hasOpenedOnce, setHasOpenedOnce] = useState(false);
   const [voiceEnabled, setVoiceEnabledState] = useState(true);
-  const [voiceMode, setVoiceMode] = useState<ActiveVoiceMode>("preset");
-  const [voiceCapped, setVoiceCapped] = useState(false);
-  const [isDemoMode, setIsDemoMode] = useState(false);
-  const [spotlightSlug, setSpotlightSlug] = useState<string | null>(null);
 
-  const prevInteractionIdRef = useRef<string | null>(null);
+  const setIsOpen = useCallback((next: boolean) => {
+    if (next) setHasOpenedOnce(true);
+    setIsOpenState(next);
+  }, []);
+  const [voiceCapped, setVoiceCapped] = useState(false);
+  const [spotlightSlug, setSpotlightSlug] = useState<string | null>(null);
+  const [heroAvatarSlot, setHeroAvatarSlot] = useState<HTMLElement | null>(null);
+  const [chatPageAvatarSlot, setChatPageAvatarSlot] = useState<HTMLElement | null>(
+    null
+  );
+
   const messagesRef = useRef<ChatTurn[]>([]);
   const isStreamingRef = useRef(false);
   const voiceEnabledRef = useRef(true);
@@ -217,7 +228,9 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
           const restored = (parsed.messages as ChatTurn[]).filter(
             (m) => m.id !== "a-prologue-welcome"
           );
-          if (restored.length > 0) setMessages(restored);
+          if (restored.length > 0) {
+            queueMicrotask(() => setMessages(restored));
+          }
         }
       }
     } catch {
@@ -283,7 +296,7 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
         tourTimersRef.current.push(id);
       }
     },
-    [router]
+    [router, setIsOpen]
   );
 
   const sendMessage = useCallback(
@@ -342,7 +355,6 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
             : localeRef.current;
         const steps: Array<{ slug?: string; audioSrc?: string; bubble: string }> =
           getLocalizedData(tourLocale).tourSteps;
-        prevInteractionIdRef.current = null;
         setMood("happy");
 
         const finishStreamingState = () => {
@@ -379,7 +391,6 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
         };
 
         if (wantVoice) {
-          setVoiceMode("replicated");
           (async () => {
             for (let i = 0; i < steps.length; i++) {
               if (abortController.signal.aborted) return;
@@ -448,7 +459,6 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
             page: pageContext,
             voice: wantVoice,
             locale: localeRef.current,
-            previousInteractionId: prevInteractionIdRef.current,
           }),
         });
 
@@ -590,7 +600,6 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
 
             if (typeof data.demo === "boolean") {
               isDemoStream = data.demo;
-              setIsDemoMode(data.demo);
               if (data.demo) {
                 holdTextForVoice = false;
                 syncVisibleText();
@@ -622,7 +631,8 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
             }
 
             if (typeof data.go === "string" && data.go) {
-              router.push(data.go);
+              const safeGo = isAllowedGoPath(data.go, VALID_SLUGS);
+              if (safeGo) router.push(safeGo);
             }
 
             if (data.file === "cv") {
@@ -638,10 +648,6 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
                     : msg
                 )
               );
-            }
-
-            if (typeof data.interactionId === "string") {
-              prevInteractionIdRef.current = data.interactionId;
             }
 
             if (data.textDone === true) {
@@ -667,12 +673,6 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
                     : undefined;
 
               if (voiceEnabledRef.current) {
-                if (
-                  typeof data.mode === "string" &&
-                  (data.mode === "replicated" || data.mode === "preset")
-                ) {
-                  setVoiceMode(data.mode);
-                }
                 const pause =
                   typeof data.pauseBefore === "number" ? data.pauseBefore : 0;
                 if (tourSlug && bubbleIdx >= 0) {
@@ -781,7 +781,6 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
     spotlightSlugRef.current = null;
     setSpotlightSlug(null);
     portfolioAudio.stopAll();
-    prevInteractionIdRef.current = null;
     setMessages([]);
     setMood("neutral");
     sessionStorage.removeItem("ai-twin-chat");
@@ -799,7 +798,7 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
       sendMessage,
       setIsOpen,
     }),
-    [spotlightSlug, clearSpotlight, sendMessage]
+    [spotlightSlug, clearSpotlight, sendMessage, setIsOpen]
   );
 
   const ctxValue = useMemo<CompanionContextValue>(
@@ -808,31 +807,36 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
       mood,
       isStreaming,
       isOpen,
+      hasOpenedOnce,
       setIsOpen,
       voiceEnabled,
       setVoiceEnabled,
-      voiceMode,
       voiceCapped,
-      isDemoMode,
       spotlightSlug,
       clearSpotlight,
       sendMessage,
       resetChat,
+      heroAvatarSlot,
+      setHeroAvatarSlot,
+      chatPageAvatarSlot,
+      setChatPageAvatarSlot,
     }),
     [
       messages,
       mood,
       isStreaming,
       isOpen,
+      hasOpenedOnce,
+      setIsOpen,
       voiceEnabled,
       setVoiceEnabled,
-      voiceMode,
       voiceCapped,
-      isDemoMode,
       spotlightSlug,
       clearSpotlight,
       sendMessage,
       resetChat,
+      heroAvatarSlot,
+      chatPageAvatarSlot,
     ]
   );
 

@@ -9,7 +9,6 @@ import {
   VolumeX,
 } from "lucide-react";
 import { useCompanion, useCompanionPortfolio } from "@/components/CompanionContext";
-import { AvatarStage } from "@/components/AvatarStage";
 import { ChatThread, Composer } from "@/components/ChatThread";
 import { ProjectCard } from "@/components/ProjectCard";
 import { useLocalizedData } from "@/lib/i18n";
@@ -71,7 +70,7 @@ export default function HomePage() {
   const showSchool = effectiveFilter === "all" || effectiveFilter === "school";
 
   return (
-    <div className="page-enter">
+    <div>
       {/* HERO: Clean, low-noise intro + desktop 3D AI Twin Studio */}
       <section
         data-viewport-section="Hero"
@@ -105,7 +104,7 @@ export default function HomePage() {
             </h2>
 
             <div
-              role="tablist"
+              role="group"
               aria-label={t.worksTitle}
               className="inline-flex items-center rounded-full border border-line bg-paper-raised p-1"
             >
@@ -121,8 +120,7 @@ export default function HomePage() {
                   <button
                     key={tab.id}
                     type="button"
-                    role="tab"
-                    aria-selected={active}
+                    aria-pressed={active}
                     onClick={() => setFilter(tab.id)}
                     className={`rounded-full px-3.5 py-1 text-xs font-medium transition-colors cursor-pointer ${
                       active ? "bg-ink text-paper" : "text-ink-soft hover:text-ink"
@@ -196,22 +194,14 @@ const HeroAiStudio = memo(function HeroAiStudio() {
     setVoiceEnabled,
     voiceCapped,
     resetChat,
+    setHeroAvatarSlot,
   } = useCompanion();
   const { ui, profile: PROFILE } = useLocalizedData();
-  const [isDesktop, setIsDesktop] = useState(false);
   const [infoPinned, setInfoPinned] = useState(false);
   const [infoHovered, setInfoHovered] = useState(false);
   const infoOpen = infoPinned || infoHovered;
   const infoRef = useRef<HTMLDivElement | null>(null);
   const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(min-width: 1024px)");
-    const sync = () => setIsDesktop(mq.matches);
-    sync();
-    mq.addEventListener("change", sync);
-    return () => mq.removeEventListener("change", sync);
-  }, []);
 
   const openHover = useCallback(() => {
     if (hoverTimerRef.current) {
@@ -364,11 +354,7 @@ const HeroAiStudio = memo(function HeroAiStudio() {
       </div>
 
       <div className="relative h-[265px] w-full sm:h-[290px]">
-        <div className="absolute inset-0">
-          {isDesktop && (
-            <AvatarStage mood={mood} variant="hero" className="h-full w-full" />
-          )}
-        </div>
+        <div ref={setHeroAvatarSlot} className="absolute inset-0" />
       </div>
 
       <div className="relative z-20 border-t border-white/10 bg-[#141d1a]">

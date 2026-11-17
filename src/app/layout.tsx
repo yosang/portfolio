@@ -124,7 +124,7 @@ const jsonLd = {
         "@type": item.repoUrl ? "SoftwareSourceCode" : "WebApplication",
         name: item.title,
         description: `${item.subtitle} ${item.summary}`,
-        url: item.liveUrl ?? item.repoUrl ?? `${SITE_URL}/#prosjekter`,
+        url: item.liveUrl ?? `${SITE_URL}/prosjekter/${item.slug}`,
         ...(item.repoUrl ? { codeRepository: item.repoUrl } : {}),
         author: { "@id": `${SITE_URL}/#person` },
         keywords: item.tags.join(", "),
@@ -158,12 +158,11 @@ export default function RootLayout({
         />
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{if("scrollRestoration"in history){history.scrollRestoration="manual"}if(location.hash!=="#prosjekter"){window.scrollTo(0,0)}}catch(e){}`,
+            __html: `try{var t=localStorage.getItem("portfolio-theme");if(t==="dark"){document.documentElement.dataset.theme="dark"}var l=localStorage.getItem("portfolio-locale");if(!l&&typeof navigator!=="undefined"){var ls=navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||"nb"];if(!ls.some(function(x){return/^(nb|nn|no|da|sv)\\b/i.test(String(x).trim())})){l="en"}}if(l==="en"){document.documentElement.lang="en"}if("scrollRestoration"in history){history.scrollRestoration="manual"}if(location.hash!=="#prosjekter"){window.scrollTo(0,0)}}catch(e){}`,
           }}
         />
       </head>
       <body className="min-h-dvh flex flex-col">
-        <div aria-hidden="true" className="prism-bar" />
         <ThemeProvider>
           <CompanionProvider>
             <Navbar />
