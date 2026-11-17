@@ -121,21 +121,20 @@ function detectReplyLanguage(
   ) {
     return "es";
   }
-  const hasNorwegianCharsOrWords =
-    /[æøåÆØÅ]|\b(hei|hvordan|hva|hvorfor|hvilke|fortell|prosjektene|prosjektet|jobber|bygd|bygde|laget|utvikler|skole|omvisning|rundt|ta\s+meg|gjennom|caset|seksjon)\b/i.test(
+
+  const clearlyNorwegian =
+    /\b(hei|heisann|hallo|hvordan|hva|hvorfor|hvilke|hvilken|hvem|fortell|kan\s+du|vil\s+du|prosjektene|prosjektet|jobber|bygd|bygde|laget|omvisning|ta\s+meg|gjennom|caset|seksjon)\b/i.test(
       text
     );
-  if (hasNorwegianCharsOrWords) {
-    return "no";
-  }
-  if (
-    /\b(hello|hi|hey|how|what|why|when|where|who|can|could|would|tell|show|walk|briefly|through|case\s+study|about|your|you|projects|work|built|build|stack|role|experience)\b/i.test(
+  const clearlyEnglish =
+    /\b(hello|hi|hey|how\s+did|how\s+do|what\s+is|what\s+did|why\s+did|where\s+do|who\s+are|can\s+you|could\s+you|would\s+you|tell\s+me|show\s+me|walk\s+me|briefly|case\s+study|your\s+projects|your\s+work)\b/i.test(
       text
-    )
-  ) {
-    return "en";
+    );
+
+  if (locale === "en") {
+    return clearlyNorwegian && !clearlyEnglish ? "no" : "en";
   }
-  return locale === "en" ? "en" : "no";
+  return clearlyEnglish && !clearlyNorwegian ? "en" : "no";
 }
 
 const PERSONA_PATH = path.join(process.cwd(), "src", "data", "persona.md");
