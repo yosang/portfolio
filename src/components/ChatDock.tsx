@@ -208,7 +208,7 @@ export function ChatDock() {
       document.documentElement.style.overflow = prevOverflow;
       window.removeEventListener("keydown", onKey);
       if (prevFocusRef.current && document.contains(prevFocusRef.current)) {
-        prevFocusRef.current.focus();
+        prevFocusRef.current.focus({ preventScroll: true });
       }
     };
   }, [isOpen, setIsOpen]);
@@ -262,19 +262,19 @@ export function ChatDock() {
       )}
 
       {!isOnChatPage && isOpen && (
-        <div className="fixed inset-0 z-50 flex justify-end overflow-hidden">
+        <div className="fixed inset-0 z-50 flex justify-end overflow-hidden sm:pointer-events-none">
           <button
             type="button"
             aria-label={t.close}
             onClick={() => setIsOpen(false)}
-            className="absolute inset-0 bg-black/35 cursor-default"
+            className="absolute inset-0 bg-black/35 cursor-default sm:hidden"
           />
           <aside
             ref={dialogRef}
             role="dialog"
             aria-modal="true"
             aria-label={t.title}
-            className="relative flex h-dvh max-h-dvh w-full flex-col bg-paper shadow-2xl sm:max-w-[400px] sm:border-l sm:border-line"
+            className="pointer-events-auto relative flex h-dvh max-h-dvh w-full flex-col bg-paper shadow-2xl sm:max-w-[400px] sm:border-l sm:border-line"
           >
             <header className="relative z-20 flex items-center justify-between gap-3 border-b border-line px-4 py-2.5 sm:px-5">
               <div className="flex items-center gap-2.5">

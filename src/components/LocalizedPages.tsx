@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import { useLocalizedData } from "@/lib/i18n";
+import { useCompanionPortfolio } from "@/components/CompanionContext";
 import { ProjectMedia } from "@/components/ProjectMedia";
 import { CaseStudyAskButton } from "@/components/CaseStudyAskButton";
 
@@ -409,6 +410,7 @@ export function PrivacyPageContent() {
 
 export function ProjectCaseStudyContent({ slug }: { slug: string }) {
   const { ui: UI, projects: PROJECTS } = useLocalizedData();
+  const { spotlightSlug } = useCompanionPortfolio();
   const project = PROJECTS.find((p) => p.slug === slug);
   if (!project) return null;
 
@@ -527,8 +529,13 @@ export function ProjectCaseStudyContent({ slug }: { slug: string }) {
       </div>
 
       <div className="mt-12 space-y-12 sm:mt-16 sm:space-y-14">
-        {firstTwoSections.map((sec) => (
-          <CaseSection key={sec.title} section={sec} />
+        {firstTwoSections.map((sec, idx) => (
+          <CaseSection
+            key={sec.title}
+            section={sec}
+            sectionIndex={idx}
+            spotlit={spotlightSlug === `${project.slug}#${idx}`}
+          />
         ))}
       </div>
 
@@ -560,31 +567,38 @@ export function ProjectCaseStudyContent({ slug }: { slug: string }) {
 
       {remainingSections.length > 0 && (
         <div className="mt-12 space-y-12 sm:mt-16 sm:space-y-14">
-          {remainingSections.map((sec, idx) => (
-            <div key={sec.title} className="space-y-12 sm:space-y-14">
-              <CaseSection section={sec} />
+          {remainingSections.map((sec, idx) => {
+            const sectionIndex = idx + 2;
+            return (
+              <div key={sec.title} className="space-y-12 sm:space-y-14">
+                <CaseSection
+                  section={sec}
+                  sectionIndex={sectionIndex}
+                  spotlit={spotlightSlug === `${project.slug}#${sectionIndex}`}
+                />
 
-              {idx === 1 && caseStudy.wideImage && (
-                <figure className="space-y-3">
-                  <div className="overflow-hidden rounded-2xl border border-line bg-[#17211e] p-3 sm:p-6">
-                    <div className="overflow-hidden rounded-xl border border-white/14">
-                      <Image
-                        src={caseStudy.wideImage.src}
-                        alt={caseStudy.wideImage.alt}
-                        width={caseStudy.wideImage.width}
-                        height={caseStudy.wideImage.height}
-                        sizes="(min-width: 1024px) 980px, 96vw"
-                        className="h-auto w-full object-cover select-none"
-                      />
+                {idx === 1 && caseStudy.wideImage && (
+                  <figure className="space-y-3">
+                    <div className="overflow-hidden rounded-2xl border border-line bg-[#17211e] p-3 sm:p-6">
+                      <div className="overflow-hidden rounded-xl border border-white/14">
+                        <Image
+                          src={caseStudy.wideImage.src}
+                          alt={caseStudy.wideImage.alt}
+                          width={caseStudy.wideImage.width}
+                          height={caseStudy.wideImage.height}
+                          sizes="(min-width: 1024px) 980px, 96vw"
+                          className="h-auto w-full object-cover select-none"
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <figcaption className="px-1 text-xs leading-relaxed text-ink-soft">
-                    {caseStudy.wideImage.caption}
-                  </figcaption>
-                </figure>
-              )}
-            </div>
-          ))}
+                    <figcaption className="px-1 text-xs leading-relaxed text-ink-soft">
+                      {caseStudy.wideImage.caption}
+                    </figcaption>
+                  </figure>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
 
@@ -630,11 +644,24 @@ export function ProjectCaseStudyContent({ slug }: { slug: string }) {
 
 function CaseSection({
   section,
+  sectionIndex,
+  spotlit = false,
 }: {
   section: { title: string; paragraphs: string[]; bullets?: string[] };
+  sectionIndex: number;
+  spotlit?: boolean;
 }) {
   return (
-    <section className="max-w-3xl space-y-4">
+    <section
+      data-case-section={sectionIndex}
+      data-spotlit={spotlit ? "true" : undefined}
+      data-viewport-item={section.title}
+      className={`-mx-4 -my-3 max-w-3xl scroll-mt-28 space-y-4 rounded-2xl border px-4 py-3 transition-colors duration-300 sm:-mx-5 sm:px-5 sm:py-4 ${
+        spotlit
+          ? "border-trail/65 bg-paper-raised/70"
+          : "border-transparent"
+      }`}
+    >
       <h2 className="font-display text-xl font-medium tracking-[-0.02em] text-ink sm:text-2xl">
         {section.title}
       </h2>

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { ArrowUp, Download, FileText, Loader2, Mic, Square } from "lucide-react";
 import { useCompanion, type ChatTurn } from "@/components/CompanionContext";
 import { useLocalizedData } from "@/lib/i18n";
@@ -9,10 +10,21 @@ function pickFollowUp(
   messages: ChatTurn[],
   items: Array<{ title: string }>,
   tourPrompt: string,
-  followUpPrompts: Array<{ text: string; match?: RegExp }>
+  followUpPrompts: Array<{ text: string; match?: RegExp }>,
+  activeCasePrompt?: string
 ): string | null {
   const last = messages[messages.length - 1];
   if (!last || last.role !== "assistant" || !last.content.trim()) return null;
+
+  const asked = new Set(
+    messages
+      .filter((m) => m.role === "user")
+      .map((m) => m.content.trim().toLowerCase())
+  );
+
+  if (activeCasePrompt && !asked.has(activeCasePrompt.toLowerCase())) {
+    return activeCasePrompt;
+  }
 
   const hasSeenTour = messages.some(
     (m) =>
@@ -25,11 +37,6 @@ function pickFollowUp(
   );
   if (!hasSeenTour) return tourPrompt;
 
-  const asked = new Set(
-    messages
-      .filter((m) => m.role === "user")
-      .map((m) => m.content.trim().toLowerCase())
-  );
   const hasCv = messages.some((m) => Boolean(m.attachment));
   const assistantCount = messages.filter((m) => m.role === "assistant").length;
   const prevUser = [...messages].reverse().find((m) => m.role === "user")?.content ?? "";
@@ -63,13 +70,23 @@ export function ChatThread({
   tone?: "default" | "dark";
   compact?: boolean;
 }) {
+  const pathname = usePathname();
   const { messages, isStreaming, sendMessage } = useCompanion();
   const { ui, projects: items, tourPrompt, useCasePrompt, followUpPrompts } =
     useLocalizedData();
   const t = ui.chat;
   const scrollRef = useRef<HTMLDivElement | null>(null);
+  const activeCaseProject = pathname.startsWith("/prosjekter/")
+    ? items.find((p) => `/prosjekter/${p.slug}` === pathname)
+    : undefined;
+  const activeCasePrompt = activeCaseProject
+    ? ui.home.askCasePrompt(activeCaseProject.title)
+    : undefined;
+  const starterPrompts = activeCasePrompt
+    ? [activeCasePrompt, useCasePrompt]
+    : [tourPrompt, useCasePrompt];
   const followUp = !isStreaming
-    ? pickFollowUp(messages, items, tourPrompt, followUpPrompts)
+    ? pickFollowUp(messages, items, tourPrompt, followUpPrompts, activeCasePrompt)
     : null;
 
   useEffect(() => {
@@ -89,7 +106,7 @@ export function ChatThread({
             </p>
           )}
           <div className="flex flex-wrap gap-1.5">
-            {[tourPrompt, useCasePrompt].map((prompt) => (
+            {starterPrompts.map((prompt) => (
               <button
                 key={prompt}
                 type="button"

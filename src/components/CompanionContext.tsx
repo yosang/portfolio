@@ -150,6 +150,14 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     pathnameRef.current = pathname;
+    const currentSpot = spotlightSlugRef.current;
+    if (currentSpot && currentSpot.includes("#")) {
+      const slugPart = currentSpot.slice(0, currentSpot.indexOf("#"));
+      if (pathname !== `/prosjekter/${slugPart}`) {
+        spotlightSlugRef.current = null;
+        setSpotlightSlug(null);
+      }
+    }
   }, [pathname]);
 
   useEffect(() => {
@@ -264,10 +272,10 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const triggerSpotlight = useCallback(
-    (slug: string) => {
-      const prevSlug = spotlightSlugRef.current;
-      spotlightSlugRef.current = slug;
-      setSpotlightSlug(slug);
+    (target: string) => {
+      const prevTarget = spotlightSlugRef.current;
+      spotlightSlugRef.current = target;
+      setSpotlightSlug(target);
       hasStartedTourScrollRef.current = true;
 
       if (typeof window !== "undefined" && window.innerWidth < 640) {
@@ -276,10 +284,42 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
 
       if (autoScrollCancelledRef.current) return;
 
+      const hashIdx = target.indexOf("#");
+      if (hashIdx !== -1) {
+        const projectSlug = target.slice(0, hashIdx);
+        const sectionIdx = target.slice(hashIdx + 1);
+        const expectedPath = `/prosjekter/${projectSlug}`;
+
+        const scrollSection = () => {
+          if (autoScrollCancelledRef.current) return;
+          const el = document.querySelector<HTMLElement>(
+            `[data-case-section="${sectionIdx}"]`
+          );
+          if (el) {
+            el.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        };
+
+        if (pathnameRef.current !== expectedPath) {
+          router.push(expectedPath);
+          const id = setTimeout(scrollSection, 280);
+          tourTimersRef.current.push(id);
+        } else {
+          const delay = prevTarget && prevTarget !== target ? 180 : 50;
+          const id = setTimeout(scrollSection, delay);
+          tourTimersRef.current.push(id);
+        }
+        return;
+      }
+
+      if (pathnameRef.current === `/prosjekter/${target}`) {
+        return;
+      }
+
       const scrollAndHighlight = () => {
         if (autoScrollCancelledRef.current) return;
         const el = document.querySelector<HTMLElement>(
-          `[data-project-slug="${slug}"]`
+          `[data-project-slug="${target}"]`
         );
         if (el) {
           el.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -291,7 +331,7 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
         const id = setTimeout(scrollAndHighlight, 280);
         tourTimersRef.current.push(id);
       } else {
-        const delay = prevSlug && prevSlug !== slug ? 220 : 50;
+        const delay = prevTarget && prevTarget !== target ? 220 : 50;
         const id = setTimeout(scrollAndHighlight, delay);
         tourTimersRef.current.push(id);
       }
@@ -312,6 +352,10 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
       autoScrollCancelledRef.current = false;
       hasStartedTourScrollRef.current = false;
       tourStartedAtRef.current = performance.now();
+      if (spotlightSlugRef.current?.includes("#")) {
+        spotlightSlugRef.current = null;
+        setSpotlightSlug(null);
+      }
 
       portfolioAudio.unlock();
       portfolioAudio.stopAll();
@@ -545,6 +589,7 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
         onMuteFlushRef.current = () => {
           holdTextForVoice = false;
           syncVisibleText();
+          flushUnscheduledTourSteps();
         };
 
         const scheduleFallbackTourStep = (bubbleIdx: number, slug: string) => {

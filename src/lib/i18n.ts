@@ -64,8 +64,12 @@ export function getLocalizedData(locale: Locale) {
   if (locale === "en") {
     const tmpl = ui.home.askAboutTemplate || "Tell me briefly how you built {title}.";
     ui.home.askAboutPrompt = (title: string) => tmpl.replace("{title}", title);
+    const caseTmpl =
+      ui.home.askCaseTemplate || "Walk me briefly through the {title} case study.";
+    ui.home.askCasePrompt = (title: string) => caseTmpl.replace("{title}", title);
   } else {
     ui.home.askAboutPrompt = UI.home.askAboutPrompt;
+    ui.home.askCasePrompt = UI.home.askCasePrompt;
   }
 
   const profile = localizeValue(PROFILE, locale);
