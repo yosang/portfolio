@@ -25,7 +25,7 @@ interface ViewportPageContext {
   showing?: unknown;
 }
 
-const DAILY_VOICE_CAP = Number(process.env.DAILY_VOICE_CAP || "150");
+const DAILY_VOICE_CAP = Number(process.env.DAILY_VOICE_CAP || "95");
 const DAILY_GLOBAL_CHAT_CAP = Number(process.env.DAILY_CHAT_CAP || "300");
 const GLOBAL_CHAT_PER_MIN = 35;
 const RATE_LIMIT_PER_MIN = 10;
@@ -564,20 +564,24 @@ export async function POST(req: NextRequest) {
             ? new GoogleGenAI({ apiKey, apiVersion: "v1beta" })
             : null;
         const ttsState: {
-          voiceBudget: { allowed: boolean; remaining: number } | null;
           wakeEmitter: (() => void) | null;
         } = {
-          voiceBudget: null,
           wakeEmitter: null,
         };
         let hitDailyCap = false;
 
         const synthesizeWav = async (segmentText: string): Promise<string | null> => {
-          if (!ttsAi || !activeVoice || !segmentText) return null;
+          if (!ttsAi || !activeVoice || !segmentText || hitDailyCap) return null;
           const ttsLang = ttsLanguageCode(replyLang);
           const cacheKey = `${activeVoice}:${ttsLang}:${configuredVoiceId ? "rep" : detectedMood}:${segmentText}`;
           const cached = ttsWavCache.get(cacheKey);
           if (cached) return cached;
+
+          const budget = checkAndIncrementVoiceBudget();
+          if (!budget.allowed) {
+            hitDailyCap = true;
+            return null;
+          }
 
           const defaultModel = configuredVoiceId
             ? "gemini-3.8-flash-tts"
@@ -622,7 +626,7 @@ export async function POST(req: NextRequest) {
                     },
                     store: false,
                   },
-                  { maxRetries: 0, timeout: 15000 }
+                  { maxRetries: 0, timeout: 12000 }
                 );
                 const b64 = extractWavBase64(ttsRes);
                 if (b64) {
@@ -637,15 +641,18 @@ export async function POST(req: NextRequest) {
               } catch (ttsErr) {
                 const msg = ttsErr instanceof Error ? ttsErr.message : String(ttsErr);
                 if (msg.includes("429") || msg.includes("Rate limit")) {
-                  if (attempt === 0) {
-                    await new Promise((r) => setTimeout(r, 1400));
-                    continue;
-                  }
-                  if (msg.includes("per day") || msg.includes("PerDay")) {
-                    if (!configuredVoiceId) {
-                      exhaustedTtsModels.add(candidateModel);
-                    }
+                  if (
+                    msg.includes("requests per day") ||
+                    msg.includes("per day") ||
+                    msg.includes("PerDay")
+                  ) {
+                    exhaustedTtsModels.add(candidateModel);
                     hitDailyCap = true;
+                    break;
+                  }
+                  if (attempt === 0) {
+                    await new Promise((r) => setTimeout(r, 1200));
+                    continue;
                   }
                   break;
                 }
@@ -691,15 +698,6 @@ export async function POST(req: NextRequest) {
           if (!wantVoice || !ttsAi) return;
           const speech = cleanForSpeech(rawBubble, replyLang);
           if (!speech) return;
-          if (!ttsState.voiceBudget) {
-            ttsState.voiceBudget = checkAndIncrementVoiceBudget();
-            if (!ttsState.voiceBudget.allowed) {
-              controller.enqueue(sseFrame({ capped: true }));
-              return;
-            }
-          } else if (!ttsState.voiceBudget.allowed) {
-            return;
-          }
 
           const wavPromise = (async () => {
             await acquireTtsSlot();
@@ -716,12 +714,16 @@ export async function POST(req: NextRequest) {
 
         const ttsEmitterPromise = (async () => {
           let cursor = 0;
-          let emittedAudioCount = 0;
           let emittedStepCount = 0;
+          let emittedCapNotice = false;
           while (true) {
             while (cursor < ttsJobs.length) {
               const job = ttsJobs[cursor++];
               const wav = await job.wavPromise;
+              if (hitDailyCap && !emittedCapNotice) {
+                emittedCapNotice = true;
+                controller.enqueue(sseFrame({ capped: true }));
+              }
               if (wav) {
                 controller.enqueue(
                   sseFrame({
@@ -731,7 +733,6 @@ export async function POST(req: NextRequest) {
                     ...(emittedStepCount > 0 ? { pauseBefore: 0.24 } : {}),
                   })
                 );
-                emittedAudioCount += 1;
                 emittedStepCount += 1;
               } else {
                 controller.enqueue(
@@ -751,7 +752,7 @@ export async function POST(req: NextRequest) {
             });
             ttsState.wakeEmitter = null;
           }
-          if (emittedAudioCount === 0 && hitDailyCap) {
+          if (hitDailyCap && !emittedCapNotice) {
             controller.enqueue(sseFrame({ capped: true }));
           }
         })();
