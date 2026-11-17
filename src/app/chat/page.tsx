@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import { VolumeX } from "lucide-react";
 import { ChatThread, Composer } from "@/components/ChatThread";
 import { useCompanion } from "@/components/CompanionContext";
 import { useLocalizedData } from "@/lib/i18n";
@@ -82,7 +83,10 @@ export default function ChatPage() {
       <section className="surface-card flex min-h-[55vh] flex-col gap-4 rounded-2xl p-5 sm:p-7 md:min-h-0">
         <h1 className="font-display text-2xl font-normal tracking-[-0.025em]">{t.title}</h1>
         {voiceCapped && voiceEnabled && (
-          <p className="text-xs text-ink-soft">{t.capped}</p>
+          <p className="flex items-center gap-2 rounded-xl border border-amber-500/25 bg-amber-500/12 px-4 py-2.5 text-xs font-medium text-amber-800 dark:text-amber-300">
+            <VolumeX className="h-3.5 w-3.5 shrink-0" />
+            <span>{t.capped}</span>
+          </p>
         )}
         <ChatThread className="flex-1 border-t border-line pt-4" />
         <Composer autoFocus inputId="studio-chat-input" />

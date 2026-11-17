@@ -254,13 +254,27 @@ export function ChatDock() {
             {isThinking ? t.thinking : t.dock}
           </span>
 
-          <span
-            ref={floatingSlotRef}
-            style={{ background: STUDIO_BG }}
-            className={`pointer-events-none relative block h-[72px] w-[64px] origin-bottom-right overflow-hidden rounded-2xl border border-white/15 shadow-[0_8px_24px_-6px_rgba(10,18,15,0.38)] transition-transform duration-300 ease-out group-hover:-translate-y-0.5 sm:h-[114px] sm:w-[100px] sm:rounded-2xl ${
-              isActiveVoice ? "scale-[1.34] sm:scale-[1.05] ring-2 ring-[#1b6b57]/80 dark:ring-[#7dc4b0]/80" : ""
-            }`}
-          />
+          <span className="relative block">
+            <span
+              ref={floatingSlotRef}
+              style={{ background: STUDIO_BG }}
+              className={`pointer-events-none relative block h-[72px] w-[64px] origin-bottom-right overflow-hidden rounded-2xl border border-white/15 shadow-[0_8px_24px_-6px_rgba(10,18,15,0.38)] transition-transform duration-300 ease-out group-hover:-translate-y-0.5 sm:h-[114px] sm:w-[100px] sm:rounded-2xl ${
+                isActiveVoice ? "scale-[1.34] sm:scale-[1.05] ring-2 ring-[#1b6b57]/80 dark:ring-[#7dc4b0]/80" : ""
+              }`}
+            />
+            {(voiceCapped || !voiceEnabled) && (
+              <span
+                title={voiceCapped ? t.capped : t.sound}
+                className={`pointer-events-none absolute -top-1.5 -right-1.5 z-10 inline-flex h-6 w-6 items-center justify-center rounded-full border shadow-md transition-transform duration-300 ease-out group-hover:-translate-y-0.5 ${
+                  voiceCapped
+                    ? "border-amber-300/60 bg-amber-400 text-zinc-950"
+                    : "border-white/20 bg-[#141d1a] text-[#9ca0a8]"
+                }`}
+              >
+                <VolumeX className="h-3.5 w-3.5" />
+              </span>
+            )}
+          </span>
         </button>
       )}
 
@@ -367,8 +381,9 @@ export function ChatDock() {
             )}
 
             {voiceCapped && voiceEnabled && (
-              <p className="border-b border-line px-5 py-2 text-xs text-ink-soft">
-                {t.capped}
+              <p className="flex items-center gap-2 border-b border-amber-500/25 bg-amber-500/12 px-5 py-2.5 text-xs font-medium text-amber-800 dark:text-amber-300">
+                <VolumeX className="h-3.5 w-3.5 shrink-0" />
+                <span>{t.capped}</span>
               </p>
             )}
 

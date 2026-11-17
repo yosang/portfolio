@@ -25,7 +25,7 @@ interface ViewportPageContext {
   showing?: unknown;
 }
 
-const DAILY_VOICE_CAP = Number(process.env.DAILY_VOICE_CAP || "25");
+const DAILY_VOICE_CAP = Number(process.env.DAILY_VOICE_CAP || "60");
 const DAILY_GLOBAL_CHAT_CAP = Number(process.env.DAILY_CHAT_CAP || "300");
 const GLOBAL_CHAT_PER_MIN = 35;
 const RATE_LIMIT_PER_MIN = 10;
@@ -637,14 +637,15 @@ export async function POST(req: NextRequest) {
               } catch (ttsErr) {
                 const msg = ttsErr instanceof Error ? ttsErr.message : String(ttsErr);
                 if (msg.includes("429") || msg.includes("Rate limit")) {
-                  if (msg.includes("per day")) {
-                    exhaustedTtsModels.add(candidateModel);
-                    hitDailyCap = true;
-                    break;
-                  }
                   if (attempt === 0) {
-                    await new Promise((r) => setTimeout(r, 1000));
+                    await new Promise((r) => setTimeout(r, 1400));
                     continue;
+                  }
+                  if (msg.includes("per day") || msg.includes("PerDay")) {
+                    if (!configuredVoiceId) {
+                      exhaustedTtsModels.add(candidateModel);
+                    }
+                    hitDailyCap = true;
                   }
                   break;
                 }
