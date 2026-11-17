@@ -13,7 +13,7 @@ type FrameListener = (state: SpeechFrameState) => void;
 
 class PortfolioAudioEngine {
   private ctx: AudioContext | null = null;
-  private activeStoppers: Array<() => void> = [];
+  private activeStoppers = new Set<() => void>();
   private listeners = new Set<FrameListener>();
   private rafId: number | null = null;
   private streamAnalyser: AnalyserNode | null = null;
@@ -78,14 +78,14 @@ class PortfolioAudioEngine {
       cancelAnimationFrame(this.rafId);
       this.rafId = null;
     }
-    while (this.activeStoppers.length > 0) {
-      const stop = this.activeStoppers.pop();
+    for (const stop of this.activeStoppers) {
       try {
-        stop?.();
+        stop();
       } catch {
         // ignore cleanup errors
       }
     }
+    this.activeStoppers.clear();
     if (this.streamAnalyser) {
       try {
         this.streamAnalyser.disconnect();
@@ -116,13 +116,15 @@ class PortfolioAudioEngine {
       const leadSec = Math.min(pauseBeforeSec, 0.22);
       const fireInMs = Math.max(0, (targetStart - leadSec - nowSec) * 1000);
       let stopped = false;
-      const timer = setTimeout(() => {
-        if (!stopped) onStart();
-      }, fireInMs);
-      this.activeStoppers.push(() => {
+      const stop = () => {
         stopped = true;
         clearTimeout(timer);
-      });
+      };
+      const timer = setTimeout(() => {
+        this.activeStoppers.delete(stop);
+        if (!stopped) onStart();
+      }, fireInMs);
+      this.activeStoppers.add(stop);
     }
   }
 
@@ -183,7 +185,7 @@ class PortfolioAudioEngine {
       }, fireInMs);
     }
 
-    this.activeStoppers.push(() => {
+    const stop = () => {
       stopped = true;
       if (startTimer !== null) {
         clearTimeout(startTimer);
@@ -195,7 +197,8 @@ class PortfolioAudioEngine {
         // already stopped
       }
       source.disconnect();
-    });
+    };
+    this.activeStoppers.add(stop);
 
     if (this.rafId === null) {
       const timeData = new Uint8Array(analyser.fftSize);
@@ -251,6 +254,8 @@ class PortfolioAudioEngine {
     }
 
     source.onended = () => {
+      this.activeStoppers.delete(stop);
+      source.disconnect();
       if (!stopped) {
         this.activeSourceCount = Math.max(0, this.activeSourceCount - 1);
         if (
@@ -340,13 +345,15 @@ class PortfolioAudioEngine {
           (targetStart - leadSec - ctx.currentTime) * 1000
         );
         let stopped = false;
-        const timer = setTimeout(() => {
-          if (!stopped) onStart();
-        }, fireInMs);
-        this.activeStoppers.push(() => {
+        const stop = () => {
           stopped = true;
           clearTimeout(timer);
-        });
+        };
+        const timer = setTimeout(() => {
+          this.activeStoppers.delete(stop);
+          if (!stopped) onStart();
+        }, fireInMs);
+        this.activeStoppers.add(stop);
       }
       return;
     }

@@ -4,7 +4,7 @@ import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment
 
 export type AvatarMood = "neutral" | "happy" | "confused" | "thinking";
 export type VisemeHint = "rest" | "aa" | "ee" | "oh";
-export type AvatarVariant = "widget" | "hero" | "bust" | "head";
+export type AvatarVariant = "hero" | "bust" | "head";
 
 export interface AvatarRuntimeState {
   pointerX: number;
@@ -35,10 +35,10 @@ const _euler = new THREE.Euler(0, 0, 0, "YXZ");
 const _tmpQ = new THREE.Quaternion();
 
 /**
- * Loads the user's Avaturn T2 GLB (Mixamo-style rig + ARKit/Oculus viseme morphs)
+ * Loads the user's Avaturn T2 GLB (Mixamo-style rig + 20 ARKit/Oculus morphs)
  * and drives it as a bust: arms lowered from T-pose once, Spine2/Neck/Head follow
  * the cursor through a spring-damper, and facial blendshapes animate lip-sync,
- * blinking, eye gaze, and mood expressions in real time.
+ * blinking, and mood expressions in real time.
  * Runs identically inside an OffscreenCanvas worker or on the main thread.
  */
 export class GlbAvatarScene {
@@ -285,7 +285,7 @@ export class GlbAvatarScene {
       dt
     );
 
-    // 4. Facial mood expressions (attenuate smile slightly when mouth is wide open)
+    // 3. Facial mood expressions (attenuate smile slightly when mouth is wide open)
     const smileAtten = 1 - Math.min(0.65, articulated * 0.75);
     const baseSmile =
       state.mood === "happy" ? 0.28 : state.mood === "neutral" ? 0.07 : 0.02;

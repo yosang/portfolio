@@ -27,10 +27,7 @@ export function Navbar() {
   }, []);
 
   useEffect(() => {
-    if (pathname !== "/") {
-      setProjectsActive(false);
-      return;
-    }
+    if (pathname !== "/") return;
     const sec = document.getElementById("prosjekter");
     if (!sec) return;
     const io = new IntersectionObserver(
@@ -41,7 +38,10 @@ export function Navbar() {
       { rootMargin: "-28% 0px -55% 0px", threshold: 0 }
     );
     io.observe(sec);
-    return () => io.disconnect();
+    return () => {
+      io.disconnect();
+      setProjectsActive(false);
+    };
   }, [pathname]);
 
   useEffect(() => {

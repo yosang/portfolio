@@ -5,7 +5,6 @@ import {
   FOLLOW_UP_PROMPTS,
   INDEPENDENT_PROJECTS,
   PROFILE,
-  PROJECTS,
   SCHOOL_PROJECTS,
   TOUR_PROMPT,
   USE_CASE_PROMPT,
@@ -44,6 +43,7 @@ export function localizeValue<T>(val: T, locale: Locale): T {
         k === "video" ||
         k === "src" ||
         k === "href" ||
+        k === "caseLinkHref" ||
         k === "liveUrl" ||
         k === "repoUrl" ||
         k === "tone" ||

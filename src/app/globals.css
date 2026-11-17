@@ -6,13 +6,11 @@
   --canvas: oklch(97.5% 0.01 168);
   --surface-solid: oklch(99% 0.005 168);
   --surface-subtle: oklch(93.5% 0.016 168);
-  --koksgra: oklch(23% 0.02 170);
   --ink: #0f1011;
   --ink-soft: #5e6068;
   --line: oklch(34% 0.01 170 / 0.14);
   --line-strong: oklch(34% 0.01 170 / 0.28);
   --accent: oklch(48% 0.11 168);
-  --accent-warm: oklch(48% 0.11 168);
   --glass-bg: oklch(97.8% 0.008 168 / 0.92);
   --glass-border: oklch(34% 0.01 170 / 0.14);
   --glass-shadow: 0 6px 24px oklch(35% 0.01 170 / 0.08);
@@ -23,13 +21,11 @@
   --canvas: oklch(23% 0.02 170);
   --surface-solid: oklch(27% 0.024 170);
   --surface-subtle: oklch(31.5% 0.028 170);
-  --koksgra: oklch(25% 0.022 170);
   --ink: #f7f8f8;
   --ink-soft: #9ca0a8;
   --line: oklch(85% 0.005 260 / 0.16);
   --line-strong: oklch(85% 0.005 260 / 0.32);
   --accent: oklch(75% 0.09 168);
-  --accent-warm: oklch(75% 0.09 168);
   --glass-bg: oklch(25% 0.022 170 / 0.92);
   --glass-border: oklch(85% 0.005 260 / 0.16);
   --glass-shadow: 0 8px 28px oklch(8% 0.01 170 / 0.28);
@@ -40,7 +36,6 @@
   --color-paper: var(--canvas);
   --color-paper-raised: var(--surface-solid);
   --color-paper-subtle: var(--surface-subtle);
-  --color-koksgra: var(--koksgra);
   --color-ink: var(--ink);
   --color-ink-soft: var(--ink-soft);
   --color-line: var(--line);
@@ -128,7 +123,6 @@ body {
     scroll-behavior: auto;
   }
   .work-stage,
-  .work-card .work-stage__media,
   .work-stage__pill {
     transition: none;
   }
