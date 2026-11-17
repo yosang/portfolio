@@ -115,7 +115,7 @@ export const ProjectCard = memo(function ProjectCard({
             <ul className="space-y-1.5 text-ink-soft">
               {item.highlights.map((h, i) => {
                 const colonIdx = h.indexOf(":");
-                const hasLabel = colonIdx > 0 && colonIdx <= 24;
+                const hasLabel = colonIdx > 0 && colonIdx <= 40;
                 return (
                   <li key={i} className="leading-relaxed">
                     ·{" "}

@@ -45,6 +45,11 @@ const SKIP_EXACT = new Set([
   "hero",
   "bust",
   "head",
+  "VGS Bordtennis",
+  "Ember Booking",
+  "MedCare Clinical",
+  "Cinemorra",
+  "Agent Skills",
   "vgs-bordtennis",
   "ember-booking",
   "interaktiv-portefolje",
@@ -181,8 +186,8 @@ Rules:
    - ZERO em dashes (—) or en dashes (–). Use commas, colons, parentheses, or periods instead.
    - No AI slop words (delve, leverage, seamless, robust, pivotal, tapestry, realm, comprehensive, cutting-edge).
    - Keep placeholder tokens like {title} intact.
-   - Keep project titles like "VGS Bordtennis", "Ember Booking", "MedCare Clinical", "Cinemorra", and "Agent Skills" recognizable (you may translate "Interaktiv Portefølje" to "Interactive Portfolio", and "Pågår" to "Ongoing").
-   - When translating a string that mentions "VGS Bordtennis", you may clarify it as "VGS Bordtennis (a table tennis app for high schools)" where helpful.
+   - Keep project titles ("VGS Bordtennis", "Ember Booking", "MedCare Clinical", "Cinemorra", "Agent Skills") as their exact title ("VGS Bordtennis", etc.), and translate "Interaktiv Portefølje" to "Interactive Portfolio". In descriptions of VGS Bordtennis, clarify in English that it is a real-time table tennis app for high schools.
+   - Avoid trailing apostrophes on plural words (like "students'"): rephrase naturally without a dangling apostrophe (e.g., "among students" or "for students").
 
 Input JSON array:
 ${JSON.stringify(strings, null, 2)}`;

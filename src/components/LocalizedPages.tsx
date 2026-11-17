@@ -610,7 +610,7 @@ function CaseSection({
         <ul className="surface-card mt-4 space-y-2.5 rounded-xl p-5 text-sm text-ink-soft">
           {section.bullets.map((b, i) => {
             const colonIdx = b.indexOf(":");
-            const hasLabel = colonIdx > 0 && colonIdx <= 44;
+            const hasLabel = colonIdx > 0 && colonIdx <= 85;
             return (
               <li key={i} className="leading-relaxed">
                 ·{" "}
