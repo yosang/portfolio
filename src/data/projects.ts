@@ -86,9 +86,9 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     summary:
       "Pågående prosjekt ved Nord-Gudbrandsdal VGS laget for å inkludere flere elever i miljøet rundt bordtennisbordene i friminuttet, med QR kode ved bordet og live storskjerm i kantina.",
     highlights: [
-      "Kampflyt: Enkel flyt ved bordet med QR kode der begge spillerne bekrefter resultatet, med sjekk mot juks og automatisk frigjøring av glemte bord.",
-      "Storskjerm: Live tavle i kantina via Socket.IO, tilpasset Infoskjermen.no på eldre TV skjermer med animert WebP og ES5 støtte.",
-      "Arkitektur: Flere skoler på samme instans i Node.js og innebygd SQLite (5 npm pakker), stresstestet med 100 samtidige spillere.",
+      "Kampflyt: Gjestespill uten registrering ved bordet (opptil 3 seire på vent), automatisk kobling via QR kode og hurtigknapper for resultat (1-0, 2-0, 2-1).",
+      "Storskjerm: Live tavle i kantina via Socket.IO, tilpasset Infoskjermen.no på eldre TV skjermer med animert WebP, ES5 støtte og diagnosestempel.",
+      "Arkitektur: Flere skoler på samme instans i Node.js og innebygd SQLite (5 npm pakker), innebygd personvern og stresstestet med 100 samtidige spillere.",
     ],
     repoNote:
       "Privat repo mens løsningen er i aktiv utprøving. Jeg viser gjerne frem kodebasen og arkitekturen i en prat.",
@@ -139,21 +139,22 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
           ],
         },
         {
-          title: "Skjermfri kampflyt ved bordet",
+          title: "Lavterskel gjestespill og rask kampflyt ved bordet",
           paragraphs: [
-            "Hele poenget med løsningen er at elevene skal spille bordtennis fremfor å stå og trykke på en skjerm. Derfor er flyten rundt selve bordet lagt opp slik at telefonen kun brukes i noen sekunder før og etter kampen.",
-            "Når to spillere skanner QR koden ved samme bord innen 45 sekunder, kobles de sammen og kampen starter automatisk. Telefonen legges i lomma mens settene spilles, og etterpå legger den ene inn resultatet mens motstanderen bekrefter med ett trykk.",
+            "Hele poenget med løsningen er at elevene skal spille bordtennis fremfor å stå og trykke på en skjerm. Derfor er flyten rundt selve bordet lagt opp slik at telefonen kun brukes i noen få sekunder før og etter kampen.",
+            "Når to spillere skanner QR koden ved samme bord innen 45 sekunder, kobles de sammen og kampen starter automatisk. Telefonen legges i lomma mens settene spilles, og etterpå trykker den ene på ferdige hurtigknapper for resultatet (1-0, 2-0 eller 2-1) mens motstanderen bekrefter med ett trykk.",
           ],
           bullets: [
-            "Automatisk opprydding: Hvis noen glemmer å fullføre en kamp, frigjøres bordet automatisk etter 12 minutter slik at neste par i køen får varsel på telefonen.",
-            "Valideringslogikk mot juks: Hvis en kamp rapporteres unaturlig raskt (under 45 sekunder per sett), blokkeres automatisk godkjenning etter 90 sekunder og kampen flagges til arrangør. To venner kan heller ikke låse tabellen ved å spille tellende kamper mot hverandre to ganger på rad.",
+            "Gjestespill med poeng på vent: Uinnloggede elever som skanner bordet kommer rett inn i kamp som Gjest uten å fylle ut registreringsskjema først. De kan samle opptil 3 seire (9 poeng) på vent, og når de trykker Lag profil etter kampen oppgraderes samme bruker på stedet slik at seirene flyttes rett inn på stigen og storskjermen.",
+            "Umiddelbar bordfrigjøring og opprydding: Så snart første spiller trykker inn sluttresultatet, frigjøres det fysiske bordet med en gang slik at neste par i kantina kan skanne og starte sin kamp. Glemmer noen å fullføre en kamp, frigjøres bordet automatisk etter 12 minutter.",
+            "Valideringslogikk mot juks: Lovlige resultater godkjennes automatisk etter 60 sekunder hvis motstanderen glemmer å trykke. Rapporteres en kamp derimot unaturlig raskt (under 45 sekunder per sett), stoppes automatisk godkjenning og kampen flagges til arrangør. To venner kan heller ikke låse tabellen ved å spille tellende kamper mot hverandre to ganger på rad, og samme par har et tak på maks 2 tellende kamper per dag.",
             "Lærere og ansatte som Boss Fight: Ansatte kan enten spille uforpliktende kamper utenfor tabellen eller melde seg på med eget BOSS merke. For å hindre at elever samler lette poeng mot samme lærer gis det maks ett tellende trofe per ansatt per dag.",
           ],
         },
         {
           title: "Turneringer, rekkerter og klasselag",
           paragraphs: [
-            "Siden ulike skoler og friminutt har forskjellige behov, støtter turneringsmotoren tre oppsett: Kongen på haugen (løpende stige der man utfordrer opptil 3 plasser over seg), sluttspill med gruppespill og utslagsrunder, og Sveitserstil med faste runder der alle får spille helt til slutt.",
+            "Siden ulike skoler og friminutt har forskjellige behov, støtter turneringsmotoren tre oppsett: Kongen på haugen (åpen poengstige med 3 poeng per seier og automatisk påmelding ved bordet der alle kan møte hverandre på kryss og tvers), sluttspill med gruppespill og utslagsrunder, og Sveitserstil med faste runder der alle får spille helt til slutt.",
             "For å skape samhold på tvers av trinn og klasser har systemet egne klasselag og digitale rekkerter med lokalt preg fra skolen og Innlandet. Hver rekkert teller antall kamper, seire og tidligere eiere. Hver tredje fullførte turnering bytter skolen til en ny sesongpakke, og ved skoleårsavslutning for VG3 flyttes opplåste rekkerter over i skolens premiehvelv.",
           ],
         },
@@ -161,19 +162,19 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
           title: "Storskjermen i kantina og erfaringer med Infoskjermen.no",
           paragraphs: [
             "En av de mest lærerike tekniske utfordringene dukket opp da poengtavlen (/kiosk) skulle kjøre hele skoledagen gjennom Infoskjermen.no på eldre TV skjermer fra Samsung og LG. På vanlig mobil og PC fungerte alt på første forsøk, men inne i låste TV nettlesere oppførte visningen seg helt annerledes.",
-            "I slike TV nettlesere krever systemet et fysisk brukerklikk før en <video> får spille. Kaller man video.play() i en iframe uten klikk, kaster ikke nettleseren en feilmelding: promiset blir bare stående uavklart for alltid, slik at videoen fryser på første bilde.",
+            "I slike TV nettlesere krever systemet et fysisk brukerklikk før en <video> får spille. Kaller man video.play() i en iframe uten klikk, kaster ikke nettleseren en feilmelding: promiset blir bare stående uavklart for alltid, slik at videoen fryser på første bilde. I tillegg struper Chromium timere i kryssdomene iframes til hele minuttgrenser, slik at vanlig sekundbasert polling hoppes over.",
           ],
           bullets: [
             "24 fps animert WebP fremfor <video>: Alle animasjoner på storskjermen lages med ffmpeg som 24 fps animert WebP i et <picture> element med GIF som reserve.",
-            "Tre synkroniserte visningslag: Storskjermen leveres først som ferdig HTML fra serveren, oppgraderes til sanntids Socket.IO i moderne nettlesere, og har egen ES5 støtte (uten piler, template literals eller optional chaining) for eldre TV skjermer.",
-            "Tidsstyrt dvalemodus: Utenfor skolens åpningstid kobler storskjermen automatisk ned sanntidstrafikken og våkner igjen ved skolestart neste morgen.",
+            "Tre synkroniserte visningslag og TV testing: Storskjermen leveres først som ferdig HTML fra serveren (SSR), oppgraderes til sanntids Socket.IO i moderne nettlesere, og har en egen klient i ren ES5 (med 3 sekunders polling og måling av faktisk medgått tid) for eldre TV skjermer. Reservevisningene kan testes direkte i vanlig nettleser med ?mode=es5 og ?mode=ssr.",
+            "Diagnosestempel og tidsstyrt dvale: Nederst til høyre viser skjermen aktiv modus (LIVE, POLL, ES5 eller SSR) og laster seg selv inn på nytt automatisk når en ny versjon rulles ut. Utenfor skolens åpningstid går storskjermen i dvale og våkner igjen ved skolestart neste morgen.",
           ],
         },
         {
           title: "Arkitektur, drift og personvern",
           paragraphs: [
-            "Løsningen er bygget i Node.js med innebygd node:sqlite i WAL modus og kun 5 npm pakker (express, socket.io, dotenv, qrcode og web-push). Flere skoler kjører adskilt på samme instans via school_id i databasen og egne Socket.IO rom, i en lukket Docker container på Fly.io med fast lagringsvolum og automatisk sikkerhetskopi ved nye utgivelser.",
-            "Fordi løsningen brukes av skoleelever, er personvern bygget rett inn i datamodellen. Så snart en arrangør på skolen har bekreftet eleven, slettes midlertidig navn og epost permanent med NULL i databasen. Kun en enveis HMAC-SHA256 hash beholdes for innlogging, og løsningen har ingen fritekstchat eller tredjepartssporing. Før utrulling ble systemet stresstestet med 100 samtidige spillere uten feil.",
+            "Løsningen er bygget i Node.js med innebygd node:sqlite i WAL modus og kun 5 npm pakker (express, socket.io, dotenv, qrcode og web-push). Flere skoler kjører adskilt på samme instans via school_id i databasen og egne Socket.IO rom, i en lukket Docker container på Fly.io i Stockholm med fast lagringsvolum, CalVer versjonering og automatisk sikkerhetskopi (VACUUM INTO) ved nye utgivelser. Før utrulling ble systemet stresstestet med 100 samtidige spillere fordelt på to skoler uten feil.",
+            "Fordi løsningen brukes av skoleelever, er personvern (GDPR art. 25) bygget rett inn i datamodellen. Så snart en arrangør på skolen har bekreftet eleven, slettes midlertidig navn og epost permanent med NULL i databasen (og uverifiserte data vaskes automatisk etter 14 dager, mens tomme gjesteøkter vaskes etter 24 timer). Kun en enveis HMAC-SHA256 hash beholdes for innlogging, elevene kan slette egen konto på stedet, og arrangør kan hente ut anonymisert aktivitetsrapport for skolen (A4 og Excel generert uten eksterne pakker).",
           ],
         },
       ],
@@ -186,10 +187,10 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     aiContext: [
       "Pågående hobbyprosjekt jeg bygger på fritiden. Bakgrunnen var at vi så mye aktivitet rundt bordtennisbordene i kantina, samtidig som en gjeng med elever ikke helt greide å komme seg inn i miljøet og derfor havnet på telefonen. Prosjektet startet som et forsøk på inkludering og å lage noe artig som senket terskelen for å bli med og forsterket elevenes ønske om å delta aktivt og fysisk i friminuttet. Flere skoler kan bruke samme løsning med hvert sitt adskilte område (`/?school=<code>` og `/kiosk/<slug>`).",
       "Viktig grense hvis noen spør 'Laget du dette på jobb?' eller 'Betalte skolen for dette?': svar rolig og rett frem at nei, jobben min på skolen er kun IKT drift og support, og VGS Bordtennis er et rent hobbyprosjekt jeg har laget på egen fritid, ulønnet og på eget domene og server. Ikke nevn dette uoppfordret når folk bare spør vanlig om funksjonene i appen.",
-      "Slik fungerer kampene ved bordet: spillerne skanner en QR kode ved bordet, legger vekk mobilen mens de spiller, og begge bekrefter poengsummen etterpå (med automatisk godkjenning etter 90 sekunder og sperre mot unaturlig korte sett). Hvis noen glemmer å fullføre et bord, frigjøres det automatisk etter 12 minutter slik at neste par kan spille videre.",
-      "Turneringer og racketer: støtter Kongen på haugen, sluttspill og Sveitserstil (med Buchholz), i tillegg til statistikk på hvilke racketer som vinner mest gjennom sesongen.",
-      "Teknisk oppsett og storskjermen i kantina (`/kiosk`): bygget i Node.js med innebygd `node:sqlite` (i `WAL` modus) og kun 5 npm pakker, kjørende i Docker på Fly.io. Storskjermen i kantina oppdateres live over Socket.IO og er tilpasset Infoskjermen.no på eldre Samsung TV skjermer (bruker animert WebP i stedet for `<video>` fordi TV nettleseren fryser videoer på første bilde, samt ES5 støtte, lokale fonter og nattmodus). Stresstestet med 100 samtidige spillere uten feil.",
-      "Personvern (nevn kun kort hvis det er naturlig eller noen spør): midlertidig navn og epost slettes (`NULL`) så snart en arrangør har godkjent eleven, slik at kun en enveis `HMAC-SHA256` hash lagres, og det finnes ingen fritekstchat.",
+      "Lavterskel gjestespill og kampflyt ved bordet: uinnloggede elever som skanner QR koden ved bordet starter rett i kamp som Gjest uten å fylle ut skjema først, og kan samle opptil 3 seire (9 poeng) på vent frem til de trykker Lag profil etter kampen (da oppgraderes samme bruker på stedet og seirene flyttes inn på stigen). Når to spillere skanner samme bord innen 45 sekunder, kobles de automatisk sammen, legger vekk mobilen mens de spiller, og trykker på hurtigknapper for resultatet etterpå (1-0, 2-0 eller 2-1, med mulighet til å bytte mellom turnering og fritt spill i kampkortet). Bordet frigjøres med en gang resultatet legges inn, lovlige kamper godkjennes automatisk etter 60 sekunder, kamper under 45 sekunder per sett flagges mot juks, og glemte bord frigjøres etter 12 minutter.",
+      "Turneringer og rekkerter: støtter Kongen på haugen (åpen poengstige med 3 poeng per seier, automatisk påmelding ved bordet og maks 2 tellende kamper per spillerpar per dag), sluttspill og Sveitserstil (med Buchholz), i tillegg til klasselag, Boss Fight mot ansatte og statistikk på hvilke rekkerter som vinner mest gjennom sesongen.",
+      "Teknisk oppsett og storskjermen i kantina (`/kiosk`): bygget i Node.js med innebygd `node:sqlite` (i `WAL` modus) og kun 5 npm pakker, kjørende i Docker på Fly.io i Stockholm med CalVer utgivelser og automatisk `VACUUM INTO` sikkerhetskopi. Storskjermen er tilpasset Infoskjermen.no på eldre TV skjermer: bruker 24 fps animert WebP i stedet for `<video>` fordi TV nettleseren fryser videoer på første bilde, unngår sekundsjekker i `setInterval` fordi Chromium struper timere i iframes til minuttgrenser, og har 3 synkroniserte lag (SSR, Socket.IO og ren ES5 som kan testes med `?mode=es5` og `?mode=ssr`) samt diagnosestempel og dvalemodus. Stresstestet med 100 samtidige spillere fordelt på 2 skoler uten feil.",
+      "Personvern (nevn kun kort hvis det er naturlig eller noen spør): midlertidig navn og epost slettes (`NULL`) så snart en arrangør har godkjent eleven (eller automatisk etter 14 dager, og tomme gjesteøkter etter 24 timer), slik at kun en enveis `HMAC-SHA256` hash lagres. Løsningen har ingen fritekstchat, støtter selvbetjent sletting av konto og kan lage anonymisert aktivitetsrapport (A4 og Excel uten ekstra pakker).",
     ],
   },
   {
