@@ -66,21 +66,21 @@ export const AI_PAGE = {
     {
       project: "VGS Bordtennis",
       status: "Spike and Stabilize",
-      href: "https://vgsbordtennis.no/kiosk/demo",
+      href: "/prosjekter/vgs-bordtennis",
       description:
         "Første versjon gikk fra plan til drift på en uke med en blanding av arkitekturbygging, raske iterasjoner på design og finpuss med AI. Flat kodebase, developerlog.md og AGENTS.md holder konteksten kort mens prosjektet vokser.",
     },
     {
       project: "Ember Booking",
       status: "Håndverk først, AI til slutt",
-      href: "https://emberbooking.no",
+      href: "/prosjekter/ember-booking",
       description:
         "Her var strategien helt motsatt. Jeg gjorde grunnarbeidet selv, laget assets i Figma og bygde opp designsystemet for hånd. AI brukte jeg først helt til slutt for å fange opp inkonsekvenser og syntax feil før utrulling.",
     },
     {
       project: "MedCare Clinical og skoleprosjekter",
       status: "Minimalt med AI",
-      href: "https://github.com/yosang/medcare-clinical",
+      href: "/prosjekter/medcare-clinical",
       description:
         "Skoleprosjektene er til for å lære. Der bruker jeg nesten ingen AI utover litt sparring underveis, slik at jeg er sikker på at grunnkonseptene sitter ordentlig på egen hånd.",
     },
