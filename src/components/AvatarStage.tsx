@@ -11,7 +11,7 @@ import type {
 
 export type { AvatarMood, AvatarVariant };
 
-const MODEL_URL = "/avatar/yosmel.glb?v=gant-check";
+const MODEL_URL = "/avatar/yosmel.glb?v=gant-check-2";
 let userHasInteracted = false;
 
 interface AvatarStageProps {
