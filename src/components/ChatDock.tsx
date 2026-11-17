@@ -214,6 +214,7 @@ export function ChatDock() {
   }, [isOpen, setIsOpen]);
 
   const isActiveVoice = audioSpeaking || isStreaming;
+  const isThinking = isStreaming && !audioSpeaking;
   const showMobileHint =
     !hasOpenedOnce && messages.length === 0 && !scrolledPastTop && !isActiveVoice;
 
@@ -243,12 +244,21 @@ export function ChatDock() {
         >
           <span
             className={`glass-capsule pointer-events-none rounded-full px-3 py-1.5 text-xs font-medium text-ink transition-all duration-200 ${
-              showMobileHint
-                ? "translate-x-0 opacity-100 lg:translate-x-1 lg:opacity-0 lg:group-hover:translate-x-0 lg:group-hover:opacity-100"
-                : "hidden translate-x-1 opacity-0 sm:inline-block sm:group-hover:translate-x-0 sm:group-hover:opacity-100"
+              isThinking
+                ? "inline-flex items-center gap-1.5 translate-x-0 opacity-100"
+                : showMobileHint
+                  ? "translate-x-0 opacity-100 lg:translate-x-1 lg:opacity-0 lg:group-hover:translate-x-0 lg:group-hover:opacity-100"
+                  : "hidden translate-x-1 opacity-0 sm:inline-block sm:group-hover:translate-x-0 sm:group-hover:opacity-100"
             }`}
           >
-            {t.dock}
+            {isThinking ? (
+              <>
+                <span className="h-1.5 w-1.5 rounded-full bg-trail animate-pulse" />
+                <span className="font-mono">{t.thinking}</span>
+              </>
+            ) : (
+              t.dock
+            )}
           </span>
 
           <span
