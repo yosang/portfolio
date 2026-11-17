@@ -122,14 +122,14 @@ function detectReplyLanguage(
     return "es";
   }
   const hasNorwegianCharsOrWords =
-    /[æøåÆØÅ]|\b(hei|hvordan|hva|hvorfor|hvilke|fortell|prosjektene|prosjektet|jobber|bygd|bygde|laget|utvikler|skole|omvisning|rundt)\b/i.test(
+    /[æøåÆØÅ]|\b(hei|hvordan|hva|hvorfor|hvilke|fortell|prosjektene|prosjektet|jobber|bygd|bygde|laget|utvikler|skole|omvisning|rundt|ta\s+meg|gjennom|caset|seksjon)\b/i.test(
       text
     );
   if (hasNorwegianCharsOrWords) {
     return "no";
   }
   if (
-    /\b(hello|hi|hey|how|what|why|when|where|who|can|could|would|tell|show|about|your|you|projects|work|built|build|stack|role|experience)\b/i.test(
+    /\b(hello|hi|hey|how|what|why|when|where|who|can|could|would|tell|show|walk|briefly|through|case\s+study|about|your|you|projects|work|built|build|stack|role|experience)\b/i.test(
       text
     )
   ) {
@@ -254,16 +254,68 @@ const RATE_LIMIT_REPLY_NO =
 const RATE_LIMIT_REPLY_EN =
   "Easy there! I need a quick breather, please try again in a minute.";
 
+const EN_ONES = [
+  "zero",
+  "one",
+  "two",
+  "three",
+  "four",
+  "five",
+  "six",
+  "seven",
+  "eight",
+  "nine",
+  "ten",
+  "eleven",
+  "twelve",
+  "thirteen",
+  "fourteen",
+  "fifteen",
+  "sixteen",
+  "seventeen",
+  "eighteen",
+  "nineteen",
+];
+const EN_TENS = [
+  "",
+  "",
+  "twenty",
+  "thirty",
+  "forty",
+  "fifty",
+  "sixty",
+  "seventy",
+  "eighty",
+  "ninety",
+];
+
+function intToEnglish(n: number): string {
+  if (n < 0 || n > 100 || !Number.isInteger(n)) return String(n);
+  if (n < 20) return EN_ONES[n];
+  if (n === 100) return "one hundred";
+  const ten = Math.floor(n / 10);
+  const rem = n % 10;
+  return rem === 0 ? EN_TENS[ten] : `${EN_TENS[ten]}-${EN_ONES[rem]}`;
+}
+
 function cleanForSpeech(raw: string, replyLang: "no" | "en" | "es"): string {
   let out = raw.replace(/\bC#/g, "C sharp");
   if (replyLang === "en") {
     out = out
       .replace(/\bVGS Bordtennis\b/gi, "my high school table tennis app")
-      .replace(/\bNord-Gudbrandsdal VGS\b/gi, "North Gudbrandsdal High School");
+      .replace(/\bNord-Gudbrandsdal VGS\b/gi, "North Gudbrandsdal High School")
+      .replace(/\bInfoskjermen\.no\b/gi, "the info screen platform")
+      .replace(/\b(\d+)\s*fps\b/gi, (_, d) => `${intToEnglish(Number(d))} frames per second`)
+      .replace(/\b([0-3])-([0-3])\b/g, (_, a, b) => `${intToEnglish(Number(a))} ${intToEnglish(Number(b))}`)
+      .replace(/\bWebP\b/gi, "Web P")
+      .replace(/\bES5\b/gi, "E S five")
+      .replace(/\b3NF\b/gi, "third normal form")
+      .replace(/\b(\d{1,2}|100)\b/g, (m) => intToEnglish(Number(m)));
   } else if (replyLang === "es") {
     out = out
       .replace(/\bVGS Bordtennis\b/gi, "mi aplicación de tenis de mesa")
-      .replace(/\bNord-Gudbrandsdal VGS\b/gi, "el instituto donde trabajo");
+      .replace(/\bNord-Gudbrandsdal VGS\b/gi, "el instituto donde trabajo")
+      .replace(/\bInfoskjermen\.no\b/gi, "el sistema de pantallas");
   }
   return out
     .replace(/[`*_~]+/g, "")
@@ -286,17 +338,29 @@ function extractWavBase64(res: unknown): string | null {
   );
 }
 
-function moodToSpeechStyle(mood: Mood): string {
+function moodToSpeechStyle(mood: Mood, replyLang: "no" | "en" | "es"): string {
+  const langTag =
+    replyLang === "en"
+      ? "in natural spoken English"
+      : replyLang === "es"
+        ? "in natural spoken Spanish"
+        : "in natural spoken Norwegian";
   switch (mood) {
     case "happy":
-      return "warm, upbeat, and conversational";
+      return `warm, upbeat, and conversational ${langTag}`;
     case "confused":
-      return "curious, thoughtful, and natural";
+      return `curious, thoughtful, and natural ${langTag}`;
     case "thinking":
-      return "calm, reflective, and conversational";
+      return `calm, reflective, and conversational ${langTag}`;
     default:
-      return "relaxed, friendly, and natural";
+      return `relaxed, friendly, and natural ${langTag}`;
   }
+}
+
+function ttsLanguageCode(replyLang: "no" | "en" | "es"): string {
+  if (replyLang === "en") return "en-US";
+  if (replyLang === "es") return "es-ES";
+  return "nb-NO";
 }
 
 function buildConversationSteps(
@@ -511,7 +575,8 @@ export async function POST(req: NextRequest) {
 
         const synthesizeWav = async (segmentText: string): Promise<string | null> => {
           if (!ttsAi || !activeVoice || !segmentText) return null;
-          const cacheKey = `${activeVoice}:${configuredVoiceId ? "rep" : detectedMood}:${segmentText}`;
+          const ttsLang = ttsLanguageCode(replyLang);
+          const cacheKey = `${activeVoice}:${ttsLang}:${configuredVoiceId ? "rep" : detectedMood}:${segmentText}`;
           const cached = ttsWavCache.get(cacheKey);
           if (cached) return cached;
 
@@ -540,15 +605,13 @@ export async function POST(req: NextRequest) {
                 } = {
                   type: "text",
                   text: segmentText,
-                };
-                if (!configuredVoiceId) {
-                  contentItem.annotations = [
+                  annotations: [
                     {
                       type: "speech_metadata",
-                      style: moodToSpeechStyle(detectedMood),
+                      style: moodToSpeechStyle(detectedMood, replyLang),
                     },
-                  ];
-                }
+                  ],
+                };
 
                 const ttsRes = await ttsAi.interactions.create(
                   {
@@ -556,7 +619,7 @@ export async function POST(req: NextRequest) {
                     input: [{ type: "user_input", content: [contentItem] }],
                     response_format: { type: "audio" },
                     generation_config: {
-                      speech_config: [{ voice: activeVoice }],
+                      speech_config: [{ voice: activeVoice, language: ttsLang }],
                     },
                     store: false,
                   },
