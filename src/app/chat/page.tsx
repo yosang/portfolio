@@ -5,12 +5,12 @@ import Link from "next/link";
 import { AvatarStage } from "@/components/AvatarStage";
 import { ChatThread, Composer } from "@/components/ChatThread";
 import { useCompanion } from "@/components/CompanionContext";
-import { PROFILE } from "@/data/portfolio";
-import { UI } from "@/data/ui";
+import { useLocalizedData } from "@/lib/i18n";
 
 export default function ChatPage() {
   const { messages, mood, isStreaming, voiceEnabled, setVoiceEnabled, voiceCapped, resetChat } =
     useCompanion();
+  const { ui: UI, profile: PROFILE } = useLocalizedData();
   const t = UI.chat;
 
   return (

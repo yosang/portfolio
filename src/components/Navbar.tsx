@@ -5,11 +5,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "@/components/ThemeProvider";
-import { UI } from "@/data/ui";
+import { useLocalizedData } from "@/lib/i18n";
 
 export function Navbar() {
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
+  const { locale, toggleLocale, ui: UI } = useLocalizedData();
   const [projectsActive, setProjectsActive] = useState(false);
 
   useEffect(() => {
@@ -107,6 +108,16 @@ export function Navbar() {
           </ul>
 
           <span className="mx-0.5 h-3.5 w-px shrink-0 bg-line sm:mx-1" />
+
+          <button
+            type="button"
+            onClick={toggleLocale}
+            aria-label={UI.langLabel}
+            title={UI.langLabel}
+            className="shrink-0 rounded-full px-2 py-1 font-mono text-[11px] font-semibold tracking-wider text-ink-soft transition-colors hover:text-ink cursor-pointer"
+          >
+            {locale === "no" ? "EN" : "NO"}
+          </button>
 
           <button
             type="button"

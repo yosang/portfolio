@@ -4,7 +4,7 @@ import React, { memo } from "react";
 import Link from "next/link";
 import { ArrowUpRight, ChevronDown } from "lucide-react";
 import type { ProjectItem } from "@/data/projects";
-import { UI } from "@/data/ui";
+import { useLocalizedData } from "@/lib/i18n";
 import { ProjectMedia } from "@/components/ProjectMedia";
 
 export interface ProjectCardProps {
@@ -24,6 +24,7 @@ export const ProjectCard = memo(function ProjectCard({
   onToggle,
   onAsk,
 }: ProjectCardProps) {
+  const { ui: UI } = useLocalizedData();
   const t = UI.home;
   const panelId = `work-${item.slug}`;
   const caseHref = `/prosjekter/${item.slug}`;

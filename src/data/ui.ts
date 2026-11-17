@@ -3,6 +3,7 @@ import type { AvatarMood } from "@/lib/avatarEngine";
 export const UI = {
   nav: { home: "Hjem", projects: "Prosjekter", about: "Om", ai: "AI", chat: "Chat" },
   themeLabel: "Bytt mellom lys og mørk visning",
+  langLabel: "Bytt språk mellom norsk og engelsk",
   moods: {
     neutral: "klar",
     happy: "blid",
@@ -18,13 +19,20 @@ export const UI = {
     detailsOpen: "Skjul",
     detailsClosed: "Detaljer",
     askAbout: "Spør AI",
+    askAboutTemplate: "Fortell kort hvordan du bygde {title}.",
     askAboutPrompt: (title: string) => `Fortell kort hvordan du bygde ${title}.`,
+    askCaseButton: "Spør AI Yosmel om prosjektet",
     readAiWorkflow: "Les om arbeidsflyten på /ai",
     readCaseStudy: "Les hele caset",
     openCase: "Les mer",
     backToProjects: "Tilbake til prosjekter",
     categoryIndependent: "Eget prosjekt",
     categorySchool: "Skoleprosjekt · Noroff",
+    roleLabel: "Min rolle",
+    statusLabel: "Status",
+    moreProjects: "Flere prosjekter",
+    prevProject: "Forrige prosjekt",
+    nextProject: "Neste prosjekt",
     source: "Kode",
     live: "Nettside",
     openLive: "Åpne nettside",
@@ -90,6 +98,38 @@ export const UI = {
       },
     ],
     copyright: "© 2026 Yosmel Chiang og modellene som snakker i mitt navn.",
+  },
+  privacy: {
+    heading: "Personvern på yosmel.no",
+    lead: "Kort fortalt: denne porteføljen har ingen brukerkontoer, ingen sporings-cookies og ingen database som lagrer hva du skriver eller sier i chatten. Her er en åpen oversikt over nøyaktig hva som skjer under panseret.",
+    contactPrefix: "Spørsmål om personvern kan rettes direkte til",
+    backHome: "Tilbake til forsiden",
+    sections: [
+      {
+        title: "Ingen lagring av chathistorikk på serveren",
+        body: "Meldinger du skriver til AI versjonen av meg og svarene som genereres, lagres aldri i noen database eller loggfil på serveren. Når du lukker nettleserfanen eller trykker på Tøm i chatten, er samtalen borte.",
+      },
+      {
+        title: "Ingen lagring av lydopptak eller stemme",
+        body: "Mikrofonen i chatten aktiveres kun når du selv trykker på mikrofonknappen. Så snart du stopper opptaket, skrus mikrofonen helt av i nettleseren. Lydklippet behandles kun i minnet for å gjøre tale om til tekst og slettes umiddelbart etterpå.",
+      },
+      {
+        title: "Hva som lagres lokalt i din egen nettleser",
+        body: "Nettsiden bruker ingen informasjonskapsler (cookies) for sporing, analyse eller reklame. Små verdier holdes kun lokalt på din egen enhet for at siden skal fungere praktisk mens du bruker den:",
+        bullets: [
+          "sessionStorage (ai-twin-chat): Husker pågående chat-tråd mens du klikker deg mellom undersidene i samme fane. Slettes automatisk når du lukker fanen.",
+          "localStorage (portfolio-theme og portfolio-locale): Husker om du har valgt lys eller mørk visning og språk (NO/EN).",
+        ],
+      },
+      {
+        title: "Midlertidig kvotevern i arbeidsminnet (RAM)",
+        body: "For å beskytte API-kvoten mot automatisert spam holder serveren en enkel teller per IP-adresse i arbeidsminnet (RAM) som tilbakestilles løpende. IP-adresser skrives aldri til disk eller database.",
+      },
+      {
+        title: "Tredjepartsbehandling (Google Gemini API)",
+        body: "Når du sender en melding, bruker mikrofonen eller har lyd skrudd på i chatten, sendes forespørselen kryptert (HTTPS) til Google sitt Gemini API for å generere tekstsvar, tolke tale til tekst og lage syntetisk stemme. Kallene for tale-til-tekst og stemmesyntese sendes med lagring deaktivert (store: false).",
+      },
+    ],
   },
   networkError: "Fikk ikke svar akkurat nå. Prøv igjen.",
 };

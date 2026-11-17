@@ -4,11 +4,11 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ArrowUpRight } from "lucide-react";
-import { PROFILE } from "@/data/portfolio";
-import { UI } from "@/data/ui";
+import { useLocalizedData } from "@/lib/i18n";
 
 export function SiteFooter() {
   const pathname = usePathname();
+  const { ui: UI, profile: PROFILE } = useLocalizedData();
 
   if (pathname === "/chat") return null;
 

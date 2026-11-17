@@ -9,8 +9,7 @@ import { useCompanion } from "@/components/CompanionContext";
 import { AvatarStage } from "@/components/AvatarStage";
 import { ChatThread, Composer } from "@/components/ChatThread";
 import { portfolioAudio } from "@/lib/audioSynth";
-import { PROFILE } from "@/data/portfolio";
-import { UI } from "@/data/ui";
+import { useLocalizedData } from "@/lib/i18n";
 
 const STUDIO_BG = "#17211e";
 
@@ -27,6 +26,7 @@ export function ChatDock() {
     voiceCapped,
     resetChat,
   } = useCompanion();
+  const { ui: UI, profile: PROFILE } = useLocalizedData();
   const t = UI.chat;
 
   const [heroScrolledOut, setHeroScrolledOut] = useState(false);

@@ -12,14 +12,14 @@ import React, {
 import { usePathname, useRouter } from "next/navigation";
 import { portfolioAudio } from "@/lib/audioSynth";
 import type { AvatarMood } from "@/lib/avatarEngine";
-import {
-  PROJECT_TOUR_STEPS,
-  SPECIFIC_TOUR_TARGET_RE,
-} from "@/data/portfolio";
-import { UI } from "@/data/ui";
+import { SPECIFIC_TOUR_TARGET_RE } from "@/data/portfolio";
+import { getLocalizedData, useLocalizedData } from "@/lib/i18n";
 
-const INSTANT_TOUR_RE =
+const INSTANT_TOUR_NO_RE =
   /^(?:hei[,!\s]+)?(?:ai\s+yosmel[,!\s]+|yosmel[,!\s]+)?(?:kan du\s+|vil du\s+)?(?:vis(?:e)?(?:\s+fram|\s+frem)?(?:\s+meg)?|ta\s+meg\s+(?:med\s+)?(?:gjennom|rundt(?:\s+i)?)|gi\s+meg\s+en\s+(?:runde|omvisning)(?:\s+i|\s+gjennom)?)\s+(?:litt\s+)?(?:rundt(?:\s+i\s+(?:dine\s+)?prosjekt(?:er|ene)(?:\s+dine)?)?|(?:dine\s+|alle\s+)?prosjekt(?:er|ene)(?:\s+dine|\s+du\s+har\s+laget)?|porteføljen(?:\s+din)?)[.!?]*$/i;
+
+const INSTANT_TOUR_EN_RE =
+  /^(?:hi[,!\s]+|hello[,!\s]+|hey[,!\s]+)?(?:ai\s+yosmel[,!\s]+|yosmel[,!\s]+)?(?:can you\s+|could you\s+|would you\s+)?(?:show\s+me(?:\s+around(?:\s+in|\s+your)?)?|take\s+me\s+(?:around|through|on\s+a\s+tour\s+of)|give\s+me\s+a\s+tour\s+of|walk\s+me\s+through)\s*(?:your\s+|the\s+|all\s+)?(?:projects|portfolio|work)?[.!?]*$/i;
 
 export interface ChatAttachment {
   href: string;
@@ -111,6 +111,7 @@ function inspectViewportContext(pathname: string) {
 export function CompanionProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
+  const { locale, ui: UI } = useLocalizedData();
 
   const [messages, setMessages] = useState<ChatTurn[]>([]);
   const [mood, setMood] = useState<AvatarMood>("neutral");
@@ -127,6 +128,8 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
   const isStreamingRef = useRef(false);
   const voiceEnabledRef = useRef(true);
   const pathnameRef = useRef(pathname);
+  const localeRef = useRef(locale);
+  const uiRef = useRef(UI);
   const spotlightSlugRef = useRef<string | null>(null);
   const autoScrollCancelledRef = useRef(false);
   const hasStartedTourScrollRef = useRef(false);
@@ -137,6 +140,11 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     pathnameRef.current = pathname;
   }, [pathname]);
+
+  useEffect(() => {
+    localeRef.current = locale;
+    uiRef.current = UI;
+  }, [locale, UI]);
 
   useEffect(() => {
     spotlightSlugRef.current = spotlightSlug;
@@ -318,12 +326,22 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
       const pageContext = inspectViewportContext(pathnameRef.current);
       const wantVoice = voiceEnabledRef.current;
 
-      const isInstantTour =
-        !SPECIFIC_TOUR_TARGET_RE.test(trimmed) && INSTANT_TOUR_RE.test(trimmed);
+      const isEnglishTour =
+        !SPECIFIC_TOUR_TARGET_RE.test(trimmed) && INSTANT_TOUR_EN_RE.test(trimmed);
+      const isNorwegianTour =
+        !SPECIFIC_TOUR_TARGET_RE.test(trimmed) && INSTANT_TOUR_NO_RE.test(trimmed);
+      const isInstantTour = isEnglishTour || isNorwegianTour;
 
       if (isInstantTour) {
+        const tourLocale = isEnglishTour
+          ? "en"
+          : isNorwegianTour
+            ? localeRef.current === "en"
+              ? "no"
+              : localeRef.current
+            : localeRef.current;
         const steps: Array<{ slug?: string; audioSrc?: string; bubble: string }> =
-          PROJECT_TOUR_STEPS;
+          getLocalizedData(tourLocale).tourSteps;
         prevInteractionIdRef.current = null;
         setMood("happy");
 
@@ -429,6 +447,7 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
             })),
             page: pageContext,
             voice: wantVoice,
+            locale: localeRef.current,
             previousInteractionId: prevInteractionIdRef.current,
           }),
         });
@@ -610,7 +629,7 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
               latestAttachment = {
                 href: "/Yosmel_Chiang_CV.pdf",
                 filename: "Yosmel_Chiang_CV.pdf",
-                label: UI.chat.cvLabel,
+                label: uiRef.current.chat.cvLabel,
               };
               setMessages((prev) =>
                 prev.map((msg) =>
@@ -737,8 +756,8 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
             msg.id === assistantId
                 ? {
                   ...msg,
-                  content: UI.networkError,
-                  bubbles: [UI.networkError],
+                  content: uiRef.current.networkError,
+                  bubbles: [uiRef.current.networkError],
                   mood: "confused",
                 }
               : msg

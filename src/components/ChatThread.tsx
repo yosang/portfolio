@@ -3,26 +3,27 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowUp, Download, FileText, Loader2, Mic, Square } from "lucide-react";
 import { useCompanion, type ChatTurn } from "@/components/CompanionContext";
-import {
-  FOLLOW_UP_PROMPTS,
-  ITEMS,
-  TOUR_PROMPT,
-  USE_CASE_PROMPT,
-} from "@/data/portfolio";
-import { UI } from "@/data/ui";
+import { useLocalizedData } from "@/lib/i18n";
 
-function pickFollowUp(messages: ChatTurn[]): string | null {
+function pickFollowUp(
+  messages: ChatTurn[],
+  items: Array<{ title: string }>,
+  tourPrompt: string,
+  followUpPrompts: Array<{ text: string; match?: RegExp }>
+): string | null {
   const last = messages[messages.length - 1];
   if (!last || last.role !== "assistant" || !last.content.trim()) return null;
 
   const hasSeenTour = messages.some(
     (m) =>
       (m.role === "user" &&
-        /rundt i prosjekt|vis.*prosjektene|prosjektene dine/i.test(m.content)) ||
+        /rundt i prosjekt|vis.*prosjektene|prosjektene dine|around.*projects|show.*projects|your projects|tour.*projects/i.test(
+          m.content
+        )) ||
       (m.role === "assistant" &&
-        ITEMS.filter((item) => m.content.includes(item.title)).length >= 2)
+        items.filter((item) => m.content.includes(item.title)).length >= 2)
   );
-  if (!hasSeenTour) return TOUR_PROMPT;
+  if (!hasSeenTour) return tourPrompt;
 
   const asked = new Set(
     messages
@@ -34,8 +35,8 @@ function pickFollowUp(messages: ChatTurn[]): string | null {
   const prevUser = [...messages].reverse().find((m) => m.role === "user")?.content ?? "";
   const contextText = `${prevUser} ${last.content}`;
 
-  const pool = FOLLOW_UP_PROMPTS.filter((p) => {
-    if (p.text === TOUR_PROMPT) return false;
+  const pool = followUpPrompts.filter((p) => {
+    if (p.text === tourPrompt) return false;
     if (asked.has(p.text.toLowerCase())) return false;
     if (p.text.includes("CV") && hasCv) return false;
     return true;
@@ -63,9 +64,13 @@ export function ChatThread({
   compact?: boolean;
 }) {
   const { messages, isStreaming, sendMessage } = useCompanion();
-  const t = UI.chat;
+  const { ui, projects: items, tourPrompt, useCasePrompt, followUpPrompts } =
+    useLocalizedData();
+  const t = ui.chat;
   const scrollRef = useRef<HTMLDivElement | null>(null);
-  const followUp = !isStreaming ? pickFollowUp(messages) : null;
+  const followUp = !isStreaming
+    ? pickFollowUp(messages, items, tourPrompt, followUpPrompts)
+    : null;
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -84,7 +89,7 @@ export function ChatThread({
             </p>
           )}
           <div className="flex flex-wrap gap-1.5">
-            {[TOUR_PROMPT, USE_CASE_PROMPT].map((prompt) => (
+            {[tourPrompt, useCasePrompt].map((prompt) => (
               <button
                 key={prompt}
                 type="button"
@@ -203,7 +208,8 @@ export function Composer({
   inputId?: string;
 }) {
   const { isStreaming, sendMessage } = useCompanion();
-  const t = UI.chat;
+  const { ui } = useLocalizedData();
+  const t = ui.chat;
   const [text, setText] = useState("");
   const [isRecording, setIsRecording] = useState(false);
   const [isTranscribing, setIsTranscribing] = useState(false);

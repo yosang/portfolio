@@ -4,9 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/sync-i18n.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "i18n": "node scripts/sync-i18n.mjs",
     "clone-voice": "node scripts/clone-voice.mjs"
   },
   "dependencies": {

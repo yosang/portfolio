@@ -8,22 +8,23 @@ import {
   Volume2,
   VolumeX,
 } from "lucide-react";
-import {
-  INDEPENDENT_PROJECTS,
-  ITEMS,
-  PROFILE,
-  SCHOOL_PROJECTS,
-} from "@/data/portfolio";
-import { UI } from "@/data/ui";
 import { useCompanion, useCompanionPortfolio } from "@/components/CompanionContext";
 import { AvatarStage } from "@/components/AvatarStage";
 import { ChatThread, Composer } from "@/components/ChatThread";
 import { ProjectCard } from "@/components/ProjectCard";
+import { useLocalizedData } from "@/lib/i18n";
 
 type FilterMode = "all" | "independent" | "school";
 
 export default function HomePage() {
   const { spotlightSlug, clearSpotlight, sendMessage, setIsOpen } = useCompanionPortfolio();
+  const {
+    ui: UI,
+    profile: PROFILE,
+    projects: ITEMS,
+    independentProjects: INDEPENDENT_PROJECTS,
+    schoolProjects: SCHOOL_PROJECTS,
+  } = useLocalizedData();
   const t = UI.home;
 
   const [filter, setFilter] = useState<FilterMode>("all");
@@ -196,7 +197,7 @@ const HeroAiStudio = memo(function HeroAiStudio() {
     voiceCapped,
     resetChat,
   } = useCompanion();
-  const ui = UI;
+  const { ui, profile: PROFILE } = useLocalizedData();
   const [isDesktop, setIsDesktop] = useState(false);
   const [infoPinned, setInfoPinned] = useState(false);
   const [infoHovered, setInfoHovered] = useState(false);

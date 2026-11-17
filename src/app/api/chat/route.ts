@@ -144,18 +144,55 @@ function checkAndIncrementVoiceBudget(): { allowed: boolean; remaining: number }
   return { allowed: true, remaining: Math.max(0, DAILY_VOICE_CAP - voiceUsesToday) };
 }
 
-const PHRASING_HINTS = [
+const PHRASING_HINTS_NO = [
   "Formuler svaret med dine egne muntlige ord uten å gjenbruke åpningsordene eller setningsoppbyggingen i notatene. Start gjerne første setning rett på det konkrete poenget.",
   "Ordlegg deg avslappet og muntlig med en annen inngang og rytme enn oppsettet i notatene, mens du holder deg strengt til faktaene.",
   "Svar kort og muntlig som i en uformell prat over en kaffekopp. Bytt gjerne om på rekkefølgen av leddene i første setning i forhold til notatene, men behold nøyaktig samme fakta.",
   "Lag en helt egen, naturlig åpning på første setning slik at svaret ikke starter med de samme ordene som kulepunktet i notatene, samtidig som du holder deg 100 % til faktaene.",
 ];
+
+const PHRASING_HINTS_EN = [
+  "Phrase the answer in your own conversational English without copying the sentence structure of the notes. Start the first sentence right on the concrete point.",
+  "Keep the tone relaxed and spoken, like chatting over a cup of coffee, while sticking strictly to the facts in the notes.",
+  "Answer briefly and naturally in first person ('I'), varying how you open the first sentence while keeping the exact same facts.",
+];
+
 let phrasingCursor = 0;
 
-function nextPhrasingHint(): string {
-  const hint = PHRASING_HINTS[phrasingCursor % PHRASING_HINTS.length];
-  phrasingCursor = (phrasingCursor + 1) % PHRASING_HINTS.length;
+function nextPhrasingHint(lang: "no" | "en" | "es"): string {
+  const list = lang === "no" ? PHRASING_HINTS_NO : PHRASING_HINTS_EN;
+  const hint = list[phrasingCursor % list.length];
+  phrasingCursor = (phrasingCursor + 1) % list.length;
   return hint;
+}
+
+function detectReplyLanguage(
+  locale: "no" | "en" | undefined,
+  lastUserMsg: string
+): "no" | "en" | "es" {
+  const text = lastUserMsg.trim();
+  if (
+    /[¿¡]|\b(hola|cómo|como\s+estás|puedes|hablas|español|proyectos|trabajas|quién|eres|gracias|buenos\s+días|buenas|cuéntame|háblame)\b/i.test(
+      text
+    )
+  ) {
+    return "es";
+  }
+  const hasNorwegianCharsOrWords =
+    /[æøåÆØÅ]|\b(hei|hvordan|hva|hvorfor|hvilke|fortell|prosjektene|prosjektet|jobber|bygd|bygde|laget|utvikler|skole|omvisning|rundt)\b/i.test(
+      text
+    );
+  if (hasNorwegianCharsOrWords) {
+    return "no";
+  }
+  if (
+    /\b(hello|hi|hey|how|what|why|when|where|who|can|could|would|tell|show|about|your|you|projects|work|built|build|stack|role|experience)\b/i.test(
+      text
+    )
+  ) {
+    return "en";
+  }
+  return locale === "en" ? "en" : "no";
 }
 
 const PERSONA_PATH = path.join(process.cwd(), "src", "data", "persona.md");
@@ -169,7 +206,10 @@ function loadPersona(): string {
   return cachedPersona;
 }
 
-function buildSystemInstruction(page?: ViewportPageContext): string {
+function buildSystemInstruction(
+  page?: ViewportPageContext,
+  replyLang: "no" | "en" | "es" = "no"
+): string {
   const persona = loadPersona();
   const projectsDigest = ITEMS.map((item, idx) => {
     const urls = [item.liveUrl, item.repoUrl].filter(Boolean).join(" · ");
@@ -189,10 +229,17 @@ ${notes}`;
   const count = ITEMS.length;
 
   const viewportNote = page
-    ? `\n## Hva besøkende ser på skjermen akkurat nå\n- Side: ${page.path || "/"}\n- Seksjon: ${page.section || "Hero"}\n- Kort på skjermen: ${page.showing || "ingen"}\n(Bruk dette KUN hvis besøkende spør direkte om "dette prosjektet" eller "denne siden". Hopp aldri over prosjekter ved en prosjektomvisning, og nevn aldri hva de ser på uoppfordret.)`
+    ? `\n## Hva besøkende ser på skjermen akkurat nå\n- Side: ${page.path || "/"}\n- Seksjon: ${page.section || "Hero"}\n- Kort på skjermen: ${page.showing || "ingen"}\n(Bruk dette KUN hvis besøkende spør direkte om "dette prosjektet" / "this project" eller "denne siden" / "this page". Hopp aldri over prosjekter ved en prosjektomvisning, og nevn aldri hva de ser på uoppfordret.)`
     : "";
 
-  const phrasingHint = nextPhrasingHint();
+  const phrasingHint = nextPhrasingHint(replyLang);
+
+  const langDirective =
+    replyLang === "en"
+      ? `- IMPORTANT: Respond in natural, conversational first-person English ("I"). Translate all facts from the Norwegian notes accurately into natural spoken English. Never use em-dashes (—) or en-dashes (–), and avoid AI-slop words (delve, leverage, seamless, robust, pivotal, tapestry). When referring to "VGS Bordtennis" in English, call it "my high school table tennis app" or "VGS Bordtennis, my real-time table tennis app for high schools" so English speakers understand what it is.`
+      : replyLang === "es"
+        ? `- IMPORTANT: Respond in natural, conversational first-person Spanish ("yo"). Translate all facts from the Norwegian notes accurately into natural spoken Spanish. Never use em-dashes (—) or en-dashes (–). When referring to "VGS Bordtennis", explain briefly that it is your real-time table tennis app for high schools.`
+        : `- Skriv alltid på helt vanlig, muntlig norsk bokmål. Finn aldri på rare sammensatte ord.`;
 
   return `${persona}
 
@@ -201,7 +248,7 @@ ${projectsDigest}
 ${viewportNote}
 
 ## Språk og variasjon i denne runden
-- Skriv alltid på helt vanlig, muntlig norsk bokmål. Finn aldri på rare sammensatte ord.
+${langDirective}
 - ${phrasingHint}
 
 ## Kontrolltagger (obligatorisk)
@@ -209,7 +256,7 @@ ${viewportNote}
 2. Valgfrie handlingstagger:
    - \`[TOUR:<slug>]\` der slug er en av: ${slugList} (scroller til og åpner prosjektkortet).
      - Enkelt prosjekt: sett \`[TOUR:<slug>]\` først i den første boblen.
-     - Full prosjektomvisning (for eksempel "Vis meg rundt i prosjektene" eller "Vis meg prosjektene dine"): gå gjennom alle ${count} prosjektene i rekkefølge ovenfra og ned (${slugList}) fordelt på ${count} korte bobler skilt med \`\\n\\n\`, der hver boble starter med \`[TOUR:<slug>]\` og holdes kort (12 til 16 ord, maks 95 tegn).
+     - Full prosjektomvisning (for eksempel "Vis meg rundt i prosjektene" eller "Show me around your projects"): gå gjennom alle ${count} prosjektene i rekkefølge ovenfra og ned (${slugList}) fordelt på ${count} korte bobler skilt med \`\\n\\n\`, der hver boble starter med \`[TOUR:<slug>]\` og holdes kort (12 til 16 ord, maks 95 tegn).
    - \`[GO:/about]\`, \`[GO:/ai]\`, \`[GO:/personvern]\`, \`[GO:/]\` eller \`[GO:/chat]\` for å bytte side.
    - \`[FILE:cv]\` KUN når besøkende spør direkte om å få se, lese eller laste ned CV'en din.
 3. Skriv 1 til 3 korte bobler skilt med \`\\n\\n\` (eller ${count} korte bobler på 1 setning hver ved full prosjektomvisning). Kun ren tekst uten markdown-overskrifter eller kodeblokker med mindre noen ber om det.`;
@@ -219,18 +266,33 @@ function sseFrame(payload: Record<string, unknown>): Uint8Array {
   return new TextEncoder().encode(`data: ${JSON.stringify(payload)}\n\n`);
 }
 
-const DEMO_REPLY =
+const DEMO_REPLY_NO =
   "Jeg kjører i demomodus akkurat nå uten API nøkkel.\n\nLegg GEMINI_API_KEY i portfolio/.env.local, så svarer jeg ordentlig.";
+const DEMO_REPLY_EN =
+  "I am running in demo mode right now without an API key.\n\nAdd GEMINI_API_KEY to portfolio/.env.local and I will answer properly.";
 
-const ERROR_REPLY =
+const ERROR_REPLY_NO =
   "Noe gikk galt i kontakten med Gemini. Sjekk GEMINI_API_KEY i .env.local og prøv igjen.";
+const ERROR_REPLY_EN =
+  "Something went wrong reaching Gemini. Please try again in a moment.";
 
-const RATE_LIMIT_REPLY =
+const RATE_LIMIT_REPLY_NO =
   "Rolig i svingene! Jeg trenger en liten pust i bakken, prøv gjerne igjen om et lite minutt.";
+const RATE_LIMIT_REPLY_EN =
+  "Easy there! I need a quick breather, please try again in a minute.";
 
-function cleanForSpeech(raw: string): string {
-  return raw
-    .replace(/\bC#/g, "C sharp")
+function cleanForSpeech(raw: string, replyLang: "no" | "en" | "es"): string {
+  let out = raw.replace(/\bC#/g, "C sharp");
+  if (replyLang === "en") {
+    out = out
+      .replace(/\bVGS Bordtennis\b/gi, "my high school table tennis app")
+      .replace(/\bNord-Gudbrandsdal VGS\b/gi, "North Gudbrandsdal High School");
+  } else if (replyLang === "es") {
+    out = out
+      .replace(/\bVGS Bordtennis\b/gi, "mi aplicación de tenis de mesa")
+      .replace(/\bNord-Gudbrandsdal VGS\b/gi, "el instituto donde trabajo");
+  }
+  return out
     .replace(/[`*_~]+/g, "")
     .replace(/\s*\n+\s*/g, " ")
     .replace(/\s{2,}/g, " ")
@@ -275,6 +337,7 @@ export async function POST(req: NextRequest) {
     messages?: ClientMessage[];
     page?: ViewportPageContext;
     voice?: boolean;
+    locale?: "no" | "en";
     previousInteractionId?: string | null;
   };
 
@@ -297,8 +360,10 @@ export async function POST(req: NextRequest) {
   const messages = body.messages || [];
   const rawLastMsg =
     [...messages].reverse().find((m) => m.role === "user")?.content?.trim() ||
-    "Hei!";
+    (body.locale === "en" ? "Hi!" : "Hei!");
   const lastUserMsg = rawLastMsg.slice(0, MAX_INPUT_CHARS);
+  const replyLang = detectReplyLanguage(body.locale, lastUserMsg);
+  const isEn = replyLang === "en";
   const wantVoice = Boolean(body.voice);
   const apiKey = process.env.GEMINI_API_KEY?.trim();
   const configuredVoiceId = process.env.GEMINI_VOICE_ID?.trim();
@@ -309,7 +374,12 @@ export async function POST(req: NextRequest) {
       try {
         if (!checkIpAllowance(clientIp)) {
           controller.enqueue(
-            sseFrame({ mood: "neutral", t: RATE_LIMIT_REPLY, textDone: true, done: true })
+            sseFrame({
+              mood: "neutral",
+              t: isEn ? RATE_LIMIT_REPLY_EN : RATE_LIMIT_REPLY_NO,
+              textDone: true,
+              done: true,
+            })
           );
           controller.close();
           return;
@@ -317,7 +387,8 @@ export async function POST(req: NextRequest) {
 
         if (!apiKey) {
           controller.enqueue(sseFrame({ mood: "happy", demo: true }));
-          for (const chunk of DEMO_REPLY.split(/(\s+)/)) {
+          const demoText = isEn ? DEMO_REPLY_EN : DEMO_REPLY_NO;
+          for (const chunk of demoText.split(/(\s+)/)) {
             controller.enqueue(sseFrame({ t: chunk }));
             await new Promise((r) => setTimeout(r, 18));
           }
@@ -327,7 +398,7 @@ export async function POST(req: NextRequest) {
         }
 
         const ai = new GoogleGenAI({ apiKey });
-        const systemInstruction = buildSystemInstruction(body.page);
+        const systemInstruction = buildSystemInstruction(body.page, replyLang);
 
         const priorUserTurns = messages
           .slice(0, -1)
@@ -335,8 +406,17 @@ export async function POST(req: NextRequest) {
           .map((m) => m.content.trim().toLowerCase());
         const isRepeatInThread = priorUserTurns.includes(lastUserMsg.trim().toLowerCase());
         const repeatSuffix = isRepeatInThread
-          ? "\n\n(Merk: Besøkende har spurt om akkurat dette tidligere i samtalen. Svar med en annen ordlyd og setningsoppbygging enn sist, uten å gjenta forrige svar ordrett.)"
+          ? replyLang === "en"
+            ? "\n\n(Note: The visitor has asked this earlier in the conversation. Answer with fresh wording and sentence structure without repeating your previous reply verbatim.)"
+            : "\n\n(Merk: Besøkende har spurt om akkurat dette tidligere i samtalen. Svar med en annen ordlyd og setningsoppbygging enn sist, uten å gjenta forrige svar ordrett.)"
           : "";
+
+        const langReminder =
+          replyLang === "en"
+            ? "\n\n(Respond in natural, conversational first-person English.)"
+            : replyLang === "es"
+              ? "\n\n(Respond in natural, conversational first-person Spanish.)"
+              : "";
 
         const contextualInput =
           !body.previousInteractionId && messages.length > 1
@@ -344,10 +424,10 @@ export async function POST(req: NextRequest) {
                 .slice(-6)
                 .map(
                   (m) =>
-                    `${m.role === "user" ? "Besøkende" : PROFILE.shortName}: ${m.content.slice(0, MAX_INPUT_CHARS)}`
+                    `${m.role === "user" ? "Visitor" : PROFILE.shortName}: ${m.content.slice(0, MAX_INPUT_CHARS)}`
                 )
-                .join("\n") + `\n\nSvar på den siste meldingen fra Besøkende over.${repeatSuffix}`
-            : `${lastUserMsg}${repeatSuffix}`;
+                .join("\n") + `\n\nReply to the last message from Visitor above.${repeatSuffix}${langReminder}`
+            : `${lastUserMsg}${repeatSuffix}${langReminder}`;
 
         const chatModel =
           process.env.GEMINI_CHAT_MODEL?.trim() || "gemini-3.5-flash-lite";
@@ -501,7 +581,7 @@ export async function POST(req: NextRequest) {
 
         const queueBubbleTts = (index: number, rawBubble: string, tour?: string) => {
           if (!wantVoice || !ttsAi) return;
-          const speech = cleanForSpeech(rawBubble);
+          const speech = cleanForSpeech(rawBubble, replyLang);
           if (!speech) return;
           if (!ttsState.voiceBudget) {
             ttsState.voiceBudget = checkAndIncrementVoiceBudget();
@@ -733,7 +813,11 @@ export async function POST(req: NextRequest) {
       } catch (err) {
         console.error("[/api/chat error]:", err);
         controller.enqueue(
-          sseFrame({ mood: "confused", t: ERROR_REPLY, done: true })
+          sseFrame({
+            mood: "confused",
+            t: isEn ? ERROR_REPLY_EN : ERROR_REPLY_NO,
+            done: true,
+          })
         );
         controller.close();
       }
