@@ -16,6 +16,7 @@ export interface CaseStudyImage {
   caption: string;
   width: number;
   height: number;
+  afterSection?: number;
 }
 
 export interface ProjectCaseStudy {
@@ -32,7 +33,6 @@ export interface ProjectItem {
   title: string;
   year: string;
   category: ItemCategory;
-  accent: string;
   ground: string;
   media: {
     poster: string;
@@ -76,7 +76,6 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     title: "VGS Bordtennis",
     year: "Pågår",
     category: "independent",
-    accent: "#1b6b57",
     ground: "#17211e",
     media: {
       poster: "/projects/vgs-bordtennis-poster.jpg",
@@ -110,6 +109,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
           "Storskjermen (/kiosk) viser pallplasser, pågående kamper og hele tabellen live i kantina.",
         width: 1600,
         height: 1055,
+        afterSection: 3,
       },
       mobileGallery: [
         {
@@ -210,7 +210,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
           title: "Milepæl fra produksjon: Evaluering og tiltak på dag 2",
           paragraphs: [
             "Allerede på dag 2 i drift ved Nord-Gudbrandsdal VGS ga produksjonsdataene fra aktivitetsrapporten et tydelig bilde av hvordan elevene faktisk tok løsningen i bruk i kantina. Fra 4 kamper i lunsjen på dag 1 økte aktiviteten til 21 fullførte kamper før kl. 13:20 på dag 2 på ett enkelt bord, med 28 registrerte profiler (pluss gjesteøkter opp til rekkert nummer 33) og 15 ulike spillere med tellende kamper.",
-            "Tidsstemplene viste faste bølger gjennom skoledagen: en kort runde før skolestart kl. 08:08, en formiddagsøkt og 9 sammenhengende kamper over 72 minutter i midttimen uten dødtid ved bordet. Tiden fra en kamp ble ferdig til neste par startet var nede i 12 til 38 sekunder, og når det var kø valgte elevene selv raske 1-settskamper på 3 til 4 minutter før de gikk over til best av 3 sett når det ble roligere. Reglene mot bordmonopol (maks 2 tellende kamper per par per dag og rullering mellom motstandere) slo inn automatisk 4 ganger i løpet av dagen og la ekstra oppgjør som fritt spill, slik at tre elever sto helt likt på toppen av tabellen.",
+            "Tidsstemplene viste faste bølger gjennom skoledagen: en kort runde før skolestart kl. 08:08, en formiddagsøkt og 9 sammenhengende kamper over 72 minutter i midttimen uten dødtid ved bordet. Tiden fra en kamp ble ferdig til neste par startet var nede i 12 til 38 sekunder, og når det var kø valgte elevene selv raske kamper på ett sett (3 til 4 minutter) før de gikk over til best av 3 sett når det ble roligere. Reglene mot bordmonopol (maks 2 tellende kamper per par per dag og rullering mellom motstandere) slo inn automatisk 4 ganger i løpet av dagen og la ekstra oppgjør som fritt spill, slik at tre elever sto helt likt på toppen av tabellen.",
             "Basert på observasjonene fra de to første dagene rullet vi ut tre målrettede tiltak samme dag for å ligge i forkant av typiske utfordringer i en skolehverdag:",
           ],
           bullets: [
@@ -234,9 +234,9 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     aiContext: [
       "Pågående hobbyprosjekt jeg bygger på fritiden. Bakgrunnen var at vi så mye aktivitet rundt bordtennisbordene i kantina, samtidig som en gjeng med elever ikke helt greide å komme seg inn i miljøet og derfor havnet på telefonen. Prosjektet startet som et forsøk på inkludering og å lage noe artig som senket terskelen for å bli med og forsterket elevenes ønske om å delta aktivt og fysisk i friminuttet. Flere skoler kan bruke samme løsning med hvert sitt adskilte område (`/?school=<code>` og `/kiosk/<slug>`).",
       "Viktig grense hvis noen spør 'Laget du dette på jobb?' eller 'Betalte skolen for dette?': svar rolig og rett frem at nei, jobben min på skolen er kun IKT drift og support, og VGS Bordtennis er et rent hobbyprosjekt jeg har laget på egen fritid, ulønnet og på eget domene og server. Ikke nevn dette uoppfordret når folk bare spør vanlig om funksjonene i appen.",
-      "Lavterskel gjestespill og kampflyt ved bordet: gjester uten konto som skanner QR koden ved bordet starter rett i kamp som Gjest uten å fylle ut skjema først, og kan samle opptil 3 seire (9 poeng) på vent. Når de oppretter profil eller logger inn på en eksisterende bruker etterpå, flyttes kamper og poeng automatisk over på kontoen mens den midlertidige gjesten slettes. En egen sesjonsbro i manifestet holder elevene innlogget på tvers av mobilkameraet og hjemskjerm-appen (PWA). Når to spillere skanner samme bord innen 45 sekunder, kobles de automatisk sammen, legger vekk mobilen mens de spiller, og trykker på hurtigknapper for resultatet etterpå (1-0, 2-0 eller 2-1, med mulighet til å bytte mellom turnering og fritt spill i kampkortet). Bordet frigjøres med en gang resultatet legges inn og husker vinneren i 20 minutter, slik at neste utfordrer kan skanne og trykke Spill mot vinneren direkte uten at vinneren må skanne på nytt. Lovlige kamper godkjennes automatisk etter 60 sekunder, kamper under 45 sekunder per sett flagges mot juks, og glemte bord frigjøres etter 12 minutter.",
+      "Lavterskel gjestespill og kampflyt ved bordet: gjester uten konto som skanner QR koden ved bordet starter rett i kamp som Gjest uten å fylle ut skjema først, og kan samle opptil 3 seire (9 poeng) på vent. Når de oppretter profil eller logger inn på en eksisterende bruker etterpå, flyttes kamper og poeng automatisk over på kontoen mens den midlertidige gjesten slettes. En egen sesjonsbro i manifestet holder elevene innlogget på tvers av mobilkameraet og appen på hjemskjermen (PWA). Når to spillere skanner samme bord innen 45 sekunder, kobles de automatisk sammen, legger vekk mobilen mens de spiller, og trykker på hurtigknapper for resultatet etterpå (1-0, 2-0 eller 2-1, med mulighet til å bytte mellom turnering og fritt spill i kampkortet). Bordet frigjøres med en gang resultatet legges inn og husker vinneren i 20 minutter, slik at neste utfordrer kan skanne og trykke Spill mot vinneren direkte uten at vinneren må skanne på nytt. Lovlige kamper godkjennes automatisk etter 60 sekunder, kamper under 45 sekunder per sett flagges mot juks, og glemte bord frigjøres etter 12 minutter.",
       "Turneringer og rekkerter: støtter Kongen på haugen (åpen poengstige med 3 poeng per seier, automatisk påmelding ved bordet og maks 2 tellende kamper per spillerpar per dag), sluttspill og Sveitserstil (med Buchholz), i tillegg til klasselag, Boss Fight mot ansatte og statistikk på hvilke rekkerter som vinner mest gjennom sesongen.",
-      "Milepæl og erfaringer fra dag 2 i drift ved Nord-Gudbrandsdal VGS: aktiviteten femdoblet seg fra 4 kamper i lunsjen på dag 1 til 21 fullførte kamper før kl. 13:20 på dag 2 på ett bord, med 28 registrerte profiler (pluss gjesteøkter opp til rekkert nummer 33) og 15 ulike spillere med tellende kamper. I midttimen gikk det 9 kamper på rad over 72 minutter uten dødtid, og tiden fra en kamp ble ferdig til neste par startet var nede i 12 til 38 sekunder. Elevene regulerte selv køen med raske 1-settskamper (3 til 4 minutter) i rushet og best av 3 sett når det var roligere, mens reglene mot bordmonopol slo inn automatisk 4 ganger slik at flere slapp til. Samme dag rullet vi ut tre konkrete tiltak basert på tallene: timeplanstyring for bordene (slik at bordene kun er åpne i friminutt og midttime eller ved midlertidig opplåsning fra arrangør), kallenavnmoderering med 24 timers varsel til eleven (og mulighet til å logge inn med det gamle kallenavnet uten å kunne bytte tilbake til det utestengte), samt krav om motstanderbekreftelse for å bytte en pågående kamp mellom turnering og fritt spill.",
+      "Milepæl og erfaringer fra dag 2 i drift ved Nord-Gudbrandsdal VGS: aktiviteten femdoblet seg fra 4 kamper i lunsjen på dag 1 til 21 fullførte kamper før kl. 13:20 på dag 2 på ett bord, med 28 registrerte profiler (pluss gjesteøkter opp til rekkert nummer 33) og 15 ulike spillere med tellende kamper. I midttimen gikk det 9 kamper på rad over 72 minutter uten dødtid, og tiden fra en kamp ble ferdig til neste par startet var nede i 12 til 38 sekunder. Elevene regulerte selv køen med raske kamper på ett sett (3 til 4 minutter) i rushet og best av 3 sett når det var roligere, mens reglene mot bordmonopol slo inn automatisk 4 ganger slik at flere slapp til. Samme dag rullet vi ut tre konkrete tiltak basert på tallene: timeplanstyring for bordene (slik at bordene kun er åpne i friminutt og midttime eller ved midlertidig opplåsning fra arrangør), kallenavnmoderering med 24 timers varsel til eleven (og mulighet til å logge inn med det gamle kallenavnet uten å kunne bytte tilbake til det utestengte), samt krav om motstanderbekreftelse for å bytte en pågående kamp mellom turnering og fritt spill.",
       "Teknisk oppsett og storskjermen i kantina (`/kiosk`): bygget i Node.js med innebygd `node:sqlite` (i `WAL` modus) og kun 5 npm pakker, kjørende i Docker på Fly.io i Stockholm med CalVer utgivelser og automatisk `VACUUM INTO` sikkerhetskopi. Storskjermen er tilpasset Infoskjermen.no på eldre TV skjermer: bruker 24 fps animert WebP i stedet for `<video>` fordi TV nettleseren fryser videoer på første bilde, unngår sekundsjekker i `setInterval` fordi Chromium struper timere i iframes til minuttgrenser, og har 3 synkroniserte lag (SSR, Socket.IO og ren ES5 som kan testes med `?mode=es5` og `?mode=ssr`) samt diagnosestempel og dvalemodus. Stresstestet med 100 samtidige spillere fordelt på 2 skoler uten feil.",
       "Personvern (nevn kun kort hvis det er naturlig eller noen spør): midlertidig navn og epost slettes (`NULL`) så snart en arrangør har godkjent eleven (eller automatisk etter 14 dager, og tomme gjesteøkter etter 24 timer), slik at kun en enveis `HMAC-SHA256` hash lagres. Løsningen har ingen fritekstchat, støtter selvbetjent sletting av konto og kan lage anonymisert aktivitetsrapport med ukentlig puls og hverdagsrytme (A4 og Excel uten ekstra pakker).",
     ],
@@ -246,7 +246,6 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     title: "Ember Booking",
     year: "2026",
     category: "independent",
-    accent: "#1b6b57",
     ground: "#17211e",
     media: {
       poster: "/projects/ember-poster.jpg",
@@ -277,6 +276,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
           "Kundehistorier på emberbooking.no viser konkret hvordan pilotkunder som Honndalen Gym og Sauna sparer 5 til 7 timer hver måned.",
         width: 1600,
         height: 1016,
+        afterSection: 2,
       },
       sections: [
         {
@@ -359,7 +359,6 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     title: "Interaktiv Portefølje",
     year: "2026",
     category: "independent",
-    accent: "#1b6b57",
     ground: "#17211e",
     media: {
       poster: "/projects/portfolio-poster.jpg",
@@ -382,7 +381,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
       role: "Design, 3D integrasjon og fullstackutvikling",
       status: "I produksjon på yosmel.no (åpen kildekode)",
       intro:
-        "På min egen portefølje har jeg bygget en samtalestyrt 3D og stemmeløsning som strømmer svar fra Gemini over SSE. Den styrer også brukergrensesnittet, viser frem prosjekter på skjermen, henter frem CV ved behov og holder seg strengt til strukturerte datakilder.",
+        "Målet med porteføljen var å lage en løsning der besøkende kan snakke med en AI versjon av meg i en vanlig samtale mens den viser rundt på skjermen, og samtidig vise hvordan sanntids tale og visuell styring kan løse oppgaver i helsevesenet, skolen og kundeservice. Løsningen kjører en delt 3D modell i en egen Web Worker og strømmer svar og klonet stemme fra Gemini over SSE, strengt forankret i strukturerte datakilder.",
       sections: [
         {
           title: "Praktiske bruksområder utenfor en portefølje",
@@ -452,7 +451,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
       "Hva teknologien kan brukes til utenfor en portefølje: tanken er å komme nærmere en vanlig samtale der den prater med stemme, henter opp riktig sted på skjermen så du slipper å lete selv, og holder seg kun til godkjente fakta. Jeg ser for meg at bedrifter kan bruke slik teknologi til å hjelpe kunder i kundeservice eller på telefon. Samtidig kan skoler bruke det til muntlig trening, og i helsevesenet kan det gi eldre og pasienter enkel veiledning.",
       "Samtidig var dette prosjektet der jeg høsten 2026 for alvor utfordret meg selv på strukturert AI assistert utvikling, med egne regler i `AGENTS.md` og `github.com/yosang/skills` (`ui-craft`, `natural-copy` og `lean-architecture`).",
       "Teknisk kjører 3D skanningen (T2 modell med 20 blendshapes for munnsynk, blunking og uttrykk) på Three.js i en delt `OffscreenCanvas` Web Worker på 60 fps som gjenbrukes på tvers av sidene via en portal, mens svar og klonet stemme (fra 17 sekunder opptak) strømmes fra Gemini over SSE.",
-      "Sikkerhet og vern mot prompt injection: da jeg gikk over koden til porteføljen fant og fikset jeg to feil der sideinfo gikk rett inn i systemprompten uten sjekk og `[GO:...]` manglet en fast liste over lovlige sider. Nå ligger sikkerheten i vanlig TypeScript kode (`apiGuard.ts` og `chat/route.ts`): 1) meldinger fra brukeren renses for kontrolltagger og legges i `<untrusted_visitor_input>` med låste roller så ingen kan forfalske tidligere svar, 2) alle tagger som styrer siden (`[GO:...]`, `[TOUR:...]`, `[FILE:cv]`) sjekkes mot en fast liste av gyldige valg på både server og klient så modellen aldri kan åpne eksterne lenker eller frie filer, og 3) alle kall til Gemini sendes med `store: false`, Origin sjekk og faste grenser per minutt og per dag i minnet.",
+      "Sikkerhet og vern mot prompt injection: da jeg gikk over koden til porteføljen fant og fikset jeg tre ting som måtte strammes inn: sideinfo gikk rett inn i systemprompten uten sjekk, `[GO:...]` manglet en fast liste over lovlige sider, og stemmekallene manglet eksplisitt `store: false`. Nå ligger sikkerheten i vanlig TypeScript kode (`apiGuard.ts` og `chat/route.ts`): 1) meldinger fra brukeren renses for kontrolltagger og legges i `<untrusted_visitor_input>` med låste roller så ingen kan forfalske tidligere svar, 2) alle tagger som styrer siden (`[GO:...]`, `[TOUR:...]`, `[FILE:cv]`) sjekkes mot en fast liste av gyldige valg på både server og klient så modellen aldri kan åpne eksterne lenker eller frie filer, og 3) alle kall til Gemini sendes med `store: false`, Origin sjekk og faste grenser per minutt og per dag i minnet.",
     ],
   },
   {
@@ -460,7 +459,6 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     title: "Agent Skills",
     year: "2026",
     category: "independent",
-    accent: "#1b6b57",
     ground: "#17211e",
     media: {
       poster: "/projects/skills-poster.jpg",
@@ -483,7 +481,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
       role: "Forfatter og vedlikeholder (Open Source)",
       status: "Offentlig repo på github.com/yosang/skills",
       intro:
-        "Jeg har bygget mine egne rammer, såkalte skills, som ligger åpent på github.com/yosang/skills. Dette er regler som kodeagenter må forholde seg til i hvert prosjekt jeg jobber med, med fokus på slank arkitektur, korte kontekster, rolige grensesnitt og naturlig språk.",
+        "Da jeg tok i bruk kodeagenter mer systematisk høsten 2026, så jeg raskt at kvaliteten står og faller på rammene man setter før man begynner å bygge. Derfor samlet jeg reglene mine i et åpent repo på github.com/yosang/skills, med faste krav til slank arkitektur, rolige grensesnitt og naturlig språk på tvers av prosjekter.",
       sections: [
         {
           title: "Hvorfor jeg samlet reglene i et eget repo",
@@ -503,9 +501,9 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
             "Repoet er delt inn i tre moduler slik at hver oppgave kun laster inn de reglene som faktisk trengs:",
           ],
           bullets: [
-            "ui-craft: Bygger på Matt D. Smiths 3P rammeverk (Purpose, Principles, Personality) og 60-30-10 fargeregelen. Kutter ut tilfeldige glødeeffekter og overdimensjonerte kort til fordel for matte flater, rolige OKLCH farger, flytende typografi (Utopia.fyi) og et 8pt avstandssystem.",
-            "lean-architecture: Holder konteksten kort og krever planlegging før kode. Fokuserer på en felles datakilde, sletting av død kode, små commits og Dan Norths Spike and Stabilize.",
-            "natural-copy: Fjerner typiske AI uvaner i både norsk og engelsk tekst, som tankestreker, unødvendige bindestreker, tomme klisjeer og stive oversettelser av tekniske uttrykk.",
+            "ui-craft: Bygger på Matt D. Smiths 3P rammeverk (Purpose, Principles, Personality) og 60-30-10 fargeregelen. Kutter ut tilfeldige glødeeffekter og overdimensjonerte kort til fordel for matte flater, rolige OKLCH farger, flytende typografi (Utopia.fyi) med maks 62 tegn per linje, et 8pt avstandssystem og medier som pauser utenfor synsfeltet.",
+            "lean-architecture: Holder konteksten kort og krever at datamodell og plattformkrav låses på papir og i AGENTS.md før kode. Fokuserer på Dan Norths Spike and Stabilize, en felles kilde for delte data, små og trygge commits uten å blande refaktorering og ny funksjonalitet, tidlig opprydding i logiske og strukturelle code smells, og dokumentasjon av tause produksjonsfeller i README.md.",
+            "natural-copy: Fjerner typiske AI uvaner i både norsk og engelsk tekst, som tankestreker, unødvendige bindestreker mellom faguttrykk og norske ord, tomme klisjeer og stive oversettelser. Krever også at prosjekttekster og søknader starter med den menneskelige motivasjonen før tekniske detaljer.",
           ],
           tour: {
             audioSrc: "/audio/cases/skills/1.mp3",
@@ -530,7 +528,6 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     title: "MedCare Clinical",
     year: "2026",
     category: "school",
-    accent: "#1b6b57",
     ground: "#17211e",
     media: {
       poster: "/projects/medcare-poster.jpg",
@@ -584,7 +581,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
           },
         },
         {
-          title: "Overlappende legetimer (tegnet på papir) og duplikatsjekk for gjester",
+          title: "Uke 3: Overlappende legetimer (tegnet på papir) og duplikatsjekk for gjester",
           paragraphs: [
             "For å hindre dobbeltbooking la jeg først inn sammensatte unike indekser i databasen på DoctorId + AppointmentDate og PatientId + AppointmentDate. Under testing oppdaget jeg at indeksen kun stoppet to timer som startet på nøyaktig samme minutt, men ikke hindret en ny bestilling klokken 10:15 hvis legen allerede hadde en time på 30 minutter fra 10:00 til 10:30.",
             "Jeg måtte sette meg ned med penn og papir og tegne opp tidsaksene for å være 100 prosent sikker på at datokontrollen fanget alle varianter av overlapp, både ved ny bestilling og når en registrert pasient endrer en eksisterende avtale.",
@@ -633,7 +630,6 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     title: "Cinemorra",
     year: "2026",
     category: "school",
-    accent: "#1b6b57",
     ground: "#17211e",
     media: {
       poster: "/projects/cinemorra-poster.jpg",
@@ -655,13 +651,13 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
       role: "Frontendutvikler (Skoleprosjekt hos Noroff)",
       status: "Fullført skoleprosjekt · Live demo og åpen kildekode",
       intro:
-        "Cinemorra er en filmkatalog og utlånsløsning bygget som skoleoppgave på frontendstudiet hos Noroff. Prosjektet fokuserer på rutestruktur i Next.js App Router, Server Actions, skjemavalidering og automatiske komponenttester.",
+        "Cinemorra ble bygget som skoleoppgave på frontendstudiet hos Noroff med mål om å lage en oversiktlig filmkatalog der brukere enkelt kan utforske, søke opp og låne filmer på nett, mens redaktører styrer katalogen i et eget adminpanel. Applikasjonen er bygget i Next.js App Router og TypeScript med et tydelig skille mellom åpne sider og administrasjon.",
       sections: [
         {
-          title: "Rutestruktur i Next.js App Router",
+          title: "Rutestruktur og tilgangskontroll i Next.js App Router",
           paragraphs: [
-            "Applikasjonen er delt inn i tydelige rutegrupper i Next.js App Router: en åpen del ((home)) der besøkende kan utforske sjangre, søke i katalogen, se trailere og lese anmeldelser, og et beskyttet adminpanel ((dashboard)/admin) for å legge til, redigere og slette filmer.",
-            "Tilgangskontroll håndteres i middleware.ts, og hver rute har egne loading og error states slik at overganger og feilsituasjoner håndteres ryddig i grensesnittet.",
+            "For å skille publikumssidene tydelig fra administrasjonen bruker applikasjonen rutegrupper i Next.js App Router: en åpen del ((home)) der besøkende kan filtrere på sjanger, søke i katalogen, se trailere og lese anmeldelser, og en skjermet del ((dashboard)/admin) for å legge til, redigere og slette filmer.",
+            "Tilgang til adminrutene sjekkes i middleware.ts før siden vises, og hver rute har egne loading og error states slik at brukeren alltid får tydelig tilbakemelding ved nettverksfeil eller trege oppslag.",
           ],
           tour: {
             audioSrc: "/audio/cases/cinemorra/0.mp3",
@@ -670,13 +666,13 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
           },
         },
         {
-          title: "State, Server Actions og testing",
+          title: "Server Actions, klientstate og automatiske tester",
           paragraphs: [
-            "Innlogging og endringer i filmkatalogen kjører via Next.js Server Actions, mens klientstate som filtre, utlånsstatus og temavalg (lys og mørk visning) holdes i Zustand.",
+            "Innlogging, utlån og endringer i filmkatalogen kjører gjennom Next.js Server Actions med skjemavalidering på serversiden. I nettleseren holdes Zustand kun til ren UI state som aktive søkefiltre, utlånsstatus og bytte mellom lys og mørk visning.",
           ],
           bullets: [
-            "Komponenttester: Sentrale visninger og interaksjoner testes med Jest og React Testing Library.",
-            "Accessibility: Koden sjekkes med eslint-plugin-jsx-a11y, med semantiske skjemaelementer og tastaturstøtte.",
+            "Komponenttester med Jest og React Testing Library: Tester at søk, filtrering, skjemainnsending og feilmeldinger oppfører seg riktig ved brukerinteraksjon.",
+            "Accessibility i skjemaflyt og kort: Sjekkes automatisk med eslint-plugin-jsx-a11y for å sikre semantiske skjemaelementer, tydelige fokusmarkeringer og full tastaturnavigasjon.",
           ],
           tour: {
             audioSrc: "/audio/cases/cinemorra/1.mp3",
@@ -749,3 +745,6 @@ export const SPECIFIC_TOUR_TARGET_RE = new RegExp(
   `\\b(${[...projectKeywordTokens, "cv", "skoleprosjekt"].join("|")})`,
   "i"
 );
+
+export const CASE_WALKTHROUGH_RE =
+  /\b(gjennom\s+caset|gjennomgang\s+av\s+caset|les(?:e)?\s+(?:gjennom\s+)?caset|seksjon\s+for\s+seksjon|walk\s+(?:me\s+)?(?:briefly\s+)?through\s+the\s+.*case|through\s+the\s+case\s+study|read\s+the\s+case\s+study)\b/i;

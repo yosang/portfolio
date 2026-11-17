@@ -12,7 +12,7 @@ import React, {
 import { usePathname, useRouter } from "next/navigation";
 import { portfolioAudio } from "@/lib/audioSynth";
 import type { AvatarMood } from "@/lib/avatarEngine";
-import { ITEMS, SPECIFIC_TOUR_TARGET_RE } from "@/data/portfolio";
+import { CASE_WALKTHROUGH_RE, ITEMS, SPECIFIC_TOUR_TARGET_RE } from "@/data/portfolio";
 import { isAllowedGoPath } from "@/lib/apiGuard";
 import { getLocalizedData, useLocalizedData } from "@/lib/i18n";
 
@@ -23,9 +23,6 @@ const INSTANT_TOUR_NO_RE =
 
 const INSTANT_TOUR_EN_RE =
   /^(?:hi[,!\s]+|hello[,!\s]+|hey[,!\s]+)?(?:ai\s+yosmel[,!\s]+|yosmel[,!\s]+)?(?:can you\s+|could you\s+|would you\s+)?(?:show\s+me(?:\s+around(?:\s+in|\s+your)?)?|take\s+me\s+(?:around|through|on\s+a\s+tour\s+of)|give\s+me\s+a\s+tour\s+of|walk\s+me\s+through)\s*(?:your\s+|the\s+|all\s+)?(?:projects|portfolio|work)?[.!?]*$/i;
-
-const INSTANT_CASE_TOUR_RE =
-  /\b(gjennom\s+caset|gjennomgang\s+av\s+caset|les(?:e)?\s+(?:gjennom\s+)?caset|walk\s+(?:me\s+)?(?:briefly\s+)?through\s+the\s+.*case|through\s+the\s+case\s+study|read\s+the\s+case\s+study)\b/i;
 
 export interface ChatAttachment {
   href: string;
@@ -406,7 +403,7 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
               : localeRef.current
             : localeRef.current;
         instantSteps = getLocalizedData(tourLocale).tourSteps;
-      } else if (INSTANT_CASE_TOUR_RE.test(trimmed)) {
+      } else if (CASE_WALKTHROUGH_RE.test(trimmed)) {
         const isEnCase =
           /\b(walk|briefly|through|case\s+study|read)\b/i.test(trimmed) &&
           !/\b(ta\s+meg|gjennom|caset)\b/i.test(trimmed);

@@ -99,7 +99,7 @@ export function AiPageContent() {
 
       <section
         aria-labelledby="ai-shift-heading"
-        className="overflow-hidden rounded-2xl border border-white/12 bg-[#17211e] p-6 text-[#f7f8f8] shadow-[0_8px_28px_rgba(10,18,15,0.18)] sm:p-8"
+        className="overflow-hidden rounded-[14px] border border-white/12 bg-[#17211e] p-6 text-[#f7f8f8] shadow-[0_8px_28px_rgba(10,18,15,0.18)] sm:p-8"
       >
         <h2
           id="ai-shift-heading"
@@ -462,11 +462,11 @@ export function ProjectCaseStudyContent({ slug }: { slug: string }) {
             ))}
         </div>
 
-        <h1 className="font-display text-3xl font-normal tracking-[-0.03em] text-ink sm:text-5xl">
+        <h1 className="font-display text-[clamp(1.875rem,3vw+1rem,3rem)] leading-[1.12] font-normal tracking-[-0.03em] text-ink">
           {project.title}
         </h1>
 
-        <p className="max-w-[64ch] text-lg leading-relaxed text-ink-soft">
+        <p className="max-w-[62ch] text-lg leading-relaxed text-ink-soft">
           {caseStudy.intro}
         </p>
 
@@ -541,11 +541,14 @@ export function ProjectCaseStudyContent({ slug }: { slug: string }) {
 
       {caseStudy.mobileGallery && caseStudy.mobileGallery.length > 0 && (
         <figure className="mt-12 sm:mt-16">
-          <div className="rounded-2xl border border-line bg-[#17211e] p-4 sm:p-8">
+          <div
+            style={{ backgroundColor: project.ground }}
+            className="rounded-[14px] border border-line p-4 sm:p-8"
+          >
             <div className="grid gap-5 sm:grid-cols-3 sm:gap-6">
               {caseStudy.mobileGallery.map((img) => (
                 <div key={img.src} className="space-y-2.5">
-                  <div className="overflow-hidden rounded-xl border border-white/14 bg-[#0d1017] shadow-lg">
+                  <div className="overflow-hidden rounded-xl border border-white/14 bg-[#141d1a] shadow-lg">
                     <Image
                       src={img.src}
                       alt={img.alt}
@@ -555,7 +558,7 @@ export function ProjectCaseStudyContent({ slug }: { slug: string }) {
                       className="h-auto w-full object-cover select-none"
                     />
                   </div>
-                  <p className="px-0.5 text-xs leading-relaxed text-[#9ca0a8]">
+                  <p className="px-0.5 text-xs leading-relaxed text-zinc-300">
                     {img.caption}
                   </p>
                 </div>
@@ -569,6 +572,7 @@ export function ProjectCaseStudyContent({ slug }: { slug: string }) {
         <div className="mt-12 space-y-12 sm:mt-16 sm:space-y-14">
           {remainingSections.map((sec, idx) => {
             const sectionIndex = idx + 2;
+            const wideTargetIdx = caseStudy.wideImage?.afterSection ?? 2;
             return (
               <div key={sec.title} className="space-y-12 sm:space-y-14">
                 <CaseSection
@@ -577,9 +581,12 @@ export function ProjectCaseStudyContent({ slug }: { slug: string }) {
                   spotlit={spotlightSlug === `${project.slug}#${sectionIndex}`}
                 />
 
-                {idx === 1 && caseStudy.wideImage && (
+                {sectionIndex === wideTargetIdx && caseStudy.wideImage && (
                   <figure className="space-y-3">
-                    <div className="overflow-hidden rounded-2xl border border-line bg-[#17211e] p-3 sm:p-6">
+                    <div
+                      style={{ backgroundColor: project.ground }}
+                      className="overflow-hidden rounded-[14px] border border-line p-3 sm:p-6"
+                    >
                       <div className="overflow-hidden rounded-xl border border-white/14">
                         <Image
                           src={caseStudy.wideImage.src}
@@ -656,19 +663,19 @@ function CaseSection({
       data-case-section={sectionIndex}
       data-spotlit={spotlit ? "true" : undefined}
       data-viewport-item={section.title}
-      className={`-mx-4 -my-3 max-w-3xl scroll-mt-28 space-y-4 rounded-2xl border px-4 py-3 transition-colors duration-300 sm:-mx-5 sm:px-5 sm:py-4 ${
+      className={`-mx-4 -my-3 max-w-3xl scroll-mt-28 space-y-4 rounded-xl border px-4 py-3 transition-colors duration-300 sm:-mx-5 sm:px-5 sm:py-4 ${
         spotlit
           ? "border-trail/65 bg-paper-raised/70"
           : "border-transparent"
       }`}
     >
-      <h2 className="font-display text-xl font-medium tracking-[-0.02em] text-ink sm:text-2xl">
+      <h2 className="font-display text-[clamp(1.35rem,1.4vw+1rem,1.85rem)] leading-[1.18] font-medium tracking-[-0.02em] text-ink">
         {section.title}
       </h2>
 
       <div className="space-y-4 text-base leading-relaxed text-ink-soft">
         {section.paragraphs.map((p, i) => (
-          <p key={i} className="max-w-[64ch]">
+          <p key={i} className="max-w-[62ch]">
             {p}
           </p>
         ))}
@@ -680,7 +687,7 @@ function CaseSection({
             const colonIdx = b.indexOf(":");
             const hasLabel = colonIdx > 0 && colonIdx <= 85;
             return (
-              <li key={i} className="leading-relaxed">
+              <li key={i} className="max-w-[62ch] leading-relaxed">
                 ·{" "}
                 {hasLabel ? (
                   <>

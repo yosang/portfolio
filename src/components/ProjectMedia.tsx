@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
@@ -25,23 +25,55 @@ export function ProjectMedia({
   const { ui: UI } = useLocalizedData();
   const t = UI.home;
 
+  const videoMp4 = item.media.video;
+  const videoWebm = videoMp4
+    ? videoMp4.replace(/\.mp4(\?.*)?$/, ".webm$1")
+    : undefined;
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !videoMp4) return;
+    if (typeof IntersectionObserver === "undefined") return;
+
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) {
+            if (!video.paused) {
+              video.pause();
+            }
+            setPlaying(false);
+          } else if (fullWidth && !reducedMotion) {
+            video.play().catch(() => {});
+          }
+        }
+      },
+      { threshold: 0.2 }
+    );
+
+    observer.observe(video);
+    return () => observer.disconnect();
+  }, [videoMp4, fullWidth]);
+
   const handlePointerEnter = useCallback(() => {
     const video = videoRef.current;
-    if (!video || !item.media.video) return;
+    if (!video || !videoMp4) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    if (!video.src) {
-      video.src = item.media.video;
-    }
     video.play().catch(() => {});
-  }, [item.media.video]);
+  }, [videoMp4]);
 
   const handlePointerLeave = useCallback(() => {
+    if (fullWidth) return;
     const video = videoRef.current;
     if (!video) return;
     setPlaying(false);
     video.pause();
-  }, []);
+  }, [fullWidth]);
 
   const stageContent = (
     <div
@@ -65,7 +97,7 @@ export function ProjectMedia({
           className="h-full w-full object-cover select-none"
         />
 
-        {item.media.video && (
+        {videoMp4 && (
           <video
             ref={videoRef}
             muted
@@ -74,10 +106,14 @@ export function ProjectMedia({
             preload="none"
             aria-hidden="true"
             onPlaying={() => setPlaying(true)}
+            onPause={() => setPlaying(false)}
             className={`pointer-events-none absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${
               playing ? "opacity-100" : "opacity-0"
             }`}
-          />
+          >
+            {videoWebm && <source src={videoWebm} type="video/webm" />}
+            <source src={videoMp4} type="video/mp4" />
+          </video>
         )}
       </div>
 

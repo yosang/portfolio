@@ -40,7 +40,6 @@ export function localizeValue<T>(val: T, locale: Locale): T {
         k === "slug" ||
         k === "id" ||
         k === "category" ||
-        k === "accent" ||
         k === "ground" ||
         k === "poster" ||
         k === "video" ||

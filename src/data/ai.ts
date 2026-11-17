@@ -53,7 +53,7 @@ export const AI_PAGE = {
   security: {
     heading: "Sikkerhet og prompt injection",
     paragraphs: [
-      "Å bruke AI til sparring på egen maskin er ganske rett frem. Det blir noe annet så snart du legger en åpen chat ut på nettet og lar den styre hva som skjer på skjermen. Da jeg gikk over koden til 3D chatten her på siden, fant jeg to klassiske feil jeg selv hadde oversett: info om hvilken side du sto på ble sendt rett inn i systemprompten uten sjekk, og taggen som bytter side ([GO:...]) manglet en fast liste over lovlige sider.",
+      "Å bruke AI til sparring på egen maskin er ganske rett frem. Det blir noe annet så snart du legger en åpen chat ut på nettet og lar den styre hva som skjer på skjermen. Da jeg gikk over koden til 3D chatten her på siden, fant jeg tre ting som måtte strammes inn: info om hvilken side du sto på ble sendt rett inn i systemprompten uten sjekk, taggen som bytter side ([GO:...]) manglet en fast liste over lovlige sider, og stemmekallene manglet eksplisitt store: false.",
       "En språkmodell gjetter bare neste ord ut fra sannsynlighet, så den kan alltid bli lurt hvis noen prøver seg på prompt injection. Derfor må selve sikkerheten ligge i vanlig TypeScript kode rundt modellen:",
     ],
     layers: [
