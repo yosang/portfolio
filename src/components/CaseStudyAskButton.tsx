@@ -14,7 +14,7 @@ export function CaseStudyAskButton({ title }: { title: string }) {
     <button
       type="button"
       onClick={() => {
-        setIsOpen(true);
+        setIsOpen(false);
         sendMessage(t.askCasePrompt(title));
       }}
       className="inline-flex items-center gap-1.5 rounded-full border border-line bg-paper-raised px-4 py-2 text-xs font-medium text-ink transition-colors hover:border-ink/35 cursor-pointer"

@@ -282,10 +282,10 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
         setIsOpen(false);
       }
 
-      if (autoScrollCancelledRef.current) return;
-
       const hashIdx = target.indexOf("#");
       if (hashIdx !== -1) {
+        setIsOpen(false);
+        if (autoScrollCancelledRef.current) return;
         const projectSlug = target.slice(0, hashIdx);
         const sectionIdx = target.slice(hashIdx + 1);
         const expectedPath = `/prosjekter/${projectSlug}`;
@@ -315,6 +315,8 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
       if (pathnameRef.current === `/prosjekter/${target}`) {
         return;
       }
+
+      if (autoScrollCancelledRef.current) return;
 
       const scrollAndHighlight = () => {
         if (autoScrollCancelledRef.current) return;
