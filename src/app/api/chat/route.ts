@@ -25,7 +25,7 @@ interface ViewportPageContext {
   showing?: unknown;
 }
 
-const DAILY_VOICE_CAP = Number(process.env.DAILY_VOICE_CAP || "60");
+const DAILY_VOICE_CAP = Number(process.env.DAILY_VOICE_CAP || "150");
 const DAILY_GLOBAL_CHAT_CAP = Number(process.env.DAILY_CHAT_CAP || "300");
 const GLOBAL_CHAT_PER_MIN = 35;
 const RATE_LIMIT_PER_MIN = 10;
@@ -670,7 +670,7 @@ export async function POST(req: NextRequest) {
 
         const acquireTtsSlot = () =>
           new Promise<void>((resolve) => {
-            if (activeTtsCount < 2) {
+            if (activeTtsCount < 1) {
               activeTtsCount += 1;
               resolve();
             } else {

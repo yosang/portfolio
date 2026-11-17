@@ -710,6 +710,7 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
             }
 
             if (typeof data.audio === "string" && data.audio.length > 0) {
+              setVoiceCapped(false);
               const bubbleIdx =
                 typeof data.bubbleIndex === "number" ? data.bubbleIndex : -1;
               const tourSlug =
