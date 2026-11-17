@@ -2,7 +2,7 @@ export const AI_PAGE = {
   title: "Hvordan jeg bruker AI",
   lead: [
     "Det siste året har jeg egentlig brukt AI ganske minimalt. Den har mest vært en sparringspartner når jeg har diskutert ideer og tenkt høyt rundt prosjekter, uten at jeg har tatt ut potensialet i selve utviklingen.",
-    "Det var først høsten 2026 at jeg bestemte meg for å gi AI assistert programvareutvikling et ordentlig forsøk med en strukturert metodikk. Når AI tar unna mer av selve skrivingen, får jeg mer tid i begge ender av arbeidet: å legge en skikkelig plan for arkitekturen i starten, og å pusse på detaljene i brukeropplevelsen til slutt.",
+    "Det var først høsten 2026 at jeg bestemte meg for å gi AI assistert programvareutvikling et ordentlig forsøk med en strukturert metodikk. Når AI tar unna mer av selve skrivingen, får jeg mer tid i begge ender av arbeidet, både til å legge en skikkelig plan for arkitekturen i starten og til å pusse på detaljene i brukeropplevelsen til slutt.",
   ],
   shift: {
     heading: "Hvor tiden min går",
@@ -35,7 +35,7 @@ export const AI_PAGE = {
     },
     {
       title: "Spike and Stabilize",
-      body: "Etter mye egen prøving og feiling landet jeg på en rytme som viste seg å være en etablert metode kalt Spike and Stabilize, beskrevet av Dan North. Først bygger jeg en rask førsteversjon hele veien fra database til UI (Spike) for å se om ideen faktisk fungerer. Når kjernefunksjonen sitter, bytter jeg til Stabilize: rydder vekk støy, håndterer edge cases og gjør koden klar for produksjon.",
+      body: "Etter mye egen prøving og feiling landet jeg på en rytme som viste seg å være en etablert metode kalt Spike and Stabilize, beskrevet av Dan North. Først bygger jeg en rask førsteversjon hele veien fra database til UI (Spike) for å se om ideen faktisk fungerer. Når kjernefunksjonen sitter, bytter jeg til Stabilize der jeg rydder vekk støy, håndterer edge cases og gjør koden klar for produksjon.",
       link: {
         label: "Dan North om Spike and Stabilize",
         href: "https://dannorth.net/blog/on-craftsmanship/",
@@ -47,13 +47,13 @@ export const AI_PAGE = {
     },
     {
       title: "Små commits og grundige tester",
-      body: "Når tempoet øker, blir sikkerhetsnettet enda viktigere. Jeg jobber i små, hyppige commits og holder refaktorering adskilt fra ny funksjonalitet, slik at det alltid er trygt å rulle tilbake og lett for andre å følge historikken. Før endringer rulles ut, verifiseres de med automatiske tester og sjekk av kritiske brukerflyter.",
+      body: "Når tempoet øker, blir sikkerhetsnettet enda viktigere. Jeg jobber i små, hyppige commits og holder refaktorering adskilt fra ny funksjonalitet, slik at det alltid er trygt å rulle tilbake og lett for andre å følge historikken. Før endringer går i produksjon, sjekker jeg dem med automatiske tester og gjennomgang av kritiske brukerflyter.",
     },
   ],
   security: {
     heading: "Sikkerhet og prompt injection",
     paragraphs: [
-      "Å bruke AI til sparring på egen maskin er ganske rett frem. Det blir noe annet så snart du legger en åpen chat ut på nettet og lar den styre hva som skjer på skjermen. Da jeg gikk over koden til 3D chatten her på siden, fant jeg tre ting som måtte strammes inn: info om hvilken side du sto på ble sendt rett inn i systemprompten uten sjekk, taggen som bytter side ([GO:...]) manglet en fast liste over lovlige sider, og stemmekallene manglet eksplisitt store: false.",
+      "Å bruke AI til sparring på egen maskin er ganske rett frem. Det blir noe annet så snart du legger en åpen chat ut på nettet og lar den styre hva som skjer på skjermen. Da jeg gikk over koden til 3D chatten her på siden, fant jeg tre ting som måtte strammes inn. Info om hvilken side du sto på ble sendt rett inn i systemprompten uten sjekk, taggen som bytter side ([GO:...]) manglet en fast liste over lovlige sider, og stemmekallene manglet eksplisitt store: false.",
       "En språkmodell gjetter bare neste ord ut fra sannsynlighet, så den kan alltid bli lurt hvis noen prøver seg på prompt injection. Derfor må selve sikkerheten ligge i vanlig TypeScript kode rundt modellen:",
     ],
     layers: [
@@ -89,7 +89,7 @@ export const AI_PAGE = {
       status: "Håndverk først, AI til slutt",
       href: "/prosjekter/ember-booking",
       description:
-        "Her var strategien helt motsatt. Jeg gjorde grunnarbeidet selv, laget assets i Figma og bygde opp designsystemet for hånd. AI brukte jeg først helt til slutt for å fange opp inkonsekvenser og syntaksfeil før utrulling.",
+        "Her var strategien helt motsatt. Jeg gjorde grunnarbeidet selv, laget assets i Figma og bygde opp designsystemet for hånd. AI brukte jeg først helt til slutt for å fange opp inkonsekvenser og syntaksfeil før deploy.",
     },
     {
       project: "MedCare Clinical og skoleprosjekter",

@@ -33,6 +33,8 @@ function sha256(str) {
 const SKIP_EXACT = new Set([
   "independent",
   "school",
+  "video",
+  "image",
   "neutral",
   "happy",
   "confused",
@@ -187,8 +189,10 @@ async function translateBatch(ai, strings) {
 Rules:
 1. Return ONLY a valid JSON array of strings in the EXACT same order and length (${strings.length} items). No markdown code fences, just the raw JSON array.
 2. Follow mimesis-principles / natural-copy strictly:
-   - ZERO em dashes (—) or en dashes (–). Use commas, colons, parentheses, or periods instead.
-   - No AI slop words (delve, leverage, seamless, robust, pivotal, tapestry, realm, comprehensive, cutting-edge).
+   - ZERO em dashes (—), en dashes (–), mid-sentence colons (:) used to join clauses, or colon-split headings (Label: Heading). Use commas, natural connecting words, parentheses, or periods instead, and write headings directly without a colon prefix.
+   - ZERO compound modifier hyphens (never write "full-stack", "cross-clinic", "real-time", "AI-assisted", "role-based", "in-memory", "server-side", "speech-to-text", "built-in", "stress-tested", or "two-year"; write "fullstack", "across clinics", "real time", "AI assisted", "role based", "in memory", "server side", "speech to text", "built in", "stress tested", "two year").
+   - No AI slop or stiff essay words (delve, leverage, seamless, robust, pivotal, tapestry, realm, comprehensive, cutting-edge, showcase, demonstrate, accumulate, arose, utilize, consolidate, eliminate, cumbersome, purged, following a bout of, targeted by trickery).
+   - Translate Norwegian idioms by meaning, never word for word (translate "står og faller på" as "depends on", never "stands and falls on"; translate "muntlig trening" as "speaking practice", never "oral practice"; translate "AI versjonen av meg" as "the AI version of me", never "my AI twin").
    - Keep placeholder tokens like {title} intact.
    - Keep project titles ("VGS Bordtennis", "Ember Booking", "MedCare Clinical", "Cinemorra", "Agent Skills") as their exact title ("VGS Bordtennis", etc.), and translate "Interaktiv Portefølje" to "Interactive Portfolio".
    - Translate EVERY sentence of multi-sentence strings completely and faithfully; never summarize or collapse a paragraph into a short tagline.

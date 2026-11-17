@@ -13,20 +13,15 @@ import { ChatThread, Composer } from "@/components/ChatThread";
 import { ProjectCard } from "@/components/ProjectCard";
 import { useLocalizedData } from "@/lib/i18n";
 
-type FilterMode = "all" | "independent" | "school";
-
 export default function HomePage() {
   const { spotlightSlug, clearSpotlight, sendMessage, setIsOpen } = useCompanionPortfolio();
   const {
     ui: UI,
     profile: PROFILE,
     projects: ITEMS,
-    independentProjects: INDEPENDENT_PROJECTS,
-    schoolProjects: SCHOOL_PROJECTS,
   } = useLocalizedData();
   const t = UI.home;
 
-  const [filter, setFilter] = useState<FilterMode>("all");
   const [openSlugs, setOpenSlugs] = useState<Record<string, boolean>>({});
 
   const toggleDetails = useCallback(
@@ -57,18 +52,6 @@ export default function HomePage() {
     [sendMessage, setIsOpen]
   );
 
-  const spotlitItem = spotlightSlug
-    ? ITEMS.find((i) => i.slug === spotlightSlug)
-    : undefined;
-  const effectiveFilter: FilterMode =
-    spotlitItem && filter !== "all" && spotlitItem.category !== filter
-      ? "all"
-      : filter;
-
-  const showIndependent =
-    effectiveFilter === "all" || effectiveFilter === "independent";
-  const showSchool = effectiveFilter === "all" || effectiveFilter === "school";
-
   return (
     <div>
       {/* HERO: Clean, low-noise intro + desktop 3D AI Twin Studio */}
@@ -82,7 +65,7 @@ export default function HomePage() {
               {PROFILE.heroHeadline}
             </h1>
 
-            <p className="max-w-md text-lg leading-relaxed text-ink-soft">
+            <p className="max-w-[54ch] text-base leading-relaxed text-ink-soft sm:text-lg">
               {PROFILE.heroBio}
             </p>
           </div>
@@ -91,94 +74,32 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* WORK INDEX: Minimal header, zero eyebrows, clean 2-col stages */}
+      {/* WORK INDEX: Unified grid with MedCare Clinical (.NET 9 / C#) in top 3 */}
       <section
         id="prosjekter"
         data-viewport-section="Prosjekter"
         className="scroll-mt-24 border-t border-line py-16 sm:py-20"
       >
         <div className="mx-auto max-w-5xl px-4 sm:px-6">
-          <div className="mb-10 flex flex-wrap items-center justify-between gap-4">
+          <div className="mb-10">
             <h2 className="font-display text-2xl font-normal tracking-[-0.025em] sm:text-3xl">
               {t.worksTitle}
             </h2>
-
-            <div
-              role="group"
-              aria-label={t.worksTitle}
-              className="inline-flex items-center rounded-full border border-line bg-paper-raised p-1"
-            >
-              {(
-                [
-                  { id: "all", label: t.filterAll },
-                  { id: "independent", label: t.filterIndependent },
-                  { id: "school", label: t.filterSchool },
-                ] as const
-              ).map((tab) => {
-                const active = effectiveFilter === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    type="button"
-                    aria-pressed={active}
-                    onClick={() => setFilter(tab.id)}
-                    className={`rounded-full px-3.5 py-1 text-xs font-medium transition-colors cursor-pointer ${
-                      active ? "bg-ink text-paper" : "text-ink-soft hover:text-ink"
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                );
-              })}
-            </div>
           </div>
 
-          {showIndependent && (
-            <div>
-              {showSchool && (
-                <h3 className="mb-6 font-display text-lg font-medium tracking-[-0.015em] text-ink">
-                  {t.filterIndependent}
-                </h3>
-              )}
-              <div className="grid items-start gap-x-8 gap-y-12 md:grid-cols-2">
-                {INDEPENDENT_PROJECTS.map((item, idx) => (
-                  <ProjectCard
-                    key={item.slug}
-                    item={item}
-                    priority={idx < 2}
-                    open={Boolean(openSlugs[item.slug]) || spotlightSlug === item.slug}
-                    spotlit={spotlightSlug === item.slug}
-                    onToggle={toggleDetails}
-                    onAsk={askAboutProject}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {showSchool && (
-            <div className={showIndependent ? "mt-16 border-t border-line pt-14" : ""}>
-              {showIndependent && (
-                <h3 className="mb-6 font-display text-lg font-medium tracking-[-0.015em] text-ink">
-                  {t.filterSchool}
-                </h3>
-              )}
-
-              <div className="grid items-start gap-x-8 gap-y-12 md:grid-cols-2">
-                {SCHOOL_PROJECTS.map((item) => (
-                  <ProjectCard
-                    key={item.slug}
-                    item={item}
-                    priority={!showIndependent}
-                    open={Boolean(openSlugs[item.slug]) || spotlightSlug === item.slug}
-                    spotlit={spotlightSlug === item.slug}
-                    onToggle={toggleDetails}
-                    onAsk={askAboutProject}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
+          <div className="grid items-start gap-x-8 gap-y-12 md:grid-cols-2">
+            {ITEMS.map((item, idx) => (
+              <ProjectCard
+                key={item.slug}
+                item={item}
+                priority={idx < 2}
+                open={Boolean(openSlugs[item.slug]) || spotlightSlug === item.slug}
+                spotlit={spotlightSlug === item.slug}
+                onToggle={toggleDetails}
+                onAsk={askAboutProject}
+              />
+            ))}
+          </div>
         </div>
       </section>
     </div>

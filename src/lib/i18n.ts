@@ -5,6 +5,7 @@ import {
   FOLLOW_UP_PROMPTS,
   INDEPENDENT_PROJECTS,
   PROFILE,
+  PROJECTS,
   SCHOOL_PROJECTS,
   TOUR_PROMPT,
   USE_CASE_PROMPT,
@@ -40,10 +41,12 @@ export function localizeValue<T>(val: T, locale: Locale): T {
         k === "slug" ||
         k === "id" ||
         k === "category" ||
+        k === "kind" ||
         k === "ground" ||
         k === "poster" ||
         k === "video" ||
         k === "src" ||
+        k === "webmSrc" ||
         k === "href" ||
         k === "caseLinkHref" ||
         k === "liveUrl" ||
@@ -77,7 +80,7 @@ export function getLocalizedData(locale: Locale) {
   const profile = localizeValue(PROFILE, locale);
   const independentProjects = localizeValue(INDEPENDENT_PROJECTS, locale);
   const schoolProjects = localizeValue(SCHOOL_PROJECTS, locale);
-  const projects = [...independentProjects, ...schoolProjects];
+  const projects = localizeValue(PROJECTS, locale);
   const aiPage = localizeValue(AI_PAGE, locale);
   const tourPrompt = tr(TOUR_PROMPT, locale);
   const useCasePrompt = tr(USE_CASE_PROMPT, locale);

@@ -5,7 +5,7 @@ export async function GET() {
   const lines: string[] = [
     `# ${PROFILE.name} (@${PROFILE.handle})`,
     "",
-    `> Fullstackutvikler bosatt i Norge (${PROFILE.location}). Fullført toårig utdanning i Backend Development ved Noroff School of Technology and Digital Media (2024 til 2026, karakter A i gjennomsnitt), og tar nå Frontend Development på deltid ved Noroff. Medbygger av Ember Booking, med bakgrunn fra industriroboter og som avdelingsleder med personalansvar på Ekornes.`,
+    `> Fullstackutvikler bosatt i Gudbrandsdalen (${PROFILE.location}). Fullført toårig utdanning i Backend Development ved Noroff School of Technology and Digital Media (2024 til 2026, karakter A i gjennomsnitt), og tar nå Frontend Development på deltid ved Noroff. Medgründer av Ember Booking, med bakgrunn fra montering av møbler og programmering av Motoman industriroboter og som avdelingsleder med personalansvar, driftsplanlegging og kvalitetskontroll på Ekornes. Trives med å bidra med mer enn bare kode i møte med kunder, forstå forretning og drift, og ta del i juridiske vurderinger og større valg.`,
     "",
     "## Kort oversikt",
     `- Nettside: ${SITE_URL}`,
@@ -14,8 +14,8 @@ export async function GET() {
     `- Epost: ${PROFILE.email}`,
     `- CV (PDF): ${SITE_URL}/Yosmel_Chiang_CV.pdf`,
     "- Språk: Norsk (morsmål), spansk (morsmål), engelsk (flytende)",
-    "- Daglig arbeid: IKT drift og brukerstøtte ved Nord-Gudbrandsdal VGS, samt frontend og design i Ember Booking.",
-    "- Ønsket arbeidsform: Åpen for spennende roller innen frontend, backend eller fullstack (remote eller hybrid).",
+    "- Daglig arbeid: IKT drift og brukerstøtte ved Nord-Gudbrandsdal VGS, samt medgründer (merkevare, UX og frontend) i Ember Booking.",
+    "- Ønsket arbeidsform: Åpen for utvikler og konsulentroller innen fullstack, backend eller frontend (fysisk kontor i Gudbrandsdalen/nærområdet, fagdager/kundemøter og hybrid i Innlandet, eller remote/hybrid).",
     "",
     "## Teknisk verktøykasse",
     ...PROFILE.about.stackGroups.map(
@@ -41,7 +41,7 @@ export async function GET() {
         item.summary,
         ...item.highlights.map((h) => `- ${h}`),
         item.repoNote ? `- ${item.repoNote}` : "",
-        item.aiNote ? `- AI-metodikk: ${item.aiNote}` : "",
+        item.aiNote ? `- AI metodikk: ${item.aiNote}` : "",
         "",
       ].filter((line, idx, arr) => !(line === "" && arr[idx - 1] === ""));
     }),

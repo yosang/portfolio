@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
@@ -8,46 +8,209 @@ import { useLocalizedData } from "@/lib/i18n";
 import { useCompanionPortfolio } from "@/components/CompanionContext";
 import { ProjectMedia } from "@/components/ProjectMedia";
 import { CaseStudyAskButton } from "@/components/CaseStudyAskButton";
+import type { OutdoorMediaItem } from "@/data/portfolio";
+
+function OutdoorCarousel({
+  items,
+  prevLabel,
+  nextLabel,
+}: {
+  items: OutdoorMediaItem[];
+  prevLabel: string;
+  nextLabel: string;
+}) {
+  const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const total = items.length;
+
+  useEffect(() => {
+    if (total <= 1 || paused) return;
+    if (
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      return;
+    }
+    const timer = window.setInterval(() => {
+      setIndex((i) => (i + 1) % total);
+    }, 4500);
+    return () => window.clearInterval(timer);
+  }, [total, paused, index]);
+
+  if (total === 0) return null;
+
+  const current = items[index] ?? items[0];
+  const prev = () => setIndex((i) => (i - 1 + total) % total);
+  const next = () => setIndex((i) => (i + 1) % total);
+
+  return (
+    <figure
+      aria-roledescription="carousel"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onFocusCapture={() => setPaused(true)}
+      onBlurCapture={() => setPaused(false)}
+      onKeyDown={(e) => {
+        if (e.key === "ArrowLeft") {
+          e.preventDefault();
+          prev();
+        } else if (e.key === "ArrowRight") {
+          e.preventDefault();
+          next();
+        }
+      }}
+      onTouchStart={(e) => {
+        setPaused(true);
+        setTouchStartX(e.touches[0]?.clientX ?? null);
+      }}
+      onTouchEnd={(e) => {
+        setPaused(false);
+        if (touchStartX === null) return;
+        const delta = (e.changedTouches[0]?.clientX ?? touchStartX) - touchStartX;
+        if (delta > 36) prev();
+        else if (delta < -36) next();
+        setTouchStartX(null);
+      }}
+      className="surface-card w-full max-w-xs overflow-hidden rounded-[14px] md:max-w-none"
+    >
+      <div className="relative aspect-[3/4] w-full overflow-hidden bg-paper-subtle">
+        <div
+          className="flex h-full w-full transition-transform duration-300 ease-out motion-reduce:transition-none"
+          style={{ transform: `translateX(-${index * 100}%)` }}
+        >
+          {items.map((img, idx) => (
+            <div
+              key={img.src}
+              aria-hidden={idx !== index}
+              className="relative h-full w-full shrink-0"
+            >
+              <Image
+                src={img.src}
+                alt={img.alt}
+                width={img.width}
+                height={img.height}
+                sizes="(min-width: 768px) 280px, 320px"
+                priority={idx === 0}
+                className="h-full w-full object-cover select-none"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <figcaption className="flex items-center justify-between gap-3 border-t border-line px-3.5 py-2.5">
+        <span className="min-w-0 flex-1 text-xs leading-snug text-ink-soft">
+          {current.caption}
+        </span>
+        <div className="flex shrink-0 items-center gap-1.5">
+          <button
+            type="button"
+            onClick={prev}
+            aria-label={prevLabel}
+            className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-line bg-paper text-ink transition-colors hover:bg-paper-subtle"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+          </button>
+          <span className="min-w-[2.4rem] text-center font-mono text-[11px] tabular-nums text-ink-soft">
+            {index + 1} / {total}
+          </span>
+          <button
+            type="button"
+            onClick={next}
+            aria-label={nextLabel}
+            className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-line bg-paper text-ink transition-colors hover:bg-paper-subtle"
+          >
+            <ArrowRight className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      </figcaption>
+    </figure>
+  );
+}
 
 export function AboutPageContent() {
   const { ui: UI, profile: PROFILE } = useLocalizedData();
   const t = UI.about;
+  const outdoors = PROFILE.about.outdoors;
+  const photoItems = outdoors.media.filter((m) => m.kind === "image");
 
   return (
     <article
       data-viewport-section="About"
-      className="mx-auto max-w-3xl space-y-14 px-4 py-14 sm:px-6 md:py-20"
+      className="mx-auto max-w-4xl space-y-14 px-4 py-14 sm:px-6 md:py-20"
     >
-      <section className="space-y-5">
-        <h1 className="font-display text-3xl font-normal tracking-[-0.03em] sm:text-4xl">
-          {t.heading}
-        </h1>
-        <div className="space-y-4 text-base leading-relaxed text-ink/90">
-          {PROFILE.about.paragraphs.map((segments, idx) => (
-            <p key={idx}>
-              {segments.map((seg, i) =>
-                typeof seg === "string" ? (
-                  <React.Fragment key={i}>{seg}</React.Fragment>
-                ) : (
-                  <a
-                    key={i}
-                    href={seg.href}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-baseline gap-0.5 font-medium text-ink underline decoration-ink/35 underline-offset-4 transition-opacity hover:opacity-75 hover:decoration-ink"
-                  >
-                    <span>{seg.label}</span>
-                    <ArrowUpRight className="h-3.5 w-3.5 shrink-0 self-center opacity-75" />
-                  </a>
-                )
-              )}
-            </p>
-          ))}
+      <section className="space-y-6">
+        <header className="space-y-2">
+          <h1 className="font-display text-[clamp(1.875rem,3vw+1rem,3rem)] leading-[1.12] font-normal tracking-[-0.03em] text-ink">
+            {t.heading}
+          </h1>
+          <p className="font-mono text-xs text-ink-soft sm:text-sm">
+            {PROFILE.about.subtitle}
+          </p>
+        </header>
+
+        <div className="grid gap-8 md:grid-cols-[1fr_240px] md:items-start">
+          <div className="max-w-[62ch] space-y-4 text-base leading-relaxed text-ink/90">
+            {PROFILE.about.paragraphs.map((segments, idx) => (
+              <p key={idx}>
+                {segments.map((seg, i) =>
+                  typeof seg === "string" ? (
+                    <React.Fragment key={i}>{seg}</React.Fragment>
+                  ) : (
+                    <a
+                      key={i}
+                      href={seg.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-baseline gap-0.5 font-medium text-ink underline decoration-ink/35 underline-offset-4 transition-opacity hover:opacity-75 hover:decoration-ink"
+                    >
+                      <span>{seg.label}</span>
+                      <ArrowUpRight className="h-3.5 w-3.5 shrink-0 self-center opacity-75" />
+                    </a>
+                  )
+                )}
+              </p>
+            ))}
+          </div>
+
+          <figure className="order-first w-44 overflow-hidden rounded-[14px] border border-line bg-paper-raised sm:w-52 md:order-last md:w-full">
+            <Image
+              src={PROFILE.about.portrait.src}
+              alt={PROFILE.about.portrait.alt}
+              width={PROFILE.about.portrait.width}
+              height={PROFILE.about.portrait.height}
+              sizes="(min-width: 768px) 240px, 208px"
+              priority
+              className="aspect-[2/3] h-auto w-full object-cover select-none"
+            />
+          </figure>
+        </div>
+      </section>
+
+      <section className="border-t border-line pt-10">
+        <div className="grid gap-8 md:grid-cols-[1fr_260px] md:items-start">
+          <div className="space-y-3">
+            <h2 className="font-display text-[clamp(1.35rem,1.4vw+1rem,1.85rem)] leading-[1.18] font-normal tracking-[-0.02em] text-ink">
+              {outdoors.heading}
+            </h2>
+            <div className="max-w-[62ch] space-y-4 text-base leading-relaxed text-ink/90">
+              {outdoors.paragraphs.map((p, idx) => (
+                <p key={idx}>{p}</p>
+              ))}
+            </div>
+          </div>
+
+          <OutdoorCarousel
+            items={photoItems}
+            prevLabel={t.prevImage}
+            nextLabel={t.nextImage}
+          />
         </div>
       </section>
 
       <section className="space-y-5 border-t border-line pt-10">
-        <h2 className="font-display text-xl font-normal tracking-[-0.02em]">
+        <h2 className="font-display text-[clamp(1.35rem,1.4vw+1rem,1.85rem)] leading-[1.18] font-normal tracking-[-0.02em] text-ink">
           {t.toolkit}
         </h2>
         <dl className="grid gap-6 sm:grid-cols-3">

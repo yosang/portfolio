@@ -42,6 +42,8 @@ export const UI = {
   about: {
     heading: "Om meg",
     toolkit: "Verktøy",
+    prevImage: "Forrige bilde",
+    nextImage: "Neste bilde",
     ctaTitle: "Lurer du på noe?",
     ctaButton: "Snakk med AI versjonen",
   },
@@ -94,7 +96,7 @@ export const UI = {
   },
   privacy: {
     heading: "Personvern på yosmel.no",
-    lead: "Kort fortalt: denne porteføljen har ingen brukerkontoer, ingen sporingscookies og ingen database som lagrer hva du skriver eller sier i chatten. Her er en åpen oversikt over nøyaktig hva som skjer under panseret.",
+    lead: "Kort fortalt har denne porteføljen ingen brukerkontoer, ingen cookies for sporing og ingen database som lagrer hva du skriver eller sier i chatten. Her er en åpen oversikt over nøyaktig hva som skjer under panseret.",
     contactPrefix: "Spørsmål om personvern kan rettes direkte til",
     backHome: "Tilbake til forsiden",
     sections: [
@@ -108,19 +110,19 @@ export const UI = {
       },
       {
         title: "Hva som lagres lokalt i din egen nettleser",
-        body: "Nettsiden bruker ingen informasjonskapsler (cookies) for sporing, analyse eller reklame. Små verdier holdes kun lokalt på din egen enhet for at siden skal fungere praktisk mens du bruker den:",
+        body: "Nettsiden bruker ingen cookies for sporing, analyse eller reklame. Små verdier holdes kun lokalt på din egen enhet for at siden skal fungere praktisk mens du bruker den:",
         bullets: [
           "sessionStorage (ai-twin-chat): Husker pågående chattråd mens du klikker deg mellom undersidene i samme fane. Slettes automatisk når du lukker fanen.",
           "localStorage (portfolio-theme og portfolio-locale): Husker om du har valgt lys eller mørk visning og språk (NO/EN).",
         ],
       },
       {
-        title: "Midlertidig kvotevern i arbeidsminnet (RAM)",
-        body: "For å beskytte API kvoten mot automatisert spam holder serveren en enkel teller per IP adresse i arbeidsminnet (RAM) som tilbakestilles løpende. IP adresser skrives aldri til disk eller database.",
+        title: "Faste grenser i minnet",
+        body: "For å beskytte API kvoten mot automatisert spam holder serveren en enkel teller per IP adresse i minnet som tilbakestilles løpende. IP adresser skrives aldri til disk eller database.",
       },
       {
         title: "Tredjepartsbehandling (Google Gemini API)",
-        body: "Når du sender en melding, bruker mikrofonen eller har lyd skrudd på i chatten, sendes forespørselen kryptert (HTTPS) til Google sitt Gemini API for å generere tekstsvar, tolke tale til tekst og lage syntetisk stemme. Alle kall for tekstsvar, tale til tekst og stemmesyntese sendes med lagring deaktivert (store: false).",
+        body: "Når du sender en melding, bruker mikrofonen eller har lyd skrudd på i chatten, sendes forespørselen kryptert (HTTPS) til Google sitt Gemini API for å generere tekstsvar, tolke tale til tekst og lage klonet stemme. Alle kall for tekstsvar, tale til tekst og stemme sendes med lagring slått av (store: false).",
       },
     ],
   },

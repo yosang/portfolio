@@ -13,6 +13,17 @@ export {
 
 export type AboutSegment = string | { label: string; href: string };
 
+export interface OutdoorMediaItem {
+  kind: "video" | "image";
+  src: string;
+  webmSrc?: string;
+  poster?: string;
+  alt: string;
+  caption: string;
+  width: number;
+  height: number;
+}
+
 export const SITE_URL = "https://yosmel.no";
 
 export const PROFILE = {
@@ -23,28 +34,76 @@ export const PROFILE = {
   location: "Otta",
   heroHeadline: "Hei, Yosmel her",
   heroBio:
-    "Jeg utvikler nettsider og systemer med fokus på ryddig arkitektur, tydelig design og løsninger som folk faktisk tar i bruk. Bla gjerne gjennom prosjektene mine, eller slå av en prat med AI versjonen av meg.",
+    "Fullstackutvikler innen TypeScript, React, Next.js og C# / .NET med øye for UX og praktisk AI. Jeg trives med å bidra med mer enn bare kode og sette meg ordentlig inn i kundens forretning og hverdag.",
   socials: [
     { label: "GitHub", href: "https://github.com/yosang" },
     { label: "LinkedIn", href: "https://www.linkedin.com/in/yosmel-chiang/" },
     { label: "Epost", href: "mailto:yosmelchiang@gmail.com" },
   ],
   about: {
+    subtitle: "Utvikler, tidligere avdelingsleder og friluftsmenneske",
+    portrait: {
+      src: "/about/portrait.jpg",
+      alt: "Portrett av Yosmel Chiang",
+      width: 500,
+      height: 750,
+    },
     paragraphs: [
       [
-        "Jeg heter Yosmel Gutierrez Chiang og bor på Otta. Jeg har fullført en toårig utdanning i backendutvikling hos Noroff, og tar nå frontendutvikling på deltid samme sted. På GitHub har jeg vært ",
+        "Jeg heter Yosmel Gutierrez Chiang, er født på Cuba, kom til Norge da jeg var ti år og bor på Otta i Gudbrandsdalen sammen med familien min og hunden vår Ella. På GitHub har jeg bygget ting som ",
         { label: "@yosang", href: "https://github.com/yosang" },
         " siden 2013.",
       ],
       [
-        "Til daglig jobber jeg på Nord-Gudbrandsdal VGS, med IKT drift og support. Ved siden av driver jeg ",
-        { label: "Ember Booking", href: "https://emberbooking.no" },
-        " sammen med Kim. Der har jeg ansvaret for design, frontend, merkevare, markedsføringssider og brukeropplevelse.",
+        "Før jeg utdannet meg i backendutvikling og frontendutvikling hos Noroff, jobbet jeg på Ekornes. Der startet jeg i produksjonen med montering av møbler og programmering av Motoman industriroboter før jeg gikk videre til teamleder og avdelingsleder med personalansvar, daglig driftsplanlegging og kvalitetskontroll. Den erfaringen gjør at jeg trives når jeg får bidra med mer enn bare kode, som å sette meg inn i forretningen og driften, ta del i juridiske vurderinger (som avtaler, personvern og forretningsregler) og være med på de større valgene.",
       ],
       [
-        "Jeg trives godt med det jeg gjør i dag, og er åpen for spennende utviklerroller innen frontend, backend eller fullstack når den rette muligheten dukker opp. Siden jeg er etablert her med familien, passer remote eller en praktisk hybridløsning best.",
+        "Til daglig jobber jeg med IKT drift og brukerstøtte på Nord-Gudbrandsdal VGS, og ved siden av driver jeg ",
+        { label: "Ember Booking", href: "https://emberbooking.no" },
+        " sammen med Kim. Der snakker vi direkte med norske bedriftseiere og former både forretningsmodell, merkevare, designsystem og frontend. Jeg trives godt med det jeg gjør i dag, og er åpen for spennende utvikler og konsulentroller innen fullstack, backend eller frontend. Siden jeg er fast etablert her i Gudbrandsdalen, stiller jeg gjerne fysisk på kontor i nærområdet eller på fagdager og kundemøter i Innlandet, og jobber like godt hybrid eller remote.",
       ],
     ] as AboutSegment[][],
+    outdoors: {
+      heading: "Fjell, telt og hunden",
+      paragraphs: [
+        "Når jeg klapper igjen PCen, finner du meg som regel ute i skogen eller til fjells rundt Gudbrandsdalen og Rondane, uansett årstid. Enten det er løpeturer i regn og tåke på bratte stier, sommernetter i telt ved et fjellvann eller vinterturer med teltovn i snøen, er det ute i naturen jeg lufter hodet og henter energi.",
+        "Nesten alltid er familiehunden vår Ella, en italiensk fuglehund (Bracco Italiano), med på lasset og først ute av teltåpningen om morgenen.",
+      ],
+      media: [
+        {
+          kind: "image",
+          src: "/about/forest-run.jpg",
+          alt: "Yosmel løper i skogen med løpevest og caps.",
+          caption: "Løpetur i skogen.",
+          width: 882,
+          height: 1176,
+        },
+        {
+          kind: "image",
+          src: "/about/winter-coffee.jpg",
+          alt: "Kaffekjele på primus, kaffekopp i hånda og hunden Ella som løper med ball i snøen.",
+          caption: "Kaffe på primusen.",
+          width: 882,
+          height: 1176,
+        },
+        {
+          kind: "image",
+          src: "/about/winter-tent.jpg",
+          alt: "Nortent kuppeltelt med teltovn i snøen med solbelyste fjell i bakgrunnen.",
+          caption: "Kald vinter med teltovn.",
+          width: 738,
+          height: 984,
+        },
+        {
+          kind: "image",
+          src: "/about/lake-camp.jpg",
+          alt: "Utsikt fra teltåpningen mot et stille fjellvann og bratte fjellsider mens Ella står ved vannkanten.",
+          caption: "Morgenstund.",
+          width: 741,
+          height: 984,
+        },
+      ] as OutdoorMediaItem[],
+    },
     stackGroups: [
       {
         label: "Frontend og design",
