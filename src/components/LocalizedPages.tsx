@@ -15,7 +15,7 @@ export function AboutPageContent() {
   return (
     <article
       data-viewport-section="About"
-      className="page-enter mx-auto max-w-3xl space-y-14 px-4 py-14 sm:px-6 md:py-20"
+      className="mx-auto max-w-3xl space-y-14 px-4 py-14 sm:px-6 md:py-20"
     >
       <section className="space-y-5">
         <h1 className="font-display text-3xl font-normal tracking-[-0.03em] sm:text-4xl">
@@ -83,7 +83,7 @@ export function AiPageContent() {
   return (
     <article
       data-viewport-section="AI"
-      className="page-enter mx-auto max-w-3xl space-y-14 px-4 py-14 sm:px-6 md:py-20"
+      className="mx-auto max-w-3xl space-y-14 px-4 py-14 sm:px-6 md:py-20"
     >
       <section className="space-y-5">
         <h1 className="font-display text-3xl font-normal tracking-[-0.03em] text-ink sm:text-4xl">
@@ -207,6 +207,47 @@ export function AiPageContent() {
 
       <section className="space-y-4 border-t border-line pt-10">
         <h2 className="font-display text-2xl font-normal tracking-[-0.025em] text-ink">
+          {t.security.heading}
+        </h2>
+        <div className="space-y-4 text-base leading-relaxed text-ink/90">
+          {t.security.paragraphs.map((p, idx) => (
+            <p key={idx}>{p}</p>
+          ))}
+        </div>
+        <ul className="surface-card space-y-2.5 rounded-xl p-5 text-sm text-ink-soft">
+          {t.security.layers.map((layer, i) => {
+            const colonIdx = layer.indexOf(":");
+            const hasLabel = colonIdx > 0 && colonIdx <= 44;
+            return (
+              <li key={i} className="leading-relaxed">
+                ·{" "}
+                {hasLabel ? (
+                  <>
+                    <span className="font-medium text-ink">
+                      {layer.slice(0, colonIdx + 1)}
+                    </span>
+                    {layer.slice(colonIdx + 1)}
+                  </>
+                ) : (
+                  layer
+                )}
+              </li>
+            );
+          })}
+        </ul>
+        <p className="pt-1">
+          <Link
+            href={t.security.caseLinkHref}
+            className="inline-flex items-center gap-1 text-xs font-medium text-ink underline underline-offset-4 hover:opacity-75"
+          >
+            <span>{t.security.caseLinkLabel}</span>
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+        </p>
+      </section>
+
+      <section className="space-y-4 border-t border-line pt-10">
+        <h2 className="font-display text-2xl font-normal tracking-[-0.025em] text-ink">
           {t.portfolioStance.heading}
         </h2>
         <div className="space-y-4 text-base leading-relaxed text-ink/90">
@@ -310,7 +351,7 @@ export function PrivacyPageContent() {
   return (
     <article
       data-viewport-section="Personvern"
-      className="page-enter mx-auto max-w-3xl space-y-12 px-4 py-14 sm:px-6 md:py-20"
+      className="mx-auto max-w-3xl space-y-12 px-4 py-14 sm:px-6 md:py-20"
     >
       <section className="space-y-4">
         <h1 className="font-display text-3xl font-normal tracking-[-0.03em] text-ink sm:text-4xl">

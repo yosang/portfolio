@@ -95,7 +95,7 @@ function shouldTranslate(s) {
   const trimmed = s.trim();
   if (trimmed.length < 2) return false;
   if (SKIP_EXACT.has(trimmed)) return false;
-  if (/^(https?:\/\/|mailto:|\/|#)/.test(trimmed)) return false;
+  if (/^(https?:\/\/|mailto:|\/(?!\/)|#)/.test(trimmed)) return false;
   if (/^#[0-9a-fA-F]{3,8}$/.test(trimmed)) return false;
   if (/^bg-/.test(trimmed)) return false;
   if (/^[a-z0-9_.-]+@[a-z0-9_.-]+$/i.test(trimmed)) return false;
@@ -116,11 +116,12 @@ function extractTranslatableStrings() {
 
   for (const fp of files) {
     let content = fs.readFileSync(fp, "utf8");
-    // Strip aiContext arrays from projects.ts so we only translate user-visible UI/case-study strings
-    // (Gemini reads aiContext directly in Norwegian!)
+    // Strip aiContext arrays and non-UI helper exports at bottom of projects.ts
     content = content.replace(/aiContext:\s*\[[\s\S]*?\],/g, "");
-    // Strip import statements
+    content = content.replace(/\nexport const INDEPENDENT_PROJECTS[\s\S]*$/, "");
+    // Strip import/re-export module specifiers
     content = content.replace(/^import\s+.*$/gm, "");
+    content = content.replace(/\bfrom\s+["'][^"']+["']/g, "");
 
     let m;
     while ((m = strRegex.exec(content)) !== null) {
@@ -186,7 +187,8 @@ Rules:
    - ZERO em dashes (—) or en dashes (–). Use commas, colons, parentheses, or periods instead.
    - No AI slop words (delve, leverage, seamless, robust, pivotal, tapestry, realm, comprehensive, cutting-edge).
    - Keep placeholder tokens like {title} intact.
-   - Keep project titles ("VGS Bordtennis", "Ember Booking", "MedCare Clinical", "Cinemorra", "Agent Skills") as their exact title ("VGS Bordtennis", etc.), and translate "Interaktiv Portefølje" to "Interactive Portfolio". In descriptions of VGS Bordtennis, clarify in English that it is a real-time table tennis app for high schools.
+   - Keep project titles ("VGS Bordtennis", "Ember Booking", "MedCare Clinical", "Cinemorra", "Agent Skills") as their exact title ("VGS Bordtennis", etc.), and translate "Interaktiv Portefølje" to "Interactive Portfolio".
+   - Translate EVERY sentence of multi-sentence strings completely and faithfully; never summarize or collapse a paragraph into a short tagline.
    - Avoid trailing apostrophes on plural words (like "students'"): rephrase naturally without a dangling apostrophe (e.g., "among students" or "for students").
 
 Input JSON array:

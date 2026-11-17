@@ -15,7 +15,6 @@ export const UI = {
     filterAll: "Alle",
     filterIndependent: "Egne",
     filterSchool: "Skoleprosjekter",
-    spotlit: "Valgt av AI",
     detailsOpen: "Skjul",
     detailsClosed: "Detaljer",
     askAbout: "Spør AI",
@@ -49,8 +48,6 @@ export const UI = {
     intro: "Spør om prosjektene mine, valg av stack eller hvordan jeg jobber.",
     placeholder: "Skriv ditt eget spørsmål…",
     send: "Send",
-    you: "Du",
-    me: "Yosmel",
     sound: "Lyd",
     clear: "Tøm",
     thinking: "tenker…",
@@ -67,12 +64,6 @@ export const UI = {
     micStop: "Stopp opptak",
     micListening: "Lytter… trykk på mikrofonen for å fullføre",
     micTranscribing: "Tolker tale…",
-    howMade: "Teknisk oppsett",
-    tech: [
-      "3D modell i egen Web Worker",
-      "Gemini strømmet svar",
-      "Gemini TTS med sanntids lydstrømming",
-    ],
     dock: "Spør Yosmel",
     fullView: "Fullskjerm",
     close: "Lukk",
@@ -101,7 +92,7 @@ export const UI = {
   },
   privacy: {
     heading: "Personvern på yosmel.no",
-    lead: "Kort fortalt: denne porteføljen har ingen brukerkontoer, ingen sporings-cookies og ingen database som lagrer hva du skriver eller sier i chatten. Her er en åpen oversikt over nøyaktig hva som skjer under panseret.",
+    lead: "Kort fortalt: denne porteføljen har ingen brukerkontoer, ingen sporingscookies og ingen database som lagrer hva du skriver eller sier i chatten. Her er en åpen oversikt over nøyaktig hva som skjer under panseret.",
     contactPrefix: "Spørsmål om personvern kan rettes direkte til",
     backHome: "Tilbake til forsiden",
     sections: [
@@ -117,19 +108,24 @@ export const UI = {
         title: "Hva som lagres lokalt i din egen nettleser",
         body: "Nettsiden bruker ingen informasjonskapsler (cookies) for sporing, analyse eller reklame. Små verdier holdes kun lokalt på din egen enhet for at siden skal fungere praktisk mens du bruker den:",
         bullets: [
-          "sessionStorage (ai-twin-chat): Husker pågående chat-tråd mens du klikker deg mellom undersidene i samme fane. Slettes automatisk når du lukker fanen.",
+          "sessionStorage (ai-twin-chat): Husker pågående chattråd mens du klikker deg mellom undersidene i samme fane. Slettes automatisk når du lukker fanen.",
           "localStorage (portfolio-theme og portfolio-locale): Husker om du har valgt lys eller mørk visning og språk (NO/EN).",
         ],
       },
       {
         title: "Midlertidig kvotevern i arbeidsminnet (RAM)",
-        body: "For å beskytte API-kvoten mot automatisert spam holder serveren en enkel teller per IP-adresse i arbeidsminnet (RAM) som tilbakestilles løpende. IP-adresser skrives aldri til disk eller database.",
+        body: "For å beskytte API kvoten mot automatisert spam holder serveren en enkel teller per IP adresse i arbeidsminnet (RAM) som tilbakestilles løpende. IP adresser skrives aldri til disk eller database.",
       },
       {
         title: "Tredjepartsbehandling (Google Gemini API)",
-        body: "Når du sender en melding, bruker mikrofonen eller har lyd skrudd på i chatten, sendes forespørselen kryptert (HTTPS) til Google sitt Gemini API for å generere tekstsvar, tolke tale til tekst og lage syntetisk stemme. Kallene for tale-til-tekst og stemmesyntese sendes med lagring deaktivert (store: false).",
+        body: "Når du sender en melding, bruker mikrofonen eller har lyd skrudd på i chatten, sendes forespørselen kryptert (HTTPS) til Google sitt Gemini API for å generere tekstsvar, tolke tale til tekst og lage syntetisk stemme. Alle kall for tekstsvar, tale til tekst og stemmesyntese sendes med lagring deaktivert (store: false).",
       },
     ],
+  },
+  notFound: {
+    code: "// 404 · Forbindelse brutt",
+    heading: "Fant ingenting på denne adressen.",
+    body: "Enten skrev du inn feil URL, eller så rakk verken jeg eller modellen min å bygge denne siden ennå.",
   },
   networkError: "Fikk ikke svar akkurat nå. Prøv igjen.",
 };

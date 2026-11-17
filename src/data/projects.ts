@@ -320,7 +320,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     highlights: [
       "Samtalegrensesnitt: AI Yosmel tar besøkende gjennom en visuell omvisning i prosjektene, svarer med stemme og henter frem CV ved behov.",
       "Bruksområder: Samme oppsett kan gi eldre og pasienter muntlig veiledning i helsevesenet, brukes til muntlig trening i skolen eller løse kundeservice for bedrifter.",
-      "Arkitektur: 3D skannet modell med blendshapes i en egen OffscreenCanvas Web Worker på 60 fps, kombinert med sanntids TTS og tale til tekst.",
+      "Arkitektur og sikkerhet: Delt 3D modell med 20 blendshapes i en egen OffscreenCanvas Web Worker på 60 fps, kombinert med sanntids TTS, tale til tekst og vern mot prompt injection.",
     ],
     aiNote:
       "Bygget høsten 2026 med faste rammer i AGENTS.md og skills.",
@@ -338,21 +338,33 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
           ],
         },
         {
-          title: "3D modell i egen Web Worker på 60 fps",
+          title: "Delt 3D modell i egen Web Worker på 60 fps",
           paragraphs: [
-            "Avataren er en 3D skanning av meg med 52 blendshapes for munnsynk, blunking, hodebevegelser og ansiktsuttrykk. For at 3D visningen aldri skal blokkere hovedtråden eller gjøre rulling på siden treg, kjører lerretet i en egen OffscreenCanvas Web Worker (avatar.worker.ts).",
-            "Three.js starter først ved brukerinteraksjon eller etter at første bilde er tegnet opp, og pauser automatisk via IntersectionObserver når seksjonen ruller ut av synsfeltet.",
+            "Avataren er en 3D skanning av meg med 20 blendshapes for munnsynk, blunking og ansiktsuttrykk, kombinert med skjelettstyring av nakke og hode. For at 3D visningen aldri skal blokkere hovedtråden eller gjøre rulling på siden treg, kjører lerretet i en egen OffscreenCanvas Web Worker (avatar.worker.ts).",
+            "En og samme WebGL og Worker instans flyttes direkte via en DOM portal mellom seksjonen på forsiden, det flytende hjørnepanelet og fullskjermssiden (/chat), slik at modellen kun lastes inn en gang i minnet. Three.js starter ved første interaksjon og pauser automatisk via IntersectionObserver når avataren er ute av synsfeltet.",
           ],
         },
         {
-          title: "Synkronisert stemmekloning, tale til tekst og sikkerhet",
+          title: "Synkronisert stemmekloning og tale til tekst",
           paragraphs: [
             "Stemmen er klonet fra et 17 sekunders lydopptak og strømmes i sanntid over SSE fra /api/chat. Når lyden er på, venter chatboblen med å vises til første lydpakke faktisk starter avspilling i Web Audio API, slik at tekst, stemme og leppebevegelser treffer likt.",
           ],
           bullets: [
             "Tale til tekst (/api/transcribe): Besøkende kan snakke direkte inn via mikrofonen i chatten, med en egen ordliste for prosjektnavn og faguttrykk.",
             "Streng faktaforankring: Systemprompten bygges dynamisk fra samme datakilde som selve nettsiden (projects.ts og portfolio.ts), med klare grenser for hva modellen skal svare på og når den skal henvise videre på epost.",
-            "Misbruksvern og kostnadskontroll: Endepunktene sjekker Origin og Sec-Fetch-Site, begrenser størrelsen på forespørsler, og har kvoter både per minutt og per dag.",
+          ],
+        },
+        {
+          title: "Vernet mot prompt injection: Funn og tiltak fra sikkerhetssjekk",
+          paragraphs: [
+            "Når en språkmodell får sende ut kontrolltagger som styrer grensesnittet ([TOUR:<slug>], [GO:<sti>] og [FILE:cv]), må alle inndata fra nettleseren behandles som utrygge. Under en grundig sikkerhetsgjennomgang av kodebasen dukket det opp tre konkrete svakheter i førsteutkastet: visningsmetadata fra klienten (body.page) ble flettet rett inn i systeminstruksen uten vasking, navigasjonstaggen [GO:...] manglet hvitelisten som [TOUR:...] hadde, og stemmesyntesen manglet eksplisitt store: false.",
+            "Siden en språkmodell alltid kan gjøre feil eller bli forsøkt manipulert, flyttet jeg sikkerhetsgrensene ut i vanlig deterministisk TypeScript kode i en felles vaktmodul (apiGuard.ts) på tvers av endepunktene:",
+          ],
+          bullets: [
+            "Kanalseparasjon og XML gjerder: Systeminstruksen settes kun sammen av faste serverfiler. Meldinger og visningsstatus fra klienten vaskes for kontrolltagger og linjeskift, og pakkes inn i <untrusted_visitor_input> og <viewport_state> med en avsluttende sikkerhetsinstruks nederst i prompten. Også lydopptak i /api/transcribe er låst til ren avskrift slik at inntalt tekst aldri tolkes som kommandoer.",
+            "Låste samtaleroller og null lagring (store: false): Samtalehistorikken sendes som typede user_input og model_output steg i Gemini Interactions API fremfor sammenslått tekst, slik at ingen kan forfalske tidligere svar i tråden. Alle kall for chat, stemme og tale til tekst kjører med store: false.",
+            "Dobbel hvitelisting av handlinger: [GO:<sti>] valideres mot en fast hviteliste av interne ruter på både server og klient før router.push kalles, slik at eksterne lenker aldri kan åpnes. [FILE:cv] peker til en fast PDF fil og slippes kun gjennom når brukerens melding faktisk etterspør CV.",
+            "Misbruksvern og kostnadstak: Felles sjekk av Sec-Fetch-Site, eksakt Origin og klientheader, kombinert med tak på forespørselsstørrelse og kvoter per minutt og per døgn i RAM.",
           ],
         },
       ],
@@ -366,7 +378,8 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
       "Denne porteføljen (`yosmel.no`, kildekode på `github.com/yosang/portfolio`) utforsker hvordan AI kan gjøre et grensesnitt enklere å bruke: man snakker med AI Yosmel i en vanlig samtale, mens den tar leseren gjennom en visuell tour av prosjekter, åpner detaljer, svarer på spørsmål og henter frem CV uten at man må klikke og lete rundt selv.",
       "Hva teknologien kan brukes til utenfor en portefølje: tanken er å komme nærmere en vanlig samtale der den prater med stemme, henter opp riktig sted på skjermen så du slipper å lete selv, og holder seg kun til godkjente fakta. Jeg ser for meg at bedrifter kan bruke slik teknologi til å hjelpe kunder i kundeservice eller på telefon. Samtidig kan skoler bruke det til muntlig trening, og i helsevesenet kan det gi eldre og pasienter enkel veiledning.",
       "Samtidig var dette prosjektet der jeg høsten 2026 for alvor utfordret meg selv på strukturert AI assistert utvikling, med egne regler i `AGENTS.md` og `github.com/yosang/skills` (`ui-craft`, `natural-copy` og `lean-architecture`).",
-      "Teknisk kjører 3D skanningen (T2 modell med blendshapes for munnsynk, blunking og uttrykk) på Three.js i en egen `OffscreenCanvas` Web Worker på 60 fps, mens svar og klonet stemme (fra 17 sekunder opptak) strømmes fra Gemini over SSE.",
+      "Teknisk kjører 3D skanningen (T2 modell med 20 blendshapes for munnsynk, blunking og uttrykk) på Three.js i en delt `OffscreenCanvas` Web Worker på 60 fps som gjenbrukes på tvers av sidene via en portal, mens svar og klonet stemme (fra 17 sekunder opptak) strømmes fra Gemini over SSE.",
+      "Sikkerhet og vern mot prompt injection: under en egen kodegjennomgang av porteføljen fant og tettet jeg konkrete svakheter der `body.page` gikk ufiltrert inn i systeminstruksen og `[GO:...]` manglet hviteliste. Nå håndteres prompt injection i tre lag i kode (`apiGuard.ts` og `chat/route.ts`): 1) brukerinput og visningsstatus vaskes for tagger og rammes inn i `<untrusted_visitor_input>` med typede `user_input` og `model_output` steg så ingen kan forfalske svar i tråden, 2) alle handlingstagger (`[GO:...]`, `[TOUR:...]`, `[FILE:cv]`) sjekkes mot faste hvitelister på både server og klient så modellen aldri kan åpne eksterne lenker eller frie filer, og 3) alle kall for chat, stemme og tale til tekst sendes med `store: false`, Origin sjekk og faste kvoter i minnet.",
     ],
   },
   {

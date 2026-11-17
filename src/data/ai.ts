@@ -50,6 +50,20 @@ export const AI_PAGE = {
       body: "Når tempoet øker, blir sikkerhetsnettet enda viktigere. Jeg jobber i små, hyppige commits og holder refaktorering adskilt fra ny funksjonalitet, slik at det alltid er trygt å rulle tilbake og lett for andre å følge historikken. Før endringer rulles ut, verifiseres de med automatiske tester og sjekk av kritiske brukerflyter.",
     },
   ],
+  security: {
+    heading: "Sikkerhet og prompt injection når AI møter brukere",
+    paragraphs: [
+      "Å bruke AI som sparringspartner på egen maskin er oversiktlig, men så snart en språkmodell kobles på et åpent skjema og får styre navigasjon i nettleseren, oppstår nye angrepsflater. Under en sikkerhetsgjennomgang av 3D chatten på denne siden dukket det opp to konkrete svakheter i førsteutkastet: visningsdata fra nettleseren ble flettet ufiltrert inn i systeminstruksen, og navigasjonstaggen [GO:...] sendte verdien videre til ruteren uten hviteliste.",
+      "En språkmodell jobber ut fra sannsynlighet og kan aldri stå alene som tilgangskontroll. Derfor ligger sikkerheten i tre faste lag med vanlig kode rundt modellen:",
+    ],
+    layers: [
+      "Skille instruks og brukerdata: Systeminstruksen bygges kun fra faste filer på serveren. Alt som kommer fra nettleseren eller mikrofonen vaskes for kontrolltagger og pakkes inn i egne XML rammer (<untrusted_visitor_input> og <viewport_state>), mens samtalehistorikken sendes med låste roller i API-et slik at ingen kan forfalske tidligere svar i tråden.",
+      "Hviteliste i kode fremfor tillit til modellen: Modellen får aldri velge frie URL-er eller filstier. Tagger som [GO:...] og [TOUR:...] kontrolleres mot faste hvitelister i TypeScript på både server og klient, slik at eksterne adresser aldri når ruteren. Vedlegget [FILE:cv] peker kun til en fast PDF når brukeren faktisk har spurt om CV.",
+      "Null lagring og faste kvoter: Alle kall til Gemini (tekstsvar, stemmesyntese og tale til tekst) sendes med lagring slått av (store: false), kombinert med sjekk av Origin og Sec-Fetch-Site, størrelsesgrenser og kvoter per minutt og per døgn i minnet.",
+    ],
+    caseLinkLabel: "Les den tekniske gjennomgangen i caset om Interaktiv Portefølje",
+    caseLinkHref: "/prosjekter/interaktiv-portefolje",
+  },
   portfolioStance: {
     heading: "Hva som hører hjemme i porteføljen",
     paragraphs: [
@@ -75,7 +89,7 @@ export const AI_PAGE = {
       status: "Håndverk først, AI til slutt",
       href: "/prosjekter/ember-booking",
       description:
-        "Her var strategien helt motsatt. Jeg gjorde grunnarbeidet selv, laget assets i Figma og bygde opp designsystemet for hånd. AI brukte jeg først helt til slutt for å fange opp inkonsekvenser og syntax feil før utrulling.",
+        "Her var strategien helt motsatt. Jeg gjorde grunnarbeidet selv, laget assets i Figma og bygde opp designsystemet for hånd. AI brukte jeg først helt til slutt for å fange opp inkonsekvenser og syntaksfeil før utrulling.",
     },
     {
       project: "MedCare Clinical og skoleprosjekter",

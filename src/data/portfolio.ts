@@ -89,6 +89,7 @@ export const FOLLOW_UP_PROMPTS: Array<{ text: string; match?: RegExp }> = [
   { text: "Hva slags rolle ser du etter?", match: /ekornes|pt|trener|cuba|erfaring/i },
   { text: "Hva er en svakhet du har?", match: /rolle|remote|hybrid|samarbeid/i },
   { text: "Hvordan løste du storskjermen i kantina?", match: /bordtennis/i },
+  { text: "Hvordan sikrer du chatten mot prompt injection?", match: /sikkerhet|personvern|prompt|injection|3d|chat/i },
   { text: "Hvordan fungerer 3D chatten?" },
   { text: "Vis meg rundt i prosjektene" },
   { text: "Kan jeg få se CV'en din?" },
