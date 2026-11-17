@@ -218,7 +218,7 @@ export function AiPageContent() {
         <ul className="surface-card space-y-2.5 rounded-xl p-5 text-sm text-ink-soft">
           {t.security.layers.map((layer, i) => {
             const colonIdx = layer.indexOf(":");
-            const hasLabel = colonIdx > 0 && colonIdx <= 44;
+            const hasLabel = colonIdx > 0 && colonIdx <= 85;
             return (
               <li key={i} className="leading-relaxed">
                 ·{" "}

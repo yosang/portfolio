@@ -355,16 +355,15 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
           ],
         },
         {
-          title: "Vernet mot prompt injection: Funn og tiltak fra sikkerhetssjekk",
+          title: "Sikring mot prompt injection i praksis",
           paragraphs: [
-            "Når en språkmodell får sende ut kontrolltagger som styrer grensesnittet ([TOUR:<slug>], [GO:<sti>] og [FILE:cv]), må alle inndata fra nettleseren behandles som utrygge. Under en grundig sikkerhetsgjennomgang av kodebasen dukket det opp tre konkrete svakheter i førsteutkastet: visningsmetadata fra klienten (body.page) ble flettet rett inn i systeminstruksen uten vasking, navigasjonstaggen [GO:...] manglet hvitelisten som [TOUR:...] hadde, og stemmesyntesen manglet eksplisitt store: false.",
-            "Siden en språkmodell alltid kan gjøre feil eller bli forsøkt manipulert, flyttet jeg sikkerhetsgrensene ut i vanlig deterministisk TypeScript kode i en felles vaktmodul (apiGuard.ts) på tvers av endepunktene:",
+            "Når en språkmodell får sende ut tagger som styrer siden ([TOUR:<slug>], [GO:<sti>] og [FILE:cv]), kan man ikke stole blindt på det som kommer inn fra nettleseren. Da jeg gikk gjennom koden for 3D chatten, fant jeg tre ting som måtte strammes inn: info om hvilken side brukeren sto på ble sendt rett inn i systemprompten uten vasking, taggen [GO:...] manglet en fast liste over gyldige ruter, og stemmekallene manglet eksplisitt store: false.",
+            "Siden en språkmodell alltid kan bli forsøkt lurt, flyttet jeg disse sjekkene ut i vanlig TypeScript kode (apiGuard.ts) rundt modellen:",
           ],
           bullets: [
-            "Kanalseparasjon og XML gjerder: Systeminstruksen settes kun sammen av faste serverfiler. Meldinger og visningsstatus fra klienten vaskes for kontrolltagger og linjeskift, og pakkes inn i <untrusted_visitor_input> og <viewport_state> med en avsluttende sikkerhetsinstruks nederst i prompten. Også lydopptak i /api/transcribe er låst til ren avskrift slik at inntalt tekst aldri tolkes som kommandoer.",
-            "Låste samtaleroller og null lagring (store: false): Samtalehistorikken sendes som typede user_input og model_output steg i Gemini Interactions API fremfor sammenslått tekst, slik at ingen kan forfalske tidligere svar i tråden. Alle kall for chat, stemme og tale til tekst kjører med store: false.",
-            "Dobbel hvitelisting av handlinger: [GO:<sti>] valideres mot en fast hviteliste av interne ruter på både server og klient før router.push kalles, slik at eksterne lenker aldri kan åpnes. [FILE:cv] peker til en fast PDF fil og slippes kun gjennom når brukerens melding faktisk etterspør CV.",
-            "Misbruksvern og kostnadstak: Felles sjekk av Sec-Fetch-Site, eksakt Origin og klientheader, kombinert med tak på forespørselsstørrelse og kvoter per minutt og per døgn i RAM.",
+            "Skille regler og brukerinput: Systemprompten settes kun sammen av faste filer på serveren. Meldinger fra chatten vaskes for kontrolltagger og legges i <untrusted_visitor_input>, og historikken sendes med låste roller (user_input og model_output) slik at ingen kan forfalske tidligere svar i tråden.",
+            "Fast liste over lovlige handlinger: [GO:<sti>] sjekkes mot en fast liste av gyldige sider på både server og klient før router.push kjører, så modellen aldri kan sende noen til eksterne nettsider. [FILE:cv] peker til en fast PDF fil og slippes kun gjennom når du faktisk ber om CV.",
+            "Ingen lagring og faste kvoter: Alle kall for chat, stemme og tale til tekst sendes med store: false, sammen med sjekk av Origin, Sec-Fetch-Site og faste grenser per minutt og per dag i minnet.",
           ],
         },
       ],
@@ -379,7 +378,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
       "Hva teknologien kan brukes til utenfor en portefølje: tanken er å komme nærmere en vanlig samtale der den prater med stemme, henter opp riktig sted på skjermen så du slipper å lete selv, og holder seg kun til godkjente fakta. Jeg ser for meg at bedrifter kan bruke slik teknologi til å hjelpe kunder i kundeservice eller på telefon. Samtidig kan skoler bruke det til muntlig trening, og i helsevesenet kan det gi eldre og pasienter enkel veiledning.",
       "Samtidig var dette prosjektet der jeg høsten 2026 for alvor utfordret meg selv på strukturert AI assistert utvikling, med egne regler i `AGENTS.md` og `github.com/yosang/skills` (`ui-craft`, `natural-copy` og `lean-architecture`).",
       "Teknisk kjører 3D skanningen (T2 modell med 20 blendshapes for munnsynk, blunking og uttrykk) på Three.js i en delt `OffscreenCanvas` Web Worker på 60 fps som gjenbrukes på tvers av sidene via en portal, mens svar og klonet stemme (fra 17 sekunder opptak) strømmes fra Gemini over SSE.",
-      "Sikkerhet og vern mot prompt injection: under en egen kodegjennomgang av porteføljen fant og tettet jeg konkrete svakheter der `body.page` gikk ufiltrert inn i systeminstruksen og `[GO:...]` manglet hviteliste. Nå håndteres prompt injection i tre lag i kode (`apiGuard.ts` og `chat/route.ts`): 1) brukerinput og visningsstatus vaskes for tagger og rammes inn i `<untrusted_visitor_input>` med typede `user_input` og `model_output` steg så ingen kan forfalske svar i tråden, 2) alle handlingstagger (`[GO:...]`, `[TOUR:...]`, `[FILE:cv]`) sjekkes mot faste hvitelister på både server og klient så modellen aldri kan åpne eksterne lenker eller frie filer, og 3) alle kall for chat, stemme og tale til tekst sendes med `store: false`, Origin sjekk og faste kvoter i minnet.",
+      "Sikkerhet og vern mot prompt injection: da jeg gikk over koden til porteføljen fant og fikset jeg to feil der sideinfo gikk rett inn i systemprompten uten sjekk og `[GO:...]` manglet en fast liste over lovlige sider. Nå ligger sikkerheten i vanlig TypeScript kode (`apiGuard.ts` og `chat/route.ts`): 1) meldinger fra brukeren renses for kontrolltagger og legges i `<untrusted_visitor_input>` med låste roller så ingen kan forfalske tidligere svar, 2) alle tagger som styrer siden (`[GO:...]`, `[TOUR:...]`, `[FILE:cv]`) sjekkes mot en fast liste av gyldige valg på både server og klient så modellen aldri kan åpne eksterne lenker eller frie filer, og 3) alle kall til Gemini sendes med `store: false`, Origin sjekk og faste grenser per minutt og per dag i minnet.",
     ],
   },
   {
