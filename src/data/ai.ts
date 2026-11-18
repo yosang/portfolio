@@ -53,16 +53,16 @@ export const AI_PAGE = {
   security: {
     heading: "Sikkerhet og prompt injection",
     paragraphs: [
-      "Å bruke KI til sparring på egen maskin er ganske rett frem. Det blir noe helt annet så snart du legger en åpen chat på nettet som både styrer skjermen og svarer med din egen klonede stemme. Simon Willison beskriver denne risikoen godt gjennom The Lethal Trifecta, der datalekkasjer oppstår når et KI system kombinerer private data, utrygt innhold utenfra og mulighet til å kommunisere ut på nettet.",
-      "Siden chatten her med vilje er åpen for meldinger og tale fra hvem som helst, må de to andre beina i trekanten kuttes i arkitekturen. En språkmodell gjetter bare neste ord ut fra sannsynlighet og kan alltid bli forsøkt lurt, så selve sikkerheten ligger i vanlig TypeScript kode rundt modellen.",
+      "Å bruke KI til sparring på egen maskin er ganske rett frem. Det blir noe annet så snart du legger en åpen chat ut på nettet, lar den styre hva som skjer på skjermen og lar den svare med din egen klonede stemme. Simon Willison beskriver denne risikoen godt i The Lethal Trifecta. Datalekkasjer skjer når et KI system kombinerer tre ting samtidig, som er tilgang til private data, tekst eller lyd utenfra og mulighet til å sende data videre ut på nettet.",
+      "Siden chatten her skal være åpen for alle, må de to andre delene kuttes helt bort. En språkmodell gjetter bare neste ord ut fra sannsynlighet og kan alltid bli lurt, så selve sikkerheten må ligge i vanlig TypeScript kode rundt modellen.",
     ],
     layers: [
-      "Ingen private data eller verktøy ut: Modellen har ingen database, ingen verktøykall og ser kun offentlige porteføljedata. Boblene vises som ren tekst i React uten Markdown bilder, og nettleseren er låst til å kun hente og sende data på eget domene.",
-      "Verifisert samtalelogg og isolert input: Systeminstruksen bygges kun på serveren mens meldinger utenfra renses og holdes strengt adskilt som ubetrodd brukerdata. Tidligere svar i tråden verifiseres på serveren slik at ingen kan sende inn forfalsket samtalelogg.",
-      "Vern rundt klonet stemme og handlinger: Handlinger som bytter side eller scroller til prosjekter sjekkes mot en fast liste av gyldige valg i kode, og CV sendes kun ut når du faktisk spør etter den. Før tekst går til stemmekloning, har koden egne rammer og sperrer mot misbruk av stemmen.",
-      "Ingen lagring og ryddig lokalt oppsett: Alle kall til Gemini kjører uten lagring og med faste kvoter i minnet. Samme trekant gjelder når jeg bruker kodeagenter lokalt, så jeg kobler aldri uprøvde MCP verktøy med utrygt innhold mot prosjekter med produksjonsnøkler og bruker egne utviklingsnøkler med strenge beløpsgrenser.",
+      "Kun åpne data og ren tekst: Modellen har ingen database, ingen verktøykall ut på nettet og ser kun de åpne tekstene om prosjektene mine. Svarene vises som ren tekst uten eksterne bilder, og nettleseren er låst til å kun snakke med mitt eget domene.",
+      "Skille regler og meldinger: Systemprompten bygges kun av faste filer på serveren. Alt du skriver eller sier i mikrofonen renses før det sendes inn, så modellen ser forskjell på mine regler og meldinger utenfra. Samtidig sjekker serveren at tidligere svar i tråden faktisk kommer herfra, så ingen kan forfalske samtalen.",
+      "Fast sjekk av handlinger og stemme: Modellen får aldri velge frie lenker eller filer selv. Tagger som bytter side eller scroller til prosjekter sjekkes mot en fast liste i kode på både server og klient før noe skjer, og CV sendes kun ut når du faktisk spør etter den. Før et svar leses opp med den klonede stemmen min, sjekker koden lengden og stopper forsøk på å få stemmen til å lese opp ting den ikke skal.",
+      "Ingen lagring og ryddige rammer lokalt: Alle kall til Gemini kjører med lagring slått av, og serveren sjekker at forespørselen kommer fra min egen side med faste grenser per minutt og per dag. Samme tankegang bruker jeg når jeg jobber med kodeagenter på egen maskin, der jeg holder uprøvde MCP verktøy unna prosjekter med produksjonsnøkler og bruker egne utviklingsnøkler med fast beløpsgrense.",
     ],
-    referencePrefix: "Simon Willison forklarer denne sikkerhetsmodellen godt i",
+    referencePrefix: "Simon Willison skriver godt om dette i",
     referenceLabel: "The Lethal Trifecta",
     referenceHref: "https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/",
     caseLinkLabel: "Les mer i caset om Interaktiv Portefølje",
