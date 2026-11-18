@@ -73,8 +73,8 @@ export const PROFILE = {
         {
           kind: "image",
           src: "/about/mountain-run.jpg",
-          alt: "Yosmel under et fjelløp med løpevest og startnummer.",
-          caption: "Fjelløp.",
+          alt: "Yosmel under fjelløp i Hornindal med løpevest og startnummer.",
+          caption: "Fjelløp i Hornindal.",
           width: 882,
           height: 1176,
         },
