@@ -72,7 +72,7 @@ export const PROFILE = {
       media: [
         {
           kind: "image",
-          src: "/about/forest-run.jpg",
+          src: "/about/mountain-run.jpg",
           alt: "Yosmel under et fjelløp med løpevest og startnummer.",
           caption: "Fjelløp.",
           width: 882,
