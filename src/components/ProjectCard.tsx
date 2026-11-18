@@ -138,18 +138,6 @@ export const ProjectCard = memo(function ProjectCard({
                 {item.repoNote}
               </p>
             )}
-            {item.aiNote && (
-              <p className="border-t border-line pt-2.5 text-xs leading-relaxed text-ink-soft">
-                {item.aiNote}{" "}
-                <Link
-                  href="/ai"
-                  tabIndex={open ? undefined : -1}
-                  className="font-medium text-ink underline underline-offset-4 hover:opacity-75"
-                >
-                  {t.readAiWorkflow} →
-                </Link>
-              </p>
-            )}
             <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
               <div className="flex flex-wrap gap-1.5">
                 {item.tags.map((tag) => (

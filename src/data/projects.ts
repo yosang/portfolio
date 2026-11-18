@@ -46,7 +46,6 @@ export interface ProjectItem {
   summary: string;
   highlights: string[];
   repoNote?: string;
-  aiNote?: string;
   caseStudy: ProjectCaseStudy;
   /**
    * 1-sentence spoken intro used during the guided project tour ("Vis meg rundt i prosjektene").
@@ -95,8 +94,6 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     ],
     repoNote:
       "Privat repo mens løsningen er i aktiv utprøving. Jeg viser gjerne frem kodebasen og arkitekturen i en prat.",
-    aiNote:
-      "Første versjon gikk fra plan til drift på en uke med Spike and Stabilize.",
     caseStudy: {
       role: "Arkitektur, design og utvikling",
       status: "I aktiv utprøving ved Nord-Gudbrandsdal VGS",
@@ -262,8 +259,6 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
       "Designsystem: Ansvar for visuell identitet, merkevare og komponenter med fokus på lesbarhet og tydelig hierarki.",
       "Brukeropplevelse: Jobber løpende med struktur, accessibility og enkel flyt på tvers av plattformen.",
     ],
-    repoNote:
-      "Privat repo (kommersielt produkt i drift). Jeg viser gjerne frem koden og designsystemet i en samtale.",
     caseStudy: {
       role: "Medgründer · Ansvar for merkevare, design, copy, frontend og brukeropplevelse",
       status: "I kommersiell drift på emberbooking.no",
@@ -477,8 +472,6 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
       "Bruksområder: Samme oppsett kan gi eldre og pasienter muntlig veiledning i helsevesenet, brukes til muntlig trening i skolen eller løse kundeservice for bedrifter.",
       "Arkitektur og sikkerhet: Delt 3D modell med 20 blendshapes i en egen OffscreenCanvas Web Worker på 60 fps, kombinert med sanntids TTS, tale til tekst og vern mot prompt injection.",
     ],
-    aiNote:
-      "Bygget høsten 2026 med faste rammer i AGENTS.md og skills.",
     caseStudy: {
       role: "Design, 3D integrasjon og fullstackutvikling",
       status: "I produksjon på yosmel.no (åpen kildekode)",
@@ -577,8 +570,6 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
       "lean-architecture: Regler for slank arkitektur, korte kontekster og hyppig versjonskontroll.",
       "natural-copy: Retningslinjer for naturlig og rett frem språk i tekst, dokumentasjon og tale.",
     ],
-    aiNote:
-      "Brukes på tvers av denne porteføljen og andre egne prosjekter.",
     caseStudy: {
       role: "Forfatter og vedlikeholder (Open Source)",
       status: "Offentlig repo på github.com/yosang/skills",

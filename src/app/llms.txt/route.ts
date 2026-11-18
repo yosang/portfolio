@@ -41,7 +41,6 @@ export async function GET() {
         item.summary,
         ...item.highlights.map((h) => `- ${h}`),
         item.repoNote ? `- ${item.repoNote}` : "",
-        item.aiNote ? `- KI metodikk: ${item.aiNote}` : "",
         "",
       ].filter((line, idx, arr) => !(line === "" && arr[idx - 1] === ""));
     }),

@@ -23,7 +23,6 @@ export const UI = {
     askCaseButton: "Spør KI",
     askCaseTemplate: "Ta meg kort gjennom caset for {title}.",
     askCasePrompt: (title: string) => `Ta meg kort gjennom caset for ${title}.`,
-    readAiWorkflow: "Les om arbeidsflyten på /ai",
     readCaseStudy: "Les hele caset",
     openCase: "Les mer",
     backToProjects: "Tilbake til prosjekter",
