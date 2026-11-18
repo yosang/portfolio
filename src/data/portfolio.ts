@@ -73,8 +73,8 @@ export const PROFILE = {
         {
           kind: "image",
           src: "/about/forest-run.jpg",
-          alt: "Yosmel løper i skogen med løpevest og caps.",
-          caption: "Løpetur i skogen.",
+          alt: "Yosmel under et fjelløp med løpevest og startnummer.",
+          caption: "Fjelløp.",
           width: 882,
           height: 1176,
         },
