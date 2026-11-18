@@ -238,6 +238,11 @@ function cleanEnglishTourForSpeech(text) {
     .replace(/\bVGS Bordtennis\b/gi, "my high school table tennis project")
     .replace(/\bNord-Gudbrandsdal VGS\b/gi, "North Gudbrandsdal High School")
     .replace(/\bInfoskjermen\.no\b/gi, "the info screen platform")
+    .replace(/\bVipps\b/gi, "Vips")
+    .replace(/\bNext\.js\b/gi, "Next J S")
+    .replace(/\bNode\.js\b/gi, "Node J S")
+    .replace(/\bTVs\b/g, "T V screens")
+    .replace(/\bHTML\b/g, "H T M L")
     .replace(/\bC#/g, "C sharp")
     .replace(/\bWebP\b/gi, "Web P")
     .replace(/\bES5\b/gi, "E S five")
@@ -255,6 +260,10 @@ function cleanNorwegianTourForSpeech(text) {
 
 async function generateMp3File(ttsAi, voiceId, speechText, language, outAudioPath) {
   fs.mkdirSync(path.dirname(outAudioPath), { recursive: true });
+  const style =
+    language === "en-US"
+      ? "warm, upbeat, and conversational in natural spoken English, pronouncing every word strictly in English"
+      : "warm, upbeat, and conversational in natural spoken Norwegian";
   let ttsRes = null;
   for (let attempt = 0; attempt < 5; attempt++) {
     try {
@@ -264,7 +273,13 @@ async function generateMp3File(ttsAi, voiceId, speechText, language, outAudioPat
           input: [
             {
               type: "user_input",
-              content: [{ type: "text", text: speechText }],
+              content: [
+                {
+                  type: "text",
+                  text: speechText,
+                  annotations: [{ type: "speech_metadata", style }],
+                },
+              ],
             },
           ],
           response_format: { type: "audio" },
