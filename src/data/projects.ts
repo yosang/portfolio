@@ -303,7 +303,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
           tour: {
             audioSrc: "/audio/cases/ember-booking/1.mp3",
             bubble:
-              "Ut fra dette spisset jeg budskapet rundt tre konkrete løfter: rask betaling med Vipps uten lange skjemaer, ferdig avstemt regnskap mot Tripletex og Fiken, og oppsett på en dag.",
+              "Ut fra dette bygde jeg opp budskapet rundt rask Vipps betaling uten lange skjemaer, ferdig avstemt regnskap mot Tripletex og Fiken, og et system som er klart på en dag.",
           },
         },
         {
@@ -390,7 +390,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
           tour: {
             audioSrc: "/audio/cases/medcare-clinical/0.mp3",
             bubble:
-              "I uke en tegnet jeg databasen i tredje normalform og eksporterte skjemaet fra MySQL tilbake til dbdiagram for å sjekke at migrasjonene i EF Core stemte på prikken.",
+              "Før jeg skrev kode tegnet jeg databasen i tredje normalform, og importerte skjemaet fra MySQL tilbake i dbdiagram for å sjekke at tabeller og unike indekser stemte med planen.",
           },
         },
         {
@@ -403,7 +403,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
           tour: {
             audioSrc: "/audio/cases/medcare-clinical/1.mp3",
             bubble:
-              "I uke to skrev jeg egne extension mappere i C# i stedet for AutoMapper, og lærte at EF Core krever eksplisitte Include kall så snart mappingen flyttes ut av Select.",
+              "Etter hvert som modellene vokste skrev jeg egne extension mappere i C# fremfor AutoMapper, og oppdaget at EF Core krever eksplisitte kall til Include når mappingen flyttes ut av Select.",
           },
         },
         {
@@ -531,7 +531,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
           tour: {
             audioSrc: "/audio/cases/interaktiv-portefolje/3.mp3",
             bubble:
-              "For å sikre mot prompt injection renses alle meldinger utenfra i en egen TypeScript vaktmodul, og alle tagger som styrer siden sjekkes mot faste lister på server og klient.",
+              "For å sikre mot prompt injection ligger sjekkene i vanlig TypeScript kode rundt modellen, der meldinger renses og alle tagger som styrer siden sjekkes mot faste lister på server og klient.",
           },
         },
       ],
@@ -601,7 +601,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
           tour: {
             audioSrc: "/audio/cases/skills/1.mp3",
             bubble:
-              "Repoet er delt i tre moduler som styrer rolige flater og farger i grensesnittet, slank arkitektur med kort kontekst, og naturlig språk uten klisjeer.",
+              "Repoet er delt i tre moduler som styrer rolige flater og farger i grensesnittet, slank arkitektur med kort kontekst, og naturlig språk der motivasjonen kommer før tekniske detaljer.",
           },
         },
       ],
@@ -668,7 +668,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
           tour: {
             audioSrc: "/audio/cases/cinemorra/1.mp3",
             bubble:
-              "Innlogging og filmendringer går gjennom Server Actions med klientstate i Zustand, og sentrale visninger testes med Jest og React Testing Library.",
+              "Innlogging, utlån og filmendringer går gjennom Server Actions med ren UI state i Zustand, mens søk, skjemaer og accessibility testes med Jest og React Testing Library.",
           },
         },
       ],

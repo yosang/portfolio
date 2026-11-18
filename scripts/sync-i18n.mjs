@@ -255,23 +255,47 @@ function cleanNorwegianTourForSpeech(text) {
 
 async function generateMp3File(ttsAi, voiceId, speechText, language, outAudioPath) {
   fs.mkdirSync(path.dirname(outAudioPath), { recursive: true });
-  const ttsRes = await ttsAi.interactions.create(
-    {
-      model: "gemini-3.8-flash-tts",
-      input: [
+  let ttsRes = null;
+  for (let attempt = 0; attempt < 5; attempt++) {
+    try {
+      ttsRes = await ttsAi.interactions.create(
         {
-          type: "user_input",
-          content: [{ type: "text", text: speechText }],
+          model: "gemini-3.8-flash-tts",
+          input: [
+            {
+              type: "user_input",
+              content: [{ type: "text", text: speechText }],
+            },
+          ],
+          response_format: { type: "audio" },
+          generation_config: {
+            speech_config: [{ voice: voiceId, language }],
+          },
+          store: false,
         },
-      ],
-      response_format: { type: "audio" },
-      generation_config: {
-        speech_config: [{ voice: voiceId, language }],
-      },
-      store: false,
-    },
-    { maxRetries: 0, timeout: 15000 }
-  );
+        { maxRetries: 0, timeout: 25000 }
+      );
+      break;
+    } catch (err) {
+      const msg = err?.message || String(err);
+      if (
+        (msg.includes("429") || msg.includes("Rate limit")) &&
+        !msg.includes("requests per day") &&
+        attempt < 4
+      ) {
+        const secMatch = msg.match(/retry in (\d+)s/i);
+        const waitMs = secMatch ? (Number(secMatch[1]) + 2) * 1000 : 15000;
+        console.log(
+          `[sync-i18n] Per-minute rate limit reached, waiting ${Math.round(
+            waitMs / 1000
+          )}s before retrying...`
+        );
+        await new Promise((r) => setTimeout(r, waitMs));
+        continue;
+      }
+      throw err;
+    }
+  }
   const b64 = extractWavBase64(ttsRes);
   if (!b64) return false;
   const wavBuf = Buffer.from(b64, "base64");
