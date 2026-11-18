@@ -89,9 +89,9 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     summary:
       "Pågående prosjekt ved Nord-Gudbrandsdal VGS laget for å inkludere flere elever i miljøet rundt bordtennisbordene i friminuttet, med QR kode ved bordet og live storskjerm i kantina.",
     highlights: [
-      "Kampflyt: Gjestespill uten registrering ved bordet (opptil 3 seire på vent), automatisk kobling via QR kode og hurtigknapper for resultat (1-0, 2-0, 2-1).",
-      "Storskjerm: Live tavle i kantina via Socket.IO, tilpasset Infoskjermen.no på eldre TV skjermer med animert WebP, ES5 støtte og diagnosestempel.",
-      "Arkitektur: Flere skoler på samme instans i Node.js og innebygd SQLite (5 npm pakker), innebygd personvern og stresstestet med 100 samtidige spillere.",
+      "Kampflyt: Gjestespill uten registrering og kobling via QR kode.",
+      "Storskjerm: Live tavle i kantina via Socket.IO, tilpasset Infoskjermen.no på eldre TV skjermer.",
+      "Arkitektur: Støtte for flere skoler på samme instans i Node.js, innebygd personvern og stresstestet med 100 samtidige spillere.",
     ],
     repoNote:
       "Privat repo mens løsningen er i aktiv utprøving. Jeg viser gjerne frem kodebasen og arkitekturen i en prat.",
