@@ -464,16 +464,16 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     ground: "#17211e",
     media: {
       poster: "/projects/portfolio-poster.jpg",
-      alt: "Fullskjerms 3D studio og AI metodikk i Interaktiv Portefølje.",
+      alt: "Fullskjerms 3D studio og KI metodikk i Interaktiv Portefølje.",
     },
-    tags: ["Next.js 16", "Three.js Worker", "Gemini TTS", "AI assistert"],
+    tags: ["Next.js 16", "Three.js Worker", "Gemini TTS", "KI assistert"],
     repoUrl: "https://github.com/yosang/portfolio",
     subtitle:
       "Samtalestyrt grensesnitt med 3D skannet avatar, stemmekloning og visuell navigasjon.",
     summary:
-      "Laget for at du kan snakke med en AI versjon av meg i en vanlig samtale mens den viser deg rundt på siden. Samtidig viser oppsettet hvordan sanntids tale, visuell styring og strukturerte fagdata kan løse reelle oppgaver innen helse, utdanning og kundeservice.",
+      "Laget for at du kan snakke med en KI versjon av meg i en vanlig samtale mens den viser deg rundt på siden. Samtidig viser oppsettet hvordan sanntids tale, visuell styring og strukturerte fagdata kan løse reelle oppgaver innen helse, utdanning og kundeservice.",
     highlights: [
-      "Samtalegrensesnitt: AI Yosmel tar besøkende gjennom en visuell omvisning i prosjektene, svarer med stemme og henter frem CV ved behov.",
+      "Samtalegrensesnitt: KI Yosmel tar besøkende gjennom en visuell omvisning i prosjektene, svarer med stemme og henter frem CV ved behov.",
       "Bruksområder: Samme oppsett kan gi eldre og pasienter muntlig veiledning i helsevesenet, brukes til muntlig trening i skolen eller løse kundeservice for bedrifter.",
       "Arkitektur og sikkerhet: Delt 3D modell med 20 blendshapes i en egen OffscreenCanvas Web Worker på 60 fps, kombinert med sanntids TTS, tale til tekst og vern mot prompt injection.",
     ],
@@ -483,7 +483,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
       role: "Design, 3D integrasjon og fullstackutvikling",
       status: "I produksjon på yosmel.no (åpen kildekode)",
       intro:
-        "Målet med porteføljen var å lage en løsning der besøkende kan snakke med en AI versjon av meg i en vanlig samtale mens den viser rundt på skjermen, og samtidig vise hvordan sanntids tale og visuell styring kan løse oppgaver i helsevesenet, skolen og kundeservice. Løsningen kjører en delt 3D modell i en egen Web Worker, strømmer svar og klonet stemme fra Gemini over SSE, og holder seg kun til godkjente fakta.",
+        "Målet med porteføljen var å lage en løsning der besøkende kan snakke med en KI versjon av meg i en vanlig samtale mens den viser rundt på skjermen, og samtidig vise hvordan sanntids tale og visuell styring kan løse oppgaver i helsevesenet, skolen og kundeservice. Løsningen kjører en delt 3D modell i en egen Web Worker, strømmer svar og klonet stemme fra Gemini over SSE, og holder seg kun til godkjente fakta.",
       sections: [
         {
           title: "Praktiske bruksområder utenfor en portefølje",
@@ -546,14 +546,14 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     tour: {
       audioSrc: "/audio/tour/portfolio.mp3",
       bubble:
-        "Her er selve porteføljen du er på nå, laget for at du kan snakke med en AI versjon av meg som viser deg rundt.",
+        "Her er selve porteføljen du er på nå, laget for at du kan snakke med en KI versjon av meg som viser deg rundt.",
     },
     aiContext: [
-      "Denne porteføljen (`yosmel.no`, kildekode på `github.com/yosang/portfolio`) utforsker hvordan AI kan gjøre et grensesnitt enklere å bruke: man snakker med AI Yosmel i en vanlig samtale, mens den tar leseren gjennom en visuell tour av prosjekter, åpner detaljer, svarer på spørsmål og henter frem CV uten at man må klikke og lete rundt selv.",
+      "Denne porteføljen (`yosmel.no`, kildekode på `github.com/yosang/portfolio`) utforsker hvordan KI kan gjøre et grensesnitt enklere å bruke, der man snakker med KI Yosmel i en vanlig samtale mens den tar leseren gjennom en visuell tour av prosjekter, åpner detaljer, svarer på spørsmål og henter frem CV uten at man må klikke og lete rundt selv.",
       "Hva teknologien kan brukes til utenfor en portefølje: tanken er å komme nærmere en vanlig samtale der den prater med stemme, henter opp riktig sted på skjermen så du slipper å lete selv, og holder seg kun til godkjente fakta. Jeg ser for meg at bedrifter kan bruke slik teknologi til å hjelpe kunder i kundeservice eller på telefon. Samtidig kan skoler bruke det til muntlig trening, og i helsevesenet kan det gi eldre og pasienter enkel veiledning.",
-      "Samtidig var dette prosjektet der jeg høsten 2026 for alvor utfordret meg selv på strukturert AI assistert utvikling, med egne regler i `AGENTS.md` og `github.com/yosang/skills` (`ui-craft`, `natural-copy` og `lean-architecture`).",
+      "Samtidig var dette prosjektet der jeg høsten 2026 for alvor utfordret meg selv på strukturert KI assistert utvikling, med egne regler i `AGENTS.md` og `github.com/yosang/skills` (`ui-craft`, `natural-copy` og `lean-architecture`).",
       "Teknisk kjører 3D skanningen (T2 modell med 20 blendshapes for munnsynk, blunking og uttrykk) på Three.js i en delt `OffscreenCanvas` Web Worker på 60 fps som gjenbrukes på tvers av sidene via en portal, mens svar og klonet stemme (fra 17 sekunder opptak) strømmes fra Gemini over SSE.",
-      "Sikkerhet og vern mot prompt injection: da jeg gikk over koden til porteføljen fant og fikset jeg tre ting som måtte strammes inn: sideinfo gikk rett inn i systemprompten uten sjekk, `[GO:...]` manglet en fast liste over lovlige sider, og stemmekallene manglet eksplisitt `store: false`. Nå ligger sikkerheten i vanlig TypeScript kode (`apiGuard.ts` og `chat/route.ts`): 1) meldinger fra brukeren renses for kontrolltagger og legges i `<untrusted_visitor_input>` med låste roller så ingen kan forfalske tidligere svar, 2) alle tagger som styrer siden (`[GO:...]`, `[TOUR:...]`, `[FILE:cv]`) sjekkes mot en fast liste av gyldige valg på både server og klient så modellen aldri kan åpne eksterne lenker eller frie filer, og 3) alle kall til Gemini sendes med `store: false`, Origin sjekk og faste grenser per minutt og per dag i minnet.",
+      "Sikkerhet og vern mot prompt injection: da jeg gikk over koden til porteføljen fant og fikset jeg tre ting som måtte strammes inn. Sideinfo gikk rett inn i systemprompten uten sjekk, `[GO:...]` manglet en fast liste over lovlige sider, og stemmekallene manglet eksplisitt `store: false`. Nå ligger sikkerheten i vanlig TypeScript kode (`apiGuard.ts` og `chat/route.ts`), der 1) meldinger fra brukeren renses for kontrolltagger og legges i `<untrusted_visitor_input>` med låste roller så ingen kan forfalske tidligere svar, 2) alle tagger som styrer siden (`[GO:...]`, `[TOUR:...]`, `[FILE:cv]`) sjekkes mot en fast liste av gyldige valg på både server og klient så modellen aldri kan åpne eksterne lenker eller frie filer, og 3) alle kall til Gemini sendes med `store: false`, Origin sjekk og faste grenser per minutt og per dag i minnet.",
     ],
   },
   {
@@ -569,7 +569,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     tags: ["SKILL.md", "AGENTS.md", "Open Source"],
     repoUrl: "https://github.com/yosang/skills",
     subtitle:
-      "Egne SKILL.md filer og AGENTS.md regler for arkitektur, design og språk i AI assistert utvikling.",
+      "Egne SKILL.md filer og AGENTS.md regler for arkitektur, design og språk i KI assistert utvikling.",
     summary:
       "Åpent repo med reglene og rammene jeg bruker når jeg jobber med kodeagenter, samlet i tre moduler som brukes på tvers av prosjekter.",
     highlights: [
@@ -588,7 +588,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
         {
           title: "Hvorfor jeg samlet reglene i et eget repo",
           paragraphs: [
-            "Da jeg høsten 2026 gikk inn for å bruke AI assistert programvareutvikling mer systematisk, merket jeg raskt at kvaliteten står og faller på rammene man setter i forkant. Uten faste begrensninger legger språkmodeller gjerne til unødvendige abstraksjoner, defensiv kode som skjuler feil, og visuell støy.",
+            "Da jeg høsten 2026 gikk inn for å bruke KI assistert programvareutvikling mer systematisk, merket jeg raskt at kvaliteten står og faller på rammene man setter i forkant. Uten faste begrensninger legger språkmodeller gjerne til unødvendige abstraksjoner, defensiv kode som skjuler feil, og visuell støy.",
             "Ved å samle reglene i et eget repo som følger Agent Skills standarden (kompatibelt med Claude Code, Cursor, Antigravity og Gemini CLI), kan jeg bruke de samme kravene i hvert nytt prosjekt.",
           ],
           tour: {
@@ -605,7 +605,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
           bullets: [
             "ui-craft: Bygger på Matt D. Smiths 3P rammeverk (Purpose, Principles, Personality) og 60-30-10 fargeregelen. Kutter ut tilfeldige glødeeffekter og overdimensjonerte kort til fordel for matte flater, rolige OKLCH farger, flytende typografi (Utopia.fyi) med maks 62 tegn per linje, et 8pt avstandssystem og medier som pauser utenfor synsfeltet.",
             "lean-architecture: Holder konteksten kort og krever at datamodell og plattformkrav låses på papir og i AGENTS.md før kode. Fokuserer på Dan Norths Spike and Stabilize, en felles kilde for delte data, små og trygge commits uten å blande refaktorering og ny funksjonalitet, tidlig opprydding i logiske og strukturelle code smells, og dokumentasjon av tause produksjonsfeller i README.md.",
-            "natural-copy: Fjerner typiske AI uvaner i både norsk og engelsk tekst, som tankestreker, unødvendige bindestreker mellom faguttrykk og norske ord, tomme klisjeer og stive oversettelser. Krever også at prosjekttekster og søknader starter med den menneskelige motivasjonen før tekniske detaljer.",
+            "natural-copy: Fjerner typiske KI uvaner i både norsk og engelsk tekst, som tankestreker, unødvendige bindestreker mellom faguttrykk og norske ord, tomme klisjeer og stive oversettelser. Krever også at prosjekttekster og søknader starter med den menneskelige motivasjonen før tekniske detaljer.",
           ],
           tour: {
             audioSrc: "/audio/cases/skills/1.mp3",
@@ -618,10 +618,10 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     tour: {
       audioSrc: "/audio/tour/skills.mp3",
       bubble:
-        "Her er også skills repoet mitt med faste regler for arkitektur, design og språk når jeg bruker AI.",
+        "Her er også skills repoet mitt med faste regler for arkitektur, design og språk når jeg bruker KI.",
     },
     aiContext: [
-      "`skills` (`github.com/yosang/skills`) er mitt åpne GitHub repo med `SKILL.md` filer og `AGENTS.md` regler for AI assistert programvareutvikling, kompatibelt med verktøy som følger Agent Skills standarden (Claude Code, Cursor, Antigravity og Gemini CLI).",
+      "`skills` (`github.com/yosang/skills`) er mitt åpne GitHub repo med `SKILL.md` filer og `AGENTS.md` regler for KI assistert programvareutvikling, kompatibelt med verktøy som følger Agent Skills standarden (Claude Code, Cursor, Antigravity og Gemini CLI).",
       "Repoet er delt inn i tre moduler: `ui-craft` (design, farger, typografi og grensesnitt), `lean-architecture` (slank kodebase, kort kontekst og god dokumentasjon) og `natural-copy` (naturlig språk uten fyllord og stive oversettelser). Hvis noen vil se de konkrete reglene i detalj, vis gjerne til selve repoet på `github.com/yosang/skills`.",
     ],
   },

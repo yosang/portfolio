@@ -200,10 +200,10 @@ ${notes}${caseSectionsBlock}`;
 
   const langDirective =
     replyLang === "en"
-      ? `- IMPORTANT: Respond in natural, conversational first person English ("I"). Translate all facts from the Norwegian notes accurately into natural spoken English. Never use em dashes, en dashes, or mid-sentence colons (:), avoid compound modifier hyphens (write "fullstack", "real time", "AI assisted", "built in", "role based", "speech to text"), and avoid AI slop or stiff essay words (delve, leverage, seamless, robust, pivotal, tapestry, thrive, showcase, demonstrate, accumulate, arose, utilize, consolidate, eliminate, cumbersome, purged). Translate idioms by meaning (translate "til daglig jobber jeg med" as "in my day job, I work in" or "day to day, I work in", never "every day, I work with"; translate "utdannet meg" as "studied", never "trained"; translate "trives" as "like" or "enjoy", never "thrive"; never say "stands and falls on", say "depends on"; say "speaking practice", never "oral practice"; say "AI version of me", never "AI twin"). When referring to "VGS Bordtennis" in English, call it "my high school table tennis app" or "VGS Bordtennis, my real time table tennis app for high schools" so English speakers understand what it is.`
+      ? `- IMPORTANT: Respond in natural, conversational first person English ("I"). Translate all facts from the Norwegian notes accurately into natural spoken English, and always translate "KI" as "AI" in English. Never use em dashes, en dashes, or mid-sentence colons (:), avoid compound modifier hyphens (write "fullstack", "real time", "AI assisted", "built in", "role based", "speech to text"), and avoid AI slop or stiff essay words (delve, leverage, seamless, robust, pivotal, tapestry, thrive, showcase, demonstrate, accumulate, arose, utilize, consolidate, eliminate, cumbersome, purged). Translate idioms by meaning (translate "til daglig jobber jeg med" as "in my day job, I work in" or "day to day, I work in", never "every day, I work with"; translate "utdannet meg" as "studied", never "trained"; translate "trives" as "like" or "enjoy", never "thrive"; never say "stands and falls on", say "depends on"; say "speaking practice", never "oral practice"; say "AI version of me", never "AI twin"). When referring to "VGS Bordtennis" in English, call it "my high school table tennis app" or "VGS Bordtennis, my real time table tennis app for high schools" so English speakers understand what it is.`
       : replyLang === "es"
         ? `- IMPORTANT: Respond in natural, conversational first person Spanish ("yo"). Translate all facts from the Norwegian notes accurately into natural spoken Spanish. Never use em dashes, en dashes, or mid-sentence colons (:). When referring to "VGS Bordtennis", explain briefly that it is your real time table tennis app for high schools.`
-        : `- Skriv alltid på helt vanlig, muntlig norsk bokmål. Bruk aldri kolon (:) midt i en setning, og finn aldri på rare sammensatte ord.`;
+        : `- Skriv alltid på helt vanlig, muntlig norsk bokmål. Bruk alltid KI (aldri AI) når du snakker på norsk. Bruk aldri kolon (:) midt i en setning, og finn aldri på rare sammensatte ord.`;
 
   return `${persona}
 
@@ -797,6 +797,11 @@ export async function POST(req: NextRequest) {
             .replace(/\bsømløs(t|e)?\b/gi, "ryddig")
             .replace(/\bdykke\s+(?:dypt\s+)?ned\s+i\b/gi, "jobbe med")
             .replace(/\s*[—–]\s*/g, ", ");
+          if (replyLang === "no") {
+            work = work.replace(/\bAI\b/g, "KI");
+          } else if (replyLang === "en") {
+            work = work.replace(/\bKI\b/g, "AI");
+          }
 
           work = work
             .replace(/([^\n\]])[ \t]*(\[TOUR:[^\]]+\])/gi, "$1\n\n$2")

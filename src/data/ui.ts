@@ -1,7 +1,7 @@
 import type { AvatarMood } from "@/lib/avatarEngine";
 
 export const UI = {
-  nav: { home: "Hjem", projects: "Prosjekter", about: "Om", ai: "AI", chat: "Chat" },
+  nav: { home: "Hjem", projects: "Prosjekter", about: "Om", ai: "KI", chat: "Chat" },
   themeLabel: "Bytt mellom lys og mørk visning",
   langLabel: "Bytt språk mellom norsk og engelsk",
   moods: {
@@ -17,10 +17,10 @@ export const UI = {
     filterSchool: "Skoleprosjekter",
     detailsOpen: "Skjul",
     detailsClosed: "Detaljer",
-    askAbout: "Spør AI",
+    askAbout: "Spør KI",
     askAboutTemplate: "Fortell kort hvordan du bygde {title}.",
     askAboutPrompt: (title: string) => `Fortell kort hvordan du bygde ${title}.`,
-    askCaseButton: "Spør AI",
+    askCaseButton: "Spør KI",
     askCaseTemplate: "Ta meg kort gjennom caset for {title}.",
     askCasePrompt: (title: string) => `Ta meg kort gjennom caset for ${title}.`,
     readAiWorkflow: "Les om arbeidsflyten på /ai",
@@ -45,7 +45,7 @@ export const UI = {
     prevImage: "Forrige bilde",
     nextImage: "Neste bilde",
     ctaTitle: "Lurer du på noe?",
-    ctaButton: "Snakk med AI versjonen",
+    ctaButton: "Snakk med KI versjonen",
   },
   chat: {
     title: "Snakk med Yosmel",
@@ -58,7 +58,7 @@ export const UI = {
     capped: "Dagens stemmekvote er brukt opp, viser kun tekst resten av dagen.",
     cvLabel: "Yosmel Chiang CV.pdf",
     cvDownload: "Last ned",
-    aboutAiLabel: "Om AI versjonen",
+    aboutAiLabel: "Om KI versjonen",
     disclaimerPrefix:
       "Her styrer en modell klonet på 17 sekunder av stemmen min og notatene mine. Den hevder den har kontroll, men send en epost til ",
     disclaimerLink: "den ekte meg",
@@ -102,7 +102,7 @@ export const UI = {
     sections: [
       {
         title: "Ingen lagring av chathistorikk på serveren",
-        body: "Meldinger du skriver til AI versjonen av meg og svarene som genereres, lagres aldri i noen database eller loggfil på serveren. Når du lukker nettleserfanen eller trykker på Tøm i chatten, er samtalen borte.",
+        body: "Meldinger du skriver til KI versjonen av meg og svarene som genereres, lagres aldri i noen database eller loggfil på serveren. Når du lukker nettleserfanen eller trykker på Tøm i chatten, er samtalen borte.",
       },
       {
         title: "Ingen lagring av lydopptak eller stemme",

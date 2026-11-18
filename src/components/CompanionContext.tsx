@@ -19,7 +19,7 @@ import { getLocalizedData, useLocalizedData } from "@/lib/i18n";
 const VALID_SLUGS = new Set(ITEMS.map((i) => i.slug));
 
 const INSTANT_TOUR_NO_RE =
-  /^(?:hei[,!\s]+)?(?:ai\s+yosmel[,!\s]+|yosmel[,!\s]+)?(?:kan du\s+|vil du\s+)?(?:vis(?:e)?(?:\s+fram|\s+frem)?(?:\s+meg)?|ta\s+meg\s+(?:med\s+)?(?:gjennom|rundt(?:\s+i)?)|gi\s+meg\s+en\s+(?:runde|omvisning)(?:\s+i|\s+gjennom)?)\s+(?:litt\s+)?(?:rundt(?:\s+i\s+(?:dine\s+)?prosjekt(?:er|ene)(?:\s+dine)?)?|(?:dine\s+|alle\s+)?prosjekt(?:er|ene)(?:\s+dine|\s+du\s+har\s+laget)?|porteføljen(?:\s+din)?)[.!?]*$/i;
+  /^(?:hei[,!\s]+)?(?:(?:ai|ki)\s+yosmel[,!\s]+|yosmel[,!\s]+)?(?:kan du\s+|vil du\s+)?(?:vis(?:e)?(?:\s+fram|\s+frem)?(?:\s+meg)?|ta\s+meg\s+(?:med\s+)?(?:gjennom|rundt(?:\s+i)?)|gi\s+meg\s+en\s+(?:runde|omvisning)(?:\s+i|\s+gjennom)?)\s+(?:litt\s+)?(?:rundt(?:\s+i\s+(?:dine\s+)?prosjekt(?:er|ene)(?:\s+dine)?)?|(?:dine\s+|alle\s+)?prosjekt(?:er|ene)(?:\s+dine|\s+du\s+har\s+laget)?|porteføljen(?:\s+din)?)[.!?]*$/i;
 
 const INSTANT_TOUR_EN_RE =
   /^(?:hi[,!\s]+|hello[,!\s]+|hey[,!\s]+)?(?:ai\s+yosmel[,!\s]+|yosmel[,!\s]+)?(?:can you\s+|could you\s+|would you\s+)?(?:show\s+me(?:\s+around(?:\s+in|\s+your)?)?|take\s+me\s+(?:around|through|on\s+a\s+tour\s+of)|give\s+me\s+a\s+tour\s+of|walk\s+me\s+through)\s*(?:your\s+|the\s+|all\s+)?(?:projects|portfolio|work)?[.!?]*$/i;

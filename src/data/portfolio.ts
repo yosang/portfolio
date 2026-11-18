@@ -34,7 +34,7 @@ export const PROFILE = {
   location: "Otta",
   heroHeadline: "Hei, Yosmel her",
   heroBio:
-    "Fullstackutvikler innen TypeScript, React, Next.js og C# / .NET med øye for UX og praktisk AI.",
+    "Fullstackutvikler innen TypeScript, React, Next.js og C# / .NET med øye for UX og praktisk KI.",
   socials: [
     { label: "GitHub", href: "https://github.com/yosang" },
     { label: "LinkedIn", href: "https://www.linkedin.com/in/yosmel-chiang/" },
@@ -135,7 +135,7 @@ export const PROFILE = {
 
 export const TOUR_PROMPT = "Vis meg rundt i prosjektene";
 export const USE_CASE_PROMPT =
-  "Hva kan denne AI teknologien brukes til i praksis?";
+  "Hva kan denne KI teknologien brukes til i praksis?";
 
 export const FOLLOW_UP_PROMPTS: Array<{ text: string; match?: RegExp }> = [
   {
@@ -144,7 +144,7 @@ export const FOLLOW_UP_PROMPTS: Array<{ text: string; match?: RegExp }> = [
   },
   { text: "Hva gjør du i Ember Booking?", match: /prosjekt|frontend|design|figma/i },
   { text: "Hvordan er MedCare Clinical bygget?", match: /ember|backend|noroff|eksamen/i },
-  { text: "Hvordan bruker du AI i programvareutvikling?", match: /handel|helse|opplæring|gemini|utvikling|stack/i },
+  { text: "Hvordan bruker du KI i programvareutvikling?", match: /handel|helse|opplæring|gemini|utvikling|stack/i },
   { text: "Hva gjorde du før utvikling?", match: /noroff|rolle|utdanning|medcare/i },
   { text: "Hva slags rolle ser du etter?", match: /ekornes|pt|trener|cuba|erfaring/i },
   { text: "Hva er en svakhet du har?", match: /rolle|remote|hybrid|samarbeid/i },

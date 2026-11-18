@@ -1,13 +1,13 @@
 export const AI_PAGE = {
-  title: "Hvordan jeg bruker AI",
+  title: "Hvordan jeg bruker KI",
   lead: [
-    "Det siste året har jeg egentlig brukt AI ganske minimalt. Den har mest vært en sparringspartner når jeg har diskutert ideer og tenkt høyt rundt prosjekter, uten at jeg har tatt ut potensialet i selve utviklingen.",
-    "Det var først høsten 2026 at jeg bestemte meg for å gi AI assistert programvareutvikling et ordentlig forsøk med en strukturert metodikk. Når AI tar unna mer av selve skrivingen, får jeg mer tid i begge ender av arbeidet, både til å legge en skikkelig plan for arkitekturen i starten og til å pusse på detaljene i brukeropplevelsen til slutt.",
+    "Det siste året har jeg egentlig brukt KI ganske minimalt. Den har mest vært en sparringspartner når jeg har diskutert ideer og tenkt høyt rundt prosjekter, uten at jeg har tatt ut potensialet i selve utviklingen.",
+    "Det var først høsten 2026 at jeg bestemte meg for å gi KI assistert programvareutvikling et ordentlig forsøk med en strukturert metodikk. Når KI tar unna mer av selve skrivingen, får jeg mer tid i begge ender av arbeidet, både til å legge en skikkelig plan for arkitekturen i starten og til å pusse på detaljene i brukeropplevelsen til slutt.",
   ],
   shift: {
     heading: "Hvor tiden min går",
     beforeLabel: "Før",
-    withAiLabel: "Med AI",
+    withAiLabel: "Med KI",
     before: [
       { label: "Arkitektur", pct: 15, tone: "bg-zinc-600" },
       { label: "Kode og oppsett", pct: 70, tone: "bg-zinc-400" },
@@ -23,7 +23,7 @@ export const AI_PAGE = {
   },
   principlesHeading: "Reglene mine",
   principlesIntro:
-    "Dette er noe jeg fortsatt utforsker og lærer meg underveis, så tanken er på ingen måte å fremstille det som en fasit eller best practice for AI assistert utvikling. Dette er rett og slett vaner som har fungert godt for meg så langt, og som helt sikkert kommer til å endre seg etter hvert som jeg lærer mer og blir flinkere til å bruke verktøyene.",
+    "Dette er noe jeg fortsatt utforsker og lærer meg underveis, så tanken er på ingen måte å fremstille det som en fasit eller best practice for KI assistert utvikling. Dette er rett og slett vaner som har fungert godt for meg så langt, og som helt sikkert kommer til å endre seg etter hvert som jeg lærer mer og blir flinkere til å bruke verktøyene.",
   principles: [
     {
       title: "Rammer før kode",
@@ -53,7 +53,7 @@ export const AI_PAGE = {
   security: {
     heading: "Sikkerhet og prompt injection",
     paragraphs: [
-      "Å bruke AI til sparring på egen maskin er ganske rett frem. Det blir noe annet så snart du legger en åpen chat ut på nettet og lar den styre hva som skjer på skjermen. Da jeg gikk over koden til 3D chatten her på siden, fant jeg tre ting som måtte strammes inn. Info om hvilken side du sto på ble sendt rett inn i systemprompten uten sjekk, taggen som bytter side ([GO:...]) manglet en fast liste over lovlige sider, og stemmekallene manglet eksplisitt store: false.",
+      "Å bruke KI til sparring på egen maskin er ganske rett frem. Det blir noe annet så snart du legger en åpen chat ut på nettet og lar den styre hva som skjer på skjermen. Da jeg gikk over koden til 3D chatten her på siden, fant jeg tre ting som måtte strammes inn. Info om hvilken side du sto på ble sendt rett inn i systemprompten uten sjekk, taggen som bytter side ([GO:...]) manglet en fast liste over lovlige sider, og stemmekallene manglet eksplisitt store: false.",
       "En språkmodell gjetter bare neste ord ut fra sannsynlighet, så den kan alltid bli lurt hvis noen prøver seg på prompt injection. Derfor må selve sikkerheten ligge i vanlig TypeScript kode rundt modellen:",
     ],
     layers: [
@@ -68,7 +68,7 @@ export const AI_PAGE = {
     heading: "Hva som hører hjemme i porteføljen",
     paragraphs: [
       "På GitHub ligger det mange raske eksperimenter der jeg bare tester et verktøy eller en ide i fart. De fungerer fint som kladdebok. Prosjektene jeg viser frem her skal derimot tåle at man ser under panseret, der mine egne valg styrer arkitekturen, flyten og detaljene.",
-      "Det samme gjelder det visuelle. Her i porteføljen viser kortene de faktiske sidene, komponentene og funksjonene jeg har laget, slik at du ser mitt arbeid. Der AI er selve poenget, som 3D versjonen av meg på forsiden, er den merket åpent.",
+      "Det samme gjelder det visuelle. Her i porteføljen viser kortene de faktiske sidene, komponentene og funksjonene jeg har laget, slik at du ser mitt arbeid. Der KI er selve poenget, som 3D versjonen av meg på forsiden, er den merket åpent.",
     ],
     referencePrefix: "Randy J. Hunt skriver godt om akkurat dette i",
     referenceLabel: "On AI-Generated Work in Design Portfolios",
@@ -82,26 +82,26 @@ export const AI_PAGE = {
       status: "Spike and Stabilize",
       href: "/prosjekter/vgs-bordtennis",
       description:
-        "Første versjon gikk fra plan til drift på en uke med en blanding av arkitekturbygging, raske iterasjoner på design og finpuss med AI. Flat kodebase, developerlog.md og AGENTS.md holder konteksten kort mens prosjektet vokser.",
+        "Første versjon gikk fra plan til drift på en uke med en blanding av arkitekturbygging, raske iterasjoner på design og finpuss med KI. Flat kodebase, developerlog.md og AGENTS.md holder konteksten kort mens prosjektet vokser.",
     },
     {
       project: "Ember Booking",
-      status: "Håndverk først, AI til slutt",
+      status: "Håndverk først, KI til slutt",
       href: "/prosjekter/ember-booking",
       description:
-        "Her var strategien helt motsatt. Jeg gjorde grunnarbeidet selv, laget assets i Figma og bygde opp designsystemet for hånd. AI brukte jeg først helt til slutt for å fange opp inkonsekvenser og syntaksfeil før deploy.",
+        "Her var strategien helt motsatt. Jeg gjorde grunnarbeidet selv, laget assets i Figma og bygde opp designsystemet for hånd. KI brukte jeg først helt til slutt for å fange opp inkonsekvenser og syntaksfeil før deploy.",
     },
     {
       project: "MedCare Clinical og skoleprosjekter",
-      status: "Minimalt med AI",
+      status: "Minimalt med KI",
       href: "/prosjekter/medcare-clinical",
       description:
-        "Skoleprosjektene er til for å lære. Der bruker jeg nesten ingen AI utover litt sparring underveis, slik at jeg er sikker på at grunnkonseptene sitter ordentlig på egen hånd.",
+        "Skoleprosjektene er til for å lære. Der bruker jeg nesten ingen KI utover litt sparring underveis, slik at jeg er sikker på at grunnkonseptene sitter ordentlig på egen hånd.",
     },
   ],
   creditPrefix: "Ideen om en egen /ai side er inspirert av",
   creditName: "Charlota Blunarova",
   creditHref: "https://www.blunarova.com/ai",
   ctaTitle: "Vil du høre mer om hvordan jeg jobber?",
-  ctaButton: "Spør AI versjonen",
+  ctaButton: "Spør KI versjonen",
 };
