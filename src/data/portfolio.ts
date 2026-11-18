@@ -34,7 +34,7 @@ export const PROFILE = {
   location: "Otta",
   heroHeadline: "Hei, Yosmel her",
   heroBio:
-    "Fullstackutvikler innen TypeScript, React, Next.js og C# / .NET med øye for UX og praktisk AI. Jeg trives med å bidra med mer enn bare kode og sette meg ordentlig inn i kundens forretning og hverdag.",
+    "Fullstackutvikler innen TypeScript, React, Next.js og C# / .NET med øye for UX og praktisk AI.",
   socials: [
     { label: "GitHub", href: "https://github.com/yosang" },
     { label: "LinkedIn", href: "https://www.linkedin.com/in/yosmel-chiang/" },
