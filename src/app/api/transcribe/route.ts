@@ -90,6 +90,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Ikke tillatt." }, { status: 403 });
   }
 
+  const declaredLen = Number(req.headers.get("content-length") || "0");
+  if (declaredLen > MAX_RAW_BODY_LEN) {
+    return NextResponse.json(
+      { error: "Lydopptaket er for stort." },
+      { status: 413 }
+    );
+  }
+
   const clientIp = getClientIp(req);
 
   if (!rateLimiter.check(clientIp)) {
@@ -102,7 +110,7 @@ export async function POST(req: NextRequest) {
   const apiKey = process.env.GEMINI_API_KEY?.trim();
   if (!apiKey) {
     return NextResponse.json(
-      { error: "Mangler API-nøkkel for tale-til-tekst." },
+      { error: "Tale til tekst er midlertidig utilgjengelig." },
       { status: 503 }
     );
   }
@@ -116,13 +124,21 @@ export async function POST(req: NextRequest) {
         { status: 413 }
       );
     }
-    body = JSON.parse(rawText);
+    const parsed = JSON.parse(rawText);
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+      return NextResponse.json({ error: "Ugyldig forespørsel." }, { status: 400 });
+    }
+    body = parsed as typeof body;
   } catch {
     return NextResponse.json({ error: "Ugyldig forespørsel." }, { status: 400 });
   }
 
   const audioBase64 = typeof body.audio === "string" ? body.audio.trim() : "";
-  if (!audioBase64 || audioBase64.length > MAX_AUDIO_BASE64_LEN) {
+  if (
+    !audioBase64 ||
+    audioBase64.length > MAX_AUDIO_BASE64_LEN ||
+    !/^[A-Za-z0-9+/=]+$/.test(audioBase64)
+  ) {
     return NextResponse.json(
       { error: "Lydopptaket er tomt eller for langt." },
       { status: 400 }
@@ -159,6 +175,7 @@ export async function POST(req: NextRequest) {
       generation_config: {
         thinking_level: thinkingLevel,
         temperature: 0.1,
+        max_output_tokens: 350,
       },
       store: false,
     });

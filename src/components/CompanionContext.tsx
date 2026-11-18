@@ -36,7 +36,52 @@ export interface ChatTurn {
   content: string;
   bubbles?: string[];
   mood?: AvatarMood;
+  sig?: string;
   attachment?: ChatAttachment;
+}
+
+function sanitizeStoredTurns(raw: unknown): ChatTurn[] {
+  if (!Array.isArray(raw)) return [];
+  const out: ChatTurn[] = [];
+  for (const item of raw) {
+    if (!item || typeof item !== "object") continue;
+    const rec = item as Partial<ChatTurn>;
+    if (rec.id === "a-prologue-welcome" || typeof rec.id !== "string") continue;
+    if (rec.role !== "user" && rec.role !== "assistant") continue;
+    if (typeof rec.content !== "string" || !rec.content.trim()) continue;
+    const bubbles = Array.isArray(rec.bubbles)
+      ? rec.bubbles.filter((b): b is string => typeof b === "string")
+      : undefined;
+    const mood =
+      rec.mood === "happy" ||
+      rec.mood === "neutral" ||
+      rec.mood === "confused" ||
+      rec.mood === "thinking"
+        ? rec.mood
+        : undefined;
+    const sig = typeof rec.sig === "string" ? rec.sig : undefined;
+    const attachment =
+      rec.attachment &&
+      typeof rec.attachment === "object" &&
+      rec.attachment.href === "/Yosmel_Chiang_CV.pdf" &&
+      typeof rec.attachment.label === "string"
+        ? {
+            href: "/Yosmel_Chiang_CV.pdf",
+            filename: "Yosmel_Chiang_CV.pdf",
+            label: rec.attachment.label,
+          }
+        : undefined;
+    out.push({
+      id: rec.id,
+      role: rec.role,
+      content: rec.content,
+      ...(bubbles ? { bubbles } : {}),
+      ...(mood ? { mood } : {}),
+      ...(sig ? { sig } : {}),
+      ...(attachment ? { attachment } : {}),
+    });
+  }
+  return out;
 }
 
 interface CompanionContextValue {
@@ -232,13 +277,9 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
       const raw = sessionStorage.getItem("ai-twin-chat");
       if (raw) {
         const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed.messages)) {
-          const restored = (parsed.messages as ChatTurn[]).filter(
-            (m) => m.id !== "a-prologue-welcome"
-          );
-          if (restored.length > 0) {
-            queueMicrotask(() => setMessages(restored));
-          }
+        const restored = sanitizeStoredTurns(parsed?.messages);
+        if (restored.length > 0) {
+          queueMicrotask(() => setMessages(restored));
         }
       }
     } catch {
@@ -540,6 +581,7 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
             messages: updatedHistory.map((m) => ({
               role: m.role,
               content: m.content,
+              ...(m.sig ? { sig: m.sig } : {}),
             })),
             page: pageContext,
             voice: wantVoice,
@@ -558,6 +600,7 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
         let sseBuffer = "";
         let accumulatedText = "";
         let latestMood: AvatarMood = "neutral";
+        let latestSigs: string[] = [];
         let latestAttachment: ChatAttachment | undefined;
         let isDemoStream = false;
         let holdTextForVoice = wantVoice;
@@ -584,6 +627,10 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
             .filter(Boolean);
 
           if (!holdTextForVoice || !voiceEnabledRef.current) {
+            const sig =
+              splitBubbles.length > 0
+                ? latestSigs[splitBubbles.length - 1]
+                : undefined;
             setMood(latestMood);
             if (textStreamFinished) {
               finishStreamingState();
@@ -596,6 +643,7 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
                       content: accumulatedText,
                       bubbles: splitBubbles,
                       mood: latestMood,
+                      ...(sig ? { sig } : {}),
                       ...(latestAttachment ? { attachment: latestAttachment } : {}),
                     }
                   : msg
@@ -610,6 +658,10 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
 
           const visibleBubbles = splitBubbles.slice(0, revealedBubbleCount);
           const visibleContent = visibleBubbles.join("\n\n");
+          const sig =
+            visibleBubbles.length > 0
+              ? latestSigs[visibleBubbles.length - 1]
+              : undefined;
           setMood(latestMood);
           finishStreamingState();
           setMessages((prev) =>
@@ -620,6 +672,7 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
                     content: visibleContent,
                     bubbles: visibleBubbles,
                     mood: latestMood,
+                    ...(sig ? { sig } : {}),
                     ...(latestAttachment ? { attachment: latestAttachment } : {}),
                   }
                 : msg
@@ -737,10 +790,13 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
             }
 
             if (data.textDone === true) {
-              textStreamFinished = true;
-              if (!holdTextForVoice || !voiceEnabledRef.current) {
-                finishStreamingState();
+              if (Array.isArray(data.sigs)) {
+                latestSigs = data.sigs.filter(
+                  (s): s is string => typeof s === "string"
+                );
               }
+              textStreamFinished = true;
+              syncVisibleText();
             }
 
             if (typeof data.t === "string") {

@@ -87,6 +87,8 @@ const SKIP_EXACT = new Set([
   "Status",
   "2026",
   "Charlota Blunarova",
+  "Simon Willison",
+  "The Lethal Trifecta",
   "On AI-Generated Work in Design Portfolios",
   "Spike and Stabilize",
 ]);

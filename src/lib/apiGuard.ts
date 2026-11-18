@@ -14,8 +14,14 @@ const STATIC_GO_PATHS = new Set([
   "/chat",
 ]);
 
-const CONTROL_TAG_RE = /\[(?:MOOD|TOUR|GO|FILE):[^\]]*\]/gi;
-const XML_FENCE_RE = /<\/?(?:untrusted_visitor_input|viewport_state)[^>]*>/gi;
+const CONTROL_TAG_RE = /\[(?:MOOD|TOUR|GO|FILE):[^\]]*\]?/gi;
+const XML_FENCE_RE =
+  /<\/?\s*(?:untrusted_visitor_input|viewport_state|system_instruction|model_output|user_input)\b[^>]*>?/gi;
+const FENCE_TOKEN_RE = /\b(?:untrusted_visitor_input|viewport_state)\b/gi;
+const INVISIBLE_UNICODE_RE =
+  /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F\u200B-\u200F\u202A-\u202E\u2066-\u2069\uFEFF\u{E0000}-\u{E007F}]/gu;
+const UNSAFE_VOICE_RE =
+  /\b(jeg\s+(?:gir\s+)?samtykke(?:r)?|jeg\s+bekrefter\s+herved|gir\s+(?:herved\s+)?mitt\s+samtykke|eier(?:en)?\s+av\s+denne\s+stemmen|i\s+(?:hereby\s+)?consent|my\s+consent\s+to\s+use\s+my\s+voice|owner\s+of\s+this\s+voice|synthetic\s+voice\s+model|authorize\s+this\s+(?:transaction|transfer|payment)|doy\s+mi\s+consentimiento|propietario\s+de\s+esta\s+voz)\b/i;
 
 export function isAllowedGoPath(
   rawPath: string,
@@ -33,36 +39,55 @@ export function isAllowedGoPath(
 }
 
 export function stripPromptInjectionDelimiters(raw: string): string {
-  return raw
-    .replace(CONTROL_TAG_RE, "")
-    .replace(XML_FENCE_RE, "")
-    .replace(/\0/g, "");
+  let out = raw.replace(INVISIBLE_UNICODE_RE, "");
+  for (let i = 0; i < 8; i++) {
+    const next = out
+      .replace(CONTROL_TAG_RE, "")
+      .replace(XML_FENCE_RE, "")
+      .replace(FENCE_TOKEN_RE, "");
+    if (next === out) break;
+    out = next;
+  }
+  return out;
+}
+
+export function normalizeTurnText(raw: string): string {
+  return stripPromptInjectionDelimiters(raw).replace(/\s+/g, " ").trim();
+}
+
+export function isSafeForVoice(raw: string): boolean {
+  return !UNSAFE_VOICE_RE.test(raw);
 }
 
 export function sanitizeChatMessages(
   raw: unknown,
   maxTurns = 6,
-  maxChars = 600
+  maxUserChars = 600,
+  verifyAssistant?: (content: string, sig?: string) => boolean
 ): SanitizedMessage[] {
   if (!Array.isArray(raw)) return [];
   const cleaned: SanitizedMessage[] = [];
   for (const item of raw) {
     if (!item || typeof item !== "object") continue;
-    const rec = item as { role?: unknown; content?: unknown };
+    const rec = item as { role?: unknown; content?: unknown; sig?: unknown };
     if (rec.role !== "user" && rec.role !== "assistant") continue;
     if (typeof rec.content !== "string") continue;
-    const text = stripPromptInjectionDelimiters(rec.content)
-      .trim()
-      .slice(0, maxChars);
-    if (!text) continue;
-    cleaned.push({ role: rec.role, content: text });
+    const stripped = stripPromptInjectionDelimiters(rec.content).trim();
+    if (!stripped) continue;
+    if (rec.role === "assistant") {
+      const sig = typeof rec.sig === "string" ? rec.sig.trim() : undefined;
+      if (verifyAssistant && !verifyAssistant(stripped, sig)) continue;
+      cleaned.push({ role: "assistant", content: stripped.slice(0, 1600) });
+      continue;
+    }
+    cleaned.push({ role: "user", content: stripped.slice(0, maxUserChars) });
   }
   return cleaned.slice(-maxTurns);
 }
 
 export function sanitizeViewportField(raw: unknown, maxLen = 80): string {
   if (typeof raw !== "string") return "";
-  return raw
+  return stripPromptInjectionDelimiters(raw)
     .replace(/[\r\n\t#<>[\]`]+/g, " ")
     .replace(/\s{2,}/g, " ")
     .trim()
@@ -76,11 +101,25 @@ export function sanitizeViewportPath(raw: unknown): string {
 }
 
 export function getClientIp(req: NextRequest): string {
+  const vercelIp = req.headers
+    .get("x-vercel-forwarded-for")
+    ?.split(",")[0]
+    ?.trim();
+  const flyIp = req.headers.get("fly-client-ip")?.trim();
+  const cfIp = req.headers.get("cf-ray")
+    ? req.headers.get("cf-connecting-ip")?.trim()
+    : undefined;
+  const xffLast = req.headers
+    .get("x-forwarded-for")
+    ?.split(",")
+    .at(-1)
+    ?.trim();
   const raw =
-    req.headers.get("x-vercel-forwarded-for")?.split(",")[0]?.trim() ||
-    req.headers.get("cf-connecting-ip")?.trim() ||
+    vercelIp ||
+    flyIp ||
+    cfIp ||
     req.headers.get("x-real-ip")?.trim() ||
-    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    xffLast ||
     "local";
   return raw.slice(0, 64);
 }
@@ -91,6 +130,7 @@ export function isAllowedRequest(req: NextRequest): boolean {
     return false;
   }
 
+  const isProd = process.env.NODE_ENV === "production";
   const origin = req.headers.get("origin");
   if (origin) {
     try {
@@ -100,21 +140,18 @@ export function isAllowedRequest(req: NextRequest): boolean {
         originHost === reqHost ||
         originHost === "yosmel.no" ||
         originHost === "www.yosmel.no" ||
-        originHost === "localhost" ||
-        originHost === "127.0.0.1";
+        (!isProd &&
+          (originHost === "localhost" || originHost === "127.0.0.1"));
       if (!allowedHost) return false;
     } catch {
       return false;
     }
-  } else if (process.env.NODE_ENV === "production") {
+  } else if (isProd) {
     return false;
   }
 
   const clientHeader = req.headers.get("x-portfolio-client");
-  if (
-    process.env.NODE_ENV === "production" &&
-    clientHeader !== "yosmel-web"
-  ) {
+  if (isProd && clientHeader !== "yosmel-web") {
     return false;
   }
 
@@ -170,8 +207,18 @@ export function createRateLimiter(opts: RateLimiterOptions) {
       }
 
       if (!ipBuckets.has(ip) && ipBuckets.size >= maxBuckets) {
-        const oldest = ipBuckets.keys().next().value;
-        if (oldest) ipBuckets.delete(oldest);
+        let evicted = false;
+        for (const [k, v] of ipBuckets) {
+          if (now - v.minuteTs > 60_000 && v.dayCount <= 2) {
+            ipBuckets.delete(k);
+            evicted = true;
+            break;
+          }
+        }
+        if (!evicted) {
+          const oldest = ipBuckets.keys().next().value;
+          if (oldest) ipBuckets.delete(oldest);
+        }
       }
 
       const entry = ipBuckets.get(ip) ?? {

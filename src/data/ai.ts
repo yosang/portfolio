@@ -53,14 +53,18 @@ export const AI_PAGE = {
   security: {
     heading: "Sikkerhet og prompt injection",
     paragraphs: [
-      "Å bruke KI til sparring på egen maskin er ganske rett frem. Det blir noe annet så snart du legger en åpen chat ut på nettet og lar den styre hva som skjer på skjermen. Da jeg gikk over koden til 3D chatten her på siden, fant jeg tre ting som måtte strammes inn. Info om hvilken side du sto på ble sendt rett inn i systemprompten uten sjekk, taggen som bytter side ([GO:...]) manglet en fast liste over lovlige sider, og stemmekallene manglet eksplisitt store: false.",
-      "En språkmodell gjetter bare neste ord ut fra sannsynlighet, så den kan alltid bli lurt hvis noen prøver seg på prompt injection. Derfor må selve sikkerheten ligge i vanlig TypeScript kode rundt modellen:",
+      "Å bruke KI til sparring på egen maskin er ganske rett frem. Det blir noe helt annet så snart du legger en åpen chat på nettet som både styrer skjermen og svarer med din egen klonede stemme. Simon Willison beskriver denne risikoen godt gjennom The Lethal Trifecta, der datalekkasjer oppstår når et KI system kombinerer private data, utrygt innhold utenfra og mulighet til å kommunisere ut på nettet.",
+      "Siden chatten her med vilje er åpen for meldinger og tale fra hvem som helst, må de to andre beina i trekanten kuttes i arkitekturen. En språkmodell gjetter bare neste ord ut fra sannsynlighet og kan alltid bli forsøkt lurt, så selve sikkerheten ligger i vanlig TypeScript kode rundt modellen.",
     ],
     layers: [
-      "Skille regler og meldinger: Systemprompten bygges kun av faste filer på serveren. Alt du skriver eller sier i mikrofonen renses for kontrolltagger og pakkes inn i egne tagger (<untrusted_visitor_input>), så modellen ser forskjell på mine regler og meldinger utenfra.",
-      "Fast sjekk i kode: Modellen får aldri velge frie lenker eller filer selv. Tagger som bytter side ([GO:...]) eller scroller til prosjekter ([TOUR:...]) sjekkes mot en fast liste i kode på både server og klient før noe skjer, og CV sendes kun ut når du faktisk spør etter den.",
-      "Ingen lagring og faste grenser: Alle kall til Gemini kjører med lagring slått av (store: false). I tillegg sjekker serveren at forespørselen kommer fra min egen side, med faste grenser for hvor mange meldinger og lydklipp som kan kjøres per minutt og per dag.",
+      "Ingen private data eller verktøy ut: Modellen har ingen database, ingen verktøykall og ser kun offentlige porteføljedata. Boblene vises som ren tekst i React uten Markdown bilder, og en stram Content Security Policy sperrer nettleseren fra å sende trafikk til fremmede domener.",
+      "Signert historikk og isolert input: Systemprompten bygges kun på serveren mens meldinger utenfra vaskes i løkke for skjulte tagger og legges i <untrusted_visitor_input>. Hvert svar fra modellen signeres med HMAC-SHA256 slik at ingen kan sende inn forfalskede tidligere svar i samtaleloggen.",
+      "Vern rundt klonet stemme og handlinger: Tagger som styrer siden ([GO:...], [TOUR:...] og [FILE:cv]) sjekkes mot faste lister på server og klient. Før tekst sendes til stemmekloning, har koden egne tak på lengde og antall bobler samt sperrer mot samtykkefraser og ordrett opplesning.",
+      "Ingen lagring og ryddig lokalt oppsett: Alle kall til Gemini kjører med store: false og faste kvoter i minnet. Samme trekant gjelder når jeg bruker kodeagenter lokalt, så jeg kobler aldri uprøvde MCP verktøy med utrygt innhold mot prosjekter med produksjonsnøkler og bruker egne utviklingsnøkler med strenge beløpsgrenser.",
     ],
+    referencePrefix: "Simon Willison forklarer denne sikkerhetsmodellen godt i",
+    referenceLabel: "The Lethal Trifecta",
+    referenceHref: "https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/",
     caseLinkLabel: "Les mer i caset om Interaktiv Portefølje",
     caseLinkHref: "/prosjekter/interaktiv-portefolje",
   },

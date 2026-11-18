@@ -399,15 +399,28 @@ export function AiPageContent() {
             );
           })}
         </ul>
-        <p className="pt-1">
+        <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 pt-1 text-xs text-ink-soft">
+          <p>
+            {t.security.referencePrefix}{" "}
+            <a
+              href={t.security.referenceHref}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-0.5 font-medium text-ink underline underline-offset-4 hover:opacity-75"
+            >
+              <span>{t.security.referenceLabel}</span>
+              <ArrowUpRight className="h-3 w-3" />
+            </a>
+            .
+          </p>
           <Link
             href={t.security.caseLinkHref}
-            className="inline-flex items-center gap-1 text-xs font-medium text-ink underline underline-offset-4 hover:opacity-75"
+            className="inline-flex items-center gap-1 font-medium text-ink underline underline-offset-4 hover:opacity-75"
           >
             <span>{t.security.caseLinkLabel}</span>
             <ArrowRight className="h-3.5 w-3.5" />
           </Link>
-        </p>
+        </div>
       </section>
 
       <section className="space-y-4 border-t border-line pt-10">

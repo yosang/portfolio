@@ -48,6 +48,8 @@ export function localizeValue<T>(val: T, locale: Locale): T {
         k === "src" ||
         k === "webmSrc" ||
         k === "href" ||
+        k === "referenceHref" ||
+        k === "creditHref" ||
         k === "caseLinkHref" ||
         k === "liveUrl" ||
         k === "repoUrl" ||
