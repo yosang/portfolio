@@ -98,7 +98,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     aiNote:
       "Første versjon gikk fra plan til drift på en uke med Spike and Stabilize.",
     caseStudy: {
-      role: "Design, arkitektur og fullstackutvikling (eget fritidsprosjekt)",
+      role: "Arkitektur, design og utvikling",
       status: "I aktiv utprøving ved Nord-Gudbrandsdal VGS",
       intro:
         "VGS Bordtennis startet som et forsøk på inkludering i friminuttet, med mål om å lage noe artig som gjorde det enklere for flere elever å bli med i miljøet rundt bordtennisbordene og være fysisk aktive sammen. Løsningen er et sanntidssystem i Node.js laget for turneringer og poengtavle på storskjerm, med QR kode ved bordet.",
