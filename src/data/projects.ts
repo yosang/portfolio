@@ -520,14 +520,14 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
         {
           title: "Sikring mot prompt injection i praksis",
           paragraphs: [
-            "Når en åpen språkmodell både får styre siden med tagger ([TOUR:<slug>], [GO:<sti>] og [FILE:cv]) og svarer med min egen klonede stemme, kan man aldri stole på systemprompten alene. Oppsettet er derfor bygget rundt Simon Willisons The Lethal Trifecta, der målet er å kutte tilgang til private data og ekstern kommunikasjon siden chatten med vilje tar imot utrygt innhold utenfra.",
-            "Selve sikkerheten ligger i vanlig TypeScript kode rundt modellen (apiGuard.ts, chat/route.ts og next.config.ts).",
+            "Når en åpen språkmodell både får styre visningen på siden og svarer med min egen klonede stemme, kan man aldri stole på systemprompten alene. Oppsettet er derfor bygget rundt Simon Willisons The Lethal Trifecta, der målet er å kutte tilgang til private data og ekstern kommunikasjon siden chatten med vilje tar imot utrygt innhold utenfra.",
+            "Selve sikkerheten ligger i vanlig TypeScript kode rundt modellen.",
           ],
           bullets: [
-            "Ingen private data eller lekkasjeveier ut: Modellen har ingen database, ingen verktøykall og ser kun offentlige porteføljedata. Boblene vises som ren tekst i React uten Markdown bilder, og en stram Content Security Policy sperrer nettleseren fra å kontakte fremmede domener.",
-            "Signert samtalelogg og isolert input: Meldinger utenfra vaskes i løkke for skjulte kontrolltagger og usynlige Unicode tegn før de pakkes i <untrusted_visitor_input>. Hvert ekte svar fra serveren signeres med HMAC-SHA256 slik at ingen kan sende inn forfalskede tidligere svar i tråden.",
-            "Hvitelister og vern av klonet stemme: [GO:<sti>] sjekkes mot en fast liste av gyldige sider på server og klient, og [FILE:cv] slippes kun gjennom når du faktisk ber om CV. Før tekst går til stemmekloning, sjekker koden lengde, maks antall bobler og sperrer mot samtykkefraser.",
-            "Ingen lagring og faste kvoter: Alle kall for chat, stemme og tale til tekst sendes med store: false, kombinert med sjekk av Origin, Sec-Fetch-Site, max_output_tokens og faste kvoter per minutt og per dag i minnet.",
+            "Ingen private data eller lekkasjeveier ut: Modellen har ingen database, ingen verktøykall og ser kun offentlige porteføljedata. Boblene vises som ren tekst i React uten Markdown bilder, og nettleseren er sperret fra å kontakte fremmede domener.",
+            "Verifisert samtalelogg og isolert input: Meldinger utenfra renses og holdes adskilt fra systeminstruksen på serveren, og tidligere svar i samtalen verifiseres slik at ingen kan sende inn forfalsket historikk.",
+            "Faste lister og vern av klonet stemme: Navigasjon og visning sjekkes mot en fast liste av gyldige sider på server og klient, og CV slippes kun gjennom når du faktisk ber om den. Før tekst går til stemmekloning, sjekker koden lengde, antall bobler og sperrer mot misbruk av stemmen.",
+            "Ingen lagring og faste kvoter: Alle kall for chat, stemme og tale til tekst kjører uten lagring hos Gemini, kombinert med opphavssjekk og faste kvoter per minutt og per dag i minnet.",
           ],
           tour: {
             audioSrc: "/audio/cases/interaktiv-portefolje/3.mp3",
@@ -547,7 +547,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
       "Hva teknologien kan brukes til utenfor en portefølje: tanken er å komme nærmere en vanlig samtale der den prater med stemme, henter opp riktig sted på skjermen så du slipper å lete selv, og holder seg kun til godkjente fakta. Jeg ser for meg at bedrifter kan bruke slik teknologi til å hjelpe kunder i kundeservice eller på telefon. Samtidig kan skoler bruke det til muntlig trening, og i helsevesenet kan det gi eldre og pasienter enkel veiledning.",
       "Samtidig var dette prosjektet der jeg høsten 2026 for alvor utfordret meg selv på strukturert KI assistert utvikling, med egne regler i `AGENTS.md` og `github.com/yosang/skills` (`ui-craft`, `natural-copy` og `lean-architecture`).",
       "Teknisk kjører 3D skanningen (T2 modell med 20 blendshapes for munnsynk, blunking og uttrykk) på Three.js i en delt `OffscreenCanvas` Web Worker på 60 fps som gjenbrukes på tvers av sidene via en portal, mens svar og klonet stemme (fra 17 sekunder opptak) strømmes fra Gemini over SSE.",
-      "Sikkerhet og vern mot prompt injection (etter Simon Willisons The Lethal Trifecta): siden chatten tar imot åpent, utrygt innhold, er tilgang til private data og ekstern kommunikasjon kuttet i kode (`apiGuard.ts`, `chat/route.ts` og `next.config.ts`). Modellen har ingen database eller verktøykall, boblene vises som ren tekst uten Markdown bilder med stram Content Security Policy, meldinger utenfra vaskes i løkke og pakkes i `<untrusted_visitor_input>`, tidligere `assistant` svar signeres med `HMAC-SHA256` så historikken ikke kan forfalskes, alle tagger (`[GO:...]`, `[TOUR:...]`, `[FILE:cv]`) sjekkes mot faste hvitelister, den klonede stemmen har egne sperrer mot samtykkefraser og lange svar, og alle kall til Gemini går med `store: false` og faste kvoter i minnet.",
+      "Sikkerhet og vern mot prompt injection (etter Simon Willisons The Lethal Trifecta): siden chatten tar imot åpent, utrygt innhold, er tilgang til private data og ekstern kommunikasjon kuttet i kode. Modellen har ingen database eller verktøykall, boblene vises som ren tekst uten Markdown bilder, meldinger utenfra renses og holdes adskilt fra systeminstruksen, tidligere svar i tråden verifiseres på serveren så samtaleloggen ikke kan forfalskes, navigasjon og vedlegg sjekkes mot faste hvitelister, den klonede stemmen har egne sperrer i kode mot misbruk, og alle kall til Gemini går uten lagring og med faste kvoter i minnet.",
     ],
   },
   {

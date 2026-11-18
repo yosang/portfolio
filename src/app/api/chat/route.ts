@@ -59,7 +59,7 @@ const TURN_HMAC_KEY = crypto
   .update(
     process.env.CHAT_SIGNING_SECRET ||
       process.env.GEMINI_API_KEY ||
-      "yosmel-dev-turn-secret"
+      crypto.randomBytes(32)
   )
   .digest();
 
