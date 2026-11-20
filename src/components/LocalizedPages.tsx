@@ -250,10 +250,10 @@ export function AiPageContent() {
       className="mx-auto max-w-3xl space-y-14 px-4 py-14 sm:px-6 md:py-20"
     >
       <section className="space-y-5">
-        <h1 className="font-display text-3xl font-normal tracking-[-0.03em] text-ink sm:text-4xl">
+        <h1 className="font-display text-3xl font-light tracking-[-0.03em] text-ink sm:text-5xl">
           {t.title}
         </h1>
-        <div className="space-y-4 text-base leading-relaxed text-ink/90 sm:text-lg">
+        <div className="space-y-4 text-base leading-relaxed text-ink-soft sm:text-[17px]">
           {t.lead.map((p, idx) => (
             <p key={idx}>{p}</p>
           ))}
@@ -343,7 +343,7 @@ export function AiPageContent() {
           {t.principles.map((item) => (
             <div
               key={item.title}
-              className="flex flex-col justify-between rounded-xl border border-line bg-paper-raised p-5 gap-3"
+              className="flex flex-col justify-between gap-3 rounded-sm border border-line bg-paper-raised p-5"
             >
               <div className="space-y-2.5">
                 <h3 className="font-display text-base font-medium tracking-[-0.015em] text-ink">
@@ -370,36 +370,15 @@ export function AiPageContent() {
       </section>
 
       <section className="space-y-4 border-t border-line pt-10">
-        <h2 className="font-display text-2xl font-normal tracking-[-0.025em] text-ink">
+        <h2 className="font-display text-2xl font-light tracking-[-0.025em] text-ink">
           {t.security.heading}
         </h2>
-        <div className="space-y-4 text-base leading-relaxed text-ink/90">
+        <div className="space-y-4 text-base leading-relaxed text-ink-soft">
           {t.security.paragraphs.map((p, idx) => (
             <p key={idx}>{p}</p>
           ))}
         </div>
-        <ul className="surface-card space-y-2.5 rounded-xl p-5 text-sm text-ink-soft">
-          {t.security.layers.map((layer, i) => {
-            const colonIdx = layer.indexOf(":");
-            const hasLabel = colonIdx > 0 && colonIdx <= 85;
-            return (
-              <li key={i} className="leading-relaxed">
-                ·{" "}
-                {hasLabel ? (
-                  <>
-                    <span className="font-medium text-ink">
-                      {layer.slice(0, colonIdx + 1)}
-                    </span>
-                    {layer.slice(colonIdx + 1)}
-                  </>
-                ) : (
-                  layer
-                )}
-              </li>
-            );
-          })}
-        </ul>
-        <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 pt-1 text-xs text-ink-soft">
+        <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 pt-2 text-xs text-ink-soft">
           <p>
             {t.security.referencePrefix}{" "}
             <a

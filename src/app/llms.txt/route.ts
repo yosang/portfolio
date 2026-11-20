@@ -53,7 +53,6 @@ export async function GET() {
     "",
     `### ${AI_PAGE.security.heading}`,
     ...AI_PAGE.security.paragraphs,
-    ...AI_PAGE.security.layers.map((l) => `- ${l}`),
     "",
     `### ${AI_PAGE.practiceHeading}`,
     ...AI_PAGE.practices.map(
