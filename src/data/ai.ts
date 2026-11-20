@@ -1,8 +1,8 @@
 export const AI_PAGE = {
   title: "Hvordan jeg bruker KI",
   lead: [
-    "Det siste året har jeg egentlig brukt KI ganske minimalt. Den har mest vært en sparringspartner når jeg har diskutert ideer og tenkt høyt rundt prosjekter, uten at jeg har tatt ut potensialet i selve utviklingen.",
-    "Det var først høsten 2026 at jeg bestemte meg for å gi KI assistert programvareutvikling et ordentlig forsøk med en strukturert metodikk. Når KI tar unna mer av selve skrivingen, får jeg mer tid i begge ender av arbeidet, både til å legge en skikkelig plan for arkitekturen i starten og til å pusse på detaljene i brukeropplevelsen til slutt.",
+    "Jeg har fulgt med på KI verktøy lenge, men valgte bevisst å holde dem utenfor gjennom hele den toårige backendutdanningen min fra 2024 til 2026. Målet var at arkitektur, feilsøking og kodekvalitet skulle sitte ordentlig i fingrene før jeg koblet på kodeagenter, så KI ble kun brukt til enkel sparring rundt ideer.",
+    "Høsten 2026 bestemte jeg meg for å gi KI assistert programvareutvikling et skikkelig forsøk med tydelige rammer. Da hadde både verktøyene og arbeidsflytene modnet, og når KI tar unna mer av selve skrivingen, får jeg mer tid i begge ender av arbeidet, både til å planlegge arkitekturen godt i starten og til å pusse på detaljene i brukeropplevelsen til slutt.",
   ],
   shift: {
     heading: "Hvor tiden min går",

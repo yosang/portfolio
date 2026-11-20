@@ -50,9 +50,9 @@ export const PROFILE = {
     },
     paragraphs: [
       [
-        "Jeg heter Yosmel Gutierrez Chiang, er født på Cuba, kom til Norge da jeg var ti år og bor på Otta i Gudbrandsdalen sammen med familien min og hunden vår Ella. På GitHub har jeg bygget ting som ",
+        "Jeg heter Yosmel Gutierrez Chiang, er født på Cuba, kom til Norge da jeg var ti år og bor på Otta i Gudbrandsdalen sammen med familien min og hunden vår Ella. Interessen for teknologi og små hobbyprosjekter har fulgt meg lenge, og kontoen min på GitHub (",
         { label: "@yosang", href: "https://github.com/yosang" },
-        " siden 2013.",
+        ") er fra 2013.",
       ],
       [
         "Før jeg utdannet meg i backendutvikling og frontendutvikling hos Noroff, jobbet jeg på Ekornes. Der startet jeg i produksjonen med montering av møbler og programmering av Motoman industriroboter før jeg gikk videre til teamleder og avdelingsleder med personalansvar, daglig driftsplanlegging og kvalitetskontroll. Den erfaringen gjør at jeg trives når jeg får bidra med mer enn bare kode, som å sette meg inn i forretningen og driften, ta del i juridiske vurderinger (som avtaler, personvern og forretningsregler) og være med på de større valgene.",
