@@ -32,7 +32,7 @@ export const ProjectCard = memo(function ProjectCard({
   const stackLabel = item.tags
     .filter((tag) => tag !== item.year)
     .slice(0, 3)
-    .join(" · ");
+    .join(", ");
 
   return (
     <article

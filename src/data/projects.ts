@@ -261,7 +261,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
       "Brukeropplevelse: Jobber løpende med struktur, accessibility og enkel flyt på tvers av plattformen.",
     ],
     caseStudy: {
-      role: "Medgründer · Ansvar for merkevare, design, copy, frontend og brukeropplevelse",
+      role: "Medgründer, med ansvar for merkevare, design, copy, frontend og brukeropplevelse",
       status: "I kommersiell drift på emberbooking.no",
       intro:
         "Ember Booking er et norsk bookingsystem jeg driver sammen med Kim for bedrifter innen badstue, treningsstudio og utleie. Der har jeg ansvaret for merkevaren, posisjoneringen, tekstene, designsystemet og frontenden på emberbooking.no.",
@@ -373,7 +373,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     ],
     caseStudy: {
       role: "Fullstackutvikler (Eksamensprosjekt i Backend 2026 hos Noroff)",
-      status: "Fullført eksamensprosjekt · Åpen kildekode",
+      status: "Fullført eksamensprosjekt, åpen kildekode",
       intro:
         "MedCare Clinical ble bygget over fem uker som avsluttende eksamensprosjekt på det toårige studiet i backendutvikling hos Noroff. Oppgaven var å planlegge, modellere og utvikle et komplett timebestillingssystem for helseklinikker i C# og .NET 9 med MySQL og en tilhørende klient i React.",
       sections: [
@@ -642,7 +642,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     ],
     caseStudy: {
       role: "Frontendutvikler (Skoleprosjekt hos Noroff)",
-      status: "Fullført skoleprosjekt · Live demo og åpen kildekode",
+      status: "Fullført skoleprosjekt, live demo og åpen kildekode",
       intro:
         "Cinemorra ble bygget som skoleoppgave på frontendstudiet hos Noroff med mål om å lage en oversiktlig filmkatalog der brukere enkelt kan utforske, søke opp og låne filmer på nett, mens administratorer styrer katalogen i et eget adminpanel. Løsningen er bygget i Next.js App Router og TypeScript med et tydelig skille mellom de åpne sidene og administrasjon.",
       sections: [

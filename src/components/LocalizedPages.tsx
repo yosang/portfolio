@@ -621,8 +621,8 @@ export function ProjectCaseStudyContent({ slug }: { slug: string }) {
           <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.1em] text-ink-muted">
             {project.category === "independent"
               ? t.categoryIndependent
-              : t.categorySchool}{" "}
-            · {project.year}
+              : t.categorySchool}
+            , {project.year}
           </p>
 
           <h1 className="font-display text-[clamp(2.25rem,4vw+1rem,3.75rem)] leading-[1.06] font-light tracking-[-0.03em] text-ink">
@@ -649,7 +649,7 @@ export function ProjectCaseStudyContent({ slug }: { slug: string }) {
                 Stack
               </dt>
               <dd className="mt-1 font-mono text-xs leading-relaxed text-ink-soft">
-                {project.tags.filter((tag) => tag !== project.year).join(" · ")}
+                {project.tags.filter((tag) => tag !== project.year).join(", ")}
               </dd>
             </div>
           </dl>

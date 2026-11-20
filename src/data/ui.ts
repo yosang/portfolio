@@ -27,7 +27,7 @@ export const UI = {
     openCase: "Les mer",
     backToProjects: "Tilbake til prosjekter",
     categoryIndependent: "Eget prosjekt",
-    categorySchool: "Skoleprosjekt · Noroff",
+    categorySchool: "Skoleprosjekt ved Noroff",
     roleLabel: "Min rolle",
     statusLabel: "Status",
     moreProjects: "Flere prosjekter",

@@ -108,25 +108,25 @@ export const PROFILE = {
       {
         label: "Frontend og design",
         items: [
-          "TypeScript · Next.js 16 · React 19",
-          "CSS Modules · GSAP · Three.js",
-          "Figma · UX · Designsystemer · Accessibility",
+          "TypeScript, Next.js 16, React 19",
+          "CSS Modules, GSAP, Three.js",
+          "Figma, UX, Designsystemer, Accessibility",
         ],
       },
       {
         label: "Backend",
         items: [
-          "C# · .NET 9 · ASP.NET Core · EF Core",
-          "Node.js · Express · Socket.IO",
-          "PostgreSQL · MySQL · JWT",
+          "C#, .NET 9, ASP.NET Core, EF Core",
+          "Node.js, Express, Socket.IO",
+          "PostgreSQL, MySQL, JWT",
         ],
       },
       {
         label: "Drift og verktøy",
         items: [
-          "Docker · Fly.io",
-          "Azure · Railway · Vercel",
-          "GitHub Actions · Playwright · Git",
+          "Docker, Fly.io",
+          "Azure, Railway, Vercel",
+          "GitHub Actions, Playwright, Git",
         ],
       },
     ],
