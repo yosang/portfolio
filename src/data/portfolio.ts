@@ -55,7 +55,7 @@ export const PROFILE = {
         ") er fra 2013.",
       ],
       [
-        "Før jeg utdannet meg i backendutvikling og frontendutvikling hos Noroff, jobbet jeg på Ekornes. Der startet jeg i produksjonen med montering av møbler og programmering av Motoman industriroboter før jeg gikk videre til teamleder og avdelingsleder med personalansvar, daglig driftsplanlegging og kvalitetskontroll. Den erfaringen gjør at jeg trives når jeg får bidra med mer enn bare kode, som å sette meg inn i forretningen og driften, ta del i juridiske vurderinger (som avtaler, personvern og forretningsregler) og være med på de større valgene.",
+        "Jeg er ferdig utdannet innen backendutvikling hos Noroff og studerer nå frontendutvikling på deltid samme sted. Før studiene jobbet jeg på Ekornes, der jeg startet i produksjonen med montering av møbler og programmering av Motoman industriroboter før jeg gikk videre til teamleder og avdelingsleder med personalansvar, daglig driftsplanlegging og kvalitetskontroll. Den erfaringen gjør at jeg trives når jeg får bidra med mer enn bare kode, som å sette meg inn i forretningen og driften, ta del i juridiske vurderinger (som avtaler, personvern og forretningsregler) og være med på de større valgene.",
       ],
       [
         "Til daglig jobber jeg med IKT drift og brukerstøtte på Nord-Gudbrandsdal VGS, og ved siden av driver jeg ",
