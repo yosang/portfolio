@@ -106,37 +106,37 @@ export const ProjectCard = memo(function ProjectCard({
       >
         <div className="overflow-hidden">
           <div
-            className={`space-y-3 rounded-sm border bg-paper-raised p-5 text-sm transition-colors duration-200 ${
+            className={`space-y-4 rounded-sm border bg-paper-raised p-5 text-sm transition-colors duration-200 ${
               spotlit ? "border-ink" : "border-line"
             }`}
           >
-            <p className="leading-relaxed text-ink">{item.summary}</p>
-            <ul className="space-y-1.5 text-ink-soft">
-              {item.highlights.map((h, i) => {
-                const colonIdx = h.indexOf(":");
-                const hasLabel = colonIdx > 0 && colonIdx <= 40;
-                return (
-                  <li key={i} className="leading-relaxed">
-                    ·{" "}
-                    {hasLabel ? (
-                      <>
-                        <span className="font-medium text-ink">
-                          {h.slice(0, colonIdx + 1)}
-                        </span>
-                        {h.slice(colonIdx + 1)}
-                      </>
-                    ) : (
-                      h
-                    )}
-                  </li>
-                );
-              })}
-            </ul>
+            <p className="leading-[1.65] text-ink-soft">{item.summary}</p>
+
+            <dl className="grid gap-3 border-t border-line pt-3.5 sm:grid-cols-2">
+              <div>
+                <dt className="font-mono text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-muted">
+                  {t.roleLabel}
+                </dt>
+                <dd className="mt-0.5 text-xs leading-relaxed text-ink">
+                  {item.caseStudy.role}
+                </dd>
+              </div>
+              <div>
+                <dt className="font-mono text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-muted">
+                  {t.statusLabel}
+                </dt>
+                <dd className="mt-0.5 text-xs leading-relaxed text-ink">
+                  {item.caseStudy.status}
+                </dd>
+              </div>
+            </dl>
+
             {item.repoNote && (
-              <p className="border-t border-line pt-2.5 text-xs leading-relaxed text-ink-soft">
+              <p className="border-t border-line pt-3 text-xs leading-relaxed text-ink-muted">
                 {item.repoNote}
               </p>
             )}
+
             <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line pt-3">
               <div className="flex items-center gap-4">
                 {item.repoUrl && (
