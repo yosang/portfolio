@@ -41,7 +41,7 @@ export const PROFILE = {
     { label: "Epost", href: "mailto:yosmelchiang@gmail.com" },
   ],
   about: {
-    subtitle: "Utvikler, tidligere avdelingsleder og friluftsmenneske",
+    subtitle: "Utvikler og friluftsmenneske",
     portrait: {
       src: "/about/portrait.jpg",
       alt: "Portrett av Yosmel Chiang",
