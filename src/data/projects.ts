@@ -75,10 +75,10 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     title: "VGS Bordtennis",
     year: "Pågår",
     category: "independent",
-    ground: "#17211e",
+    ground: "#ffffff",
     media: {
       poster: "/projects/vgs-bordtennis-poster.jpg",
-      video: "/projects/vgs-bordtennis.mp4?v=qr-bottom",
+      video: "/projects/vgs-bordtennis.mp4?v=light-ground",
       alt: "Storskjerm med poengtavle og mobilvisning i VGS Bordtennis.",
     },
     tags: ["Node.js", "node:sqlite", "Socket.IO", "Pågår"],
@@ -244,7 +244,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     title: "Ember Booking",
     year: "2026",
     category: "independent",
-    ground: "#17211e",
+    ground: "#ffffff",
     media: {
       poster: "/projects/ember-poster.jpg",
       alt: "Forsiden og funksjonsoversikten på emberbooking.no.",
@@ -355,7 +355,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     title: "MedCare Clinical",
     year: "2026",
     category: "school",
-    ground: "#17211e",
+    ground: "#ffffff",
     media: {
       poster: "/projects/medcare-poster.jpg",
       alt: "Timebestilling, kalender og egne avtaler i MedCare Clinical.",
@@ -457,7 +457,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     title: "Interaktiv Portefølje",
     year: "2026",
     category: "independent",
-    ground: "#17211e",
+    ground: "#ffffff",
     media: {
       poster: "/projects/portfolio-poster.jpg",
       alt: "Fullskjerms 3D studio og KI metodikk i Interaktiv Portefølje.",
@@ -556,7 +556,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     title: "Agent Skills",
     year: "2026",
     category: "independent",
-    ground: "#17211e",
+    ground: "#ffffff",
     media: {
       poster: "/projects/skills-poster.jpg",
       alt: "Oversikt over SKILL.md moduler og AGENTS.md i github.com/yosang/skills.",
@@ -623,7 +623,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
     title: "Cinemorra",
     year: "2026",
     category: "school",
-    ground: "#17211e",
+    ground: "#ffffff",
     media: {
       poster: "/projects/cinemorra-poster.jpg",
       alt: "Filmkatalog med søk, anmeldelser og detaljvisning i Cinemorra.",

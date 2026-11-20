@@ -17,7 +17,7 @@ export function CaseStudyAskButton({ title }: { title: string }) {
         setIsOpen(false);
         sendMessage(t.askCasePrompt(title));
       }}
-      className="inline-flex items-center gap-1.5 rounded-full border border-line bg-paper-raised px-4 py-2 text-xs font-medium text-ink transition-colors hover:border-ink/35 cursor-pointer"
+      className="inline-flex items-center gap-1.5 rounded-sm border border-line bg-paper-raised px-4 py-2 text-xs font-medium text-ink transition-colors hover:border-ink cursor-pointer"
     >
       <MessageSquare className="h-3.5 w-3.5 text-ink-soft" />
       <span>{t.askCaseButton}</span>

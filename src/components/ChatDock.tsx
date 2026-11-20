@@ -17,7 +17,7 @@ import { ChatThread, Composer } from "@/components/ChatThread";
 import { portfolioAudio } from "@/lib/audioSynth";
 import { useLocalizedData } from "@/lib/i18n";
 
-const STUDIO_BG = "#17211e";
+const STUDIO_BG = "#f7f7f7";
 let sharedPortalEl: HTMLDivElement | null = null;
 const emptySubscribe = () => () => {};
 const getServerPortalSnapshot = () => null;
@@ -243,7 +243,7 @@ export function ChatDock() {
           }`}
         >
           <span
-            className={`glass-capsule pointer-events-none rounded-full px-3 py-1.5 text-xs font-medium text-ink transition-all duration-200 ${
+            className={`pointer-events-none rounded-full border border-line bg-white px-3 py-1.5 text-xs font-medium text-ink shadow-sm transition-all duration-200 ${
               isThinking
                 ? "translate-x-0 opacity-100"
                 : showMobileHint
@@ -258,17 +258,17 @@ export function ChatDock() {
             <span
               ref={floatingSlotRef}
               style={{ background: STUDIO_BG }}
-              className={`pointer-events-none relative block h-[72px] w-[64px] origin-bottom-right overflow-hidden rounded-2xl border border-white/15 shadow-[0_8px_24px_-6px_rgba(10,18,15,0.38)] transition-transform duration-300 ease-out group-hover:-translate-y-0.5 sm:h-[114px] sm:w-[100px] sm:rounded-2xl ${
-                isActiveVoice ? "scale-[1.34] sm:scale-[1.05] ring-2 ring-[#1b6b57]/80 dark:ring-[#7dc4b0]/80" : ""
+              className={`pointer-events-none relative block h-[72px] w-[64px] origin-bottom-right overflow-hidden rounded-md border border-line shadow-[0_8px_24px_-8px_rgba(26,26,26,0.18)] transition-transform duration-300 ease-out group-hover:-translate-y-0.5 sm:h-[114px] sm:w-[100px] ${
+                isActiveVoice ? "scale-[1.34] sm:scale-[1.05] ring-2 ring-ink/75" : ""
               }`}
             />
             {(voiceCapped || !voiceEnabled) && (
               <span
                 title={voiceCapped ? t.capped : t.sound}
-                className={`pointer-events-none absolute -top-1.5 -right-1.5 z-10 inline-flex h-6 w-6 items-center justify-center rounded-full border shadow-md transition-transform duration-300 ease-out group-hover:-translate-y-0.5 ${
+                className={`pointer-events-none absolute -top-1.5 -right-1.5 z-10 inline-flex h-6 w-6 items-center justify-center rounded-full border shadow-sm transition-transform duration-300 ease-out group-hover:-translate-y-0.5 ${
                   voiceCapped
-                    ? "border-amber-300/60 bg-amber-400 text-zinc-950"
-                    : "border-white/20 bg-[#141d1a] text-[#9ca0a8]"
+                    ? "border-amber-300 bg-amber-400 text-zinc-950"
+                    : "border-line bg-white text-ink-soft"
                 }`}
               >
                 <VolumeX className="h-3.5 w-3.5" />
@@ -284,22 +284,22 @@ export function ChatDock() {
             type="button"
             aria-label={t.close}
             onClick={() => setIsOpen(false)}
-            className="absolute inset-0 bg-black/35 cursor-default"
+            className="absolute inset-0 bg-black/25 cursor-default"
           />
           <aside
             ref={dialogRef}
             role="dialog"
             aria-modal="true"
             aria-label={t.title}
-            className="relative flex h-dvh max-h-dvh w-full flex-col bg-paper shadow-2xl sm:max-w-[400px] sm:border-l sm:border-line"
+            className="relative flex h-dvh max-h-dvh w-full flex-col bg-white shadow-2xl sm:max-w-[400px] sm:border-l sm:border-line"
           >
             <header className="relative z-20 flex items-center justify-between gap-3 border-b border-line px-4 py-2.5 sm:px-5">
               <div className="flex items-center gap-2.5">
                 <div
                   ref={headerSlotRef}
                   style={{ background: STUDIO_BG }}
-                  className={`relative h-14 w-14 shrink-0 overflow-hidden rounded-2xl border border-ink/10 dark:border-white/15 ${
-                    isActiveVoice ? "ring-[1.5px] ring-[#1b6b57]/75 dark:ring-[#7dc4b0]/75" : ""
+                  className={`relative h-14 w-14 shrink-0 overflow-hidden rounded-md border border-line ${
+                    isActiveVoice ? "ring-[1.5px] ring-ink/75" : ""
                   }`}
                 />
                 <span className="text-xs text-ink-soft">

@@ -262,7 +262,7 @@ export function AiPageContent() {
 
       <section
         aria-labelledby="ai-shift-heading"
-        className="overflow-hidden rounded-[14px] border border-white/12 bg-[#17211e] p-6 text-[#f7f8f8] shadow-[0_8px_28px_rgba(10,18,15,0.18)] sm:p-8"
+        className="overflow-hidden rounded-sm bg-[#1a1a1a] p-6 text-[#f7f7f7] sm:p-8"
       >
         <h2
           id="ai-shift-heading"
@@ -604,107 +604,103 @@ export function ProjectCaseStudyContent({ slug }: { slug: string }) {
   return (
     <article
       data-viewport-section={`Prosjekt: ${project.title}`}
-      className="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-16"
+      className="mx-auto max-w-5xl px-5 py-14 sm:px-8 sm:py-20"
     >
-      <div className="mb-8">
+      <div className="mb-10">
         <Link
           href="/#prosjekter"
-          className="inline-flex items-center gap-1.5 text-xs font-medium text-ink-soft transition-colors hover:text-ink"
+          className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.08em] text-ink-muted transition-colors hover:text-ink"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
           <span>{t.backToProjects}</span>
         </Link>
       </div>
 
-      <header className="space-y-6">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="rounded-md bg-paper-subtle px-2.5 py-1 font-mono text-xs font-medium text-ink">
+      <header className="space-y-8">
+        <div className="space-y-4">
+          <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.1em] text-ink-muted">
             {project.category === "independent"
               ? t.categoryIndependent
-              : t.categorySchool}
-          </span>
-          <span className="rounded-md bg-paper-subtle px-2.5 py-1 font-mono text-xs text-ink-soft">
-            {project.year}
-          </span>
-          {project.tags
-            .filter((tag) => tag !== project.year)
-            .map((tag) => (
-              <span
-                key={tag}
-                className="rounded-md border border-line px-2.5 py-0.5 font-mono text-xs text-ink-soft"
-              >
-                {tag}
-              </span>
-            ))}
-        </div>
-
-        <h1 className="font-display text-[clamp(1.875rem,3vw+1rem,3rem)] leading-[1.12] font-normal tracking-[-0.03em] text-ink">
-          {project.title}
-        </h1>
-
-        <p className="max-w-[62ch] text-lg leading-relaxed text-ink-soft">
-          {caseStudy.intro}
-        </p>
-
-        <div className="surface-card grid gap-4 rounded-xl p-4 sm:grid-cols-2 sm:px-5 sm:py-4">
-          <div>
-            <div className="font-mono text-[11px] uppercase tracking-wider text-ink-soft">
-              {t.roleLabel}
-            </div>
-            <div className="mt-1 text-sm font-medium text-ink">
-              {caseStudy.role}
-            </div>
-          </div>
-          <div>
-            <div className="font-mono text-[11px] uppercase tracking-wider text-ink-soft">
-              {t.statusLabel}
-            </div>
-            <div className="mt-1 text-sm font-medium text-ink">
-              {caseStudy.status}
-            </div>
-          </div>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3 pt-1">
-          {project.liveUrl && (
-            <a
-              href={project.liveUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-full bg-ink px-4 py-2 text-xs font-medium text-paper transition-opacity hover:opacity-88"
-            >
-              <span>{t.openLive}</span>
-              <ArrowUpRight className="h-3.5 w-3.5" />
-            </a>
-          )}
-
-          {project.repoUrl && (
-            <a
-              href={project.repoUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-full border border-line bg-paper-raised px-4 py-2 text-xs font-medium text-ink transition-colors hover:border-ink/35"
-            >
-              <span>{t.openCode}</span>
-              <ArrowUpRight className="h-3.5 w-3.5" />
-            </a>
-          )}
-
-          <CaseStudyAskButton title={project.title} />
-        </div>
-
-        {project.repoNote && (
-          <p className="text-xs leading-relaxed text-ink-soft">
-            {project.repoNote}
+              : t.categorySchool}{" "}
+            · {project.year}
           </p>
-        )}
+
+          <h1 className="font-display text-[clamp(2.25rem,4vw+1rem,3.75rem)] leading-[1.06] font-light tracking-[-0.03em] text-ink">
+            {project.title}
+          </h1>
+        </div>
+
+        <div className="grid gap-8 border-y border-line py-7 md:grid-cols-[1fr_1.4fr] md:gap-12">
+          <dl className="grid gap-5 sm:grid-cols-2 md:grid-cols-1">
+            <div>
+              <dt className="font-mono text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-muted">
+                {t.roleLabel}
+              </dt>
+              <dd className="mt-1 text-sm text-ink">{caseStudy.role}</dd>
+            </div>
+            <div>
+              <dt className="font-mono text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-muted">
+                {t.statusLabel}
+              </dt>
+              <dd className="mt-1 text-sm text-ink">{caseStudy.status}</dd>
+            </div>
+            <div>
+              <dt className="font-mono text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-muted">
+                Stack
+              </dt>
+              <dd className="mt-1 font-mono text-xs leading-relaxed text-ink-soft">
+                {project.tags.filter((tag) => tag !== project.year).join(" · ")}
+              </dd>
+            </div>
+          </dl>
+
+          <div className="space-y-6">
+            <p className="text-base leading-[1.7] text-ink-soft sm:text-[17px]">
+              {caseStudy.intro}
+            </p>
+
+            <div className="flex flex-wrap items-center gap-3">
+              {project.liveUrl && (
+                <a
+                  href={project.liveUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-sm bg-ink px-4 py-2 text-xs font-medium text-white transition-opacity hover:opacity-85"
+                >
+                  <span>{t.openLive}</span>
+                  <ArrowUpRight className="h-3.5 w-3.5" />
+                </a>
+              )}
+
+              {project.repoUrl && (
+                <a
+                  href={project.repoUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-sm border border-line bg-paper-raised px-4 py-2 text-xs font-medium text-ink transition-colors hover:border-ink"
+                >
+                  <span>{t.openCode}</span>
+                  <ArrowUpRight className="h-3.5 w-3.5" />
+                </a>
+              )}
+
+              <CaseStudyAskButton title={project.title} />
+            </div>
+
+            {project.repoNote && (
+              <p className="text-xs leading-relaxed text-ink-muted">
+                {project.repoNote}
+              </p>
+            )}
+          </div>
+        </div>
       </header>
 
-      <div className="mt-10 sm:mt-12">
+      <div className="mt-12 sm:mt-16">
         <ProjectMedia item={project} priority linkToCase={false} fullWidth />
       </div>
 
-      <div className="mt-12 space-y-12 sm:mt-16 sm:space-y-14">
+      <div className="mt-16 space-y-14 sm:mt-20 sm:space-y-16">
         {firstTwoSections.map((sec, idx) => (
           <CaseSection
             key={sec.title}
@@ -716,15 +712,12 @@ export function ProjectCaseStudyContent({ slug }: { slug: string }) {
       </div>
 
       {caseStudy.mobileGallery && caseStudy.mobileGallery.length > 0 && (
-        <figure className="mt-12 sm:mt-16">
-          <div
-            style={{ backgroundColor: project.ground }}
-            className="rounded-[14px] border border-line p-4 sm:p-8"
-          >
-            <div className="grid gap-5 sm:grid-cols-3 sm:gap-6">
+        <figure className="mt-16 sm:mt-20">
+          <div className="rounded-sm border border-line bg-white p-5 sm:p-10">
+            <div className="grid gap-6 sm:grid-cols-3 sm:gap-8">
               {caseStudy.mobileGallery.map((img) => (
-                <div key={img.src} className="space-y-2.5">
-                  <div className="overflow-hidden rounded-xl border border-white/14 bg-[#141d1a] shadow-lg">
+                <div key={img.src} className="space-y-3">
+                  <div className="overflow-hidden rounded-sm border border-line bg-[#f7f7f7]">
                     <Image
                       src={img.src}
                       alt={img.alt}
@@ -734,7 +727,7 @@ export function ProjectCaseStudyContent({ slug }: { slug: string }) {
                       className="h-auto w-full object-cover select-none"
                     />
                   </div>
-                  <p className="px-0.5 text-xs leading-relaxed text-zinc-300">
+                  <p className="text-xs leading-relaxed text-ink-soft">
                     {img.caption}
                   </p>
                 </div>
@@ -745,12 +738,12 @@ export function ProjectCaseStudyContent({ slug }: { slug: string }) {
       )}
 
       {remainingSections.length > 0 && (
-        <div className="mt-12 space-y-12 sm:mt-16 sm:space-y-14">
+        <div className="mt-16 space-y-14 sm:mt-20 sm:space-y-16">
           {remainingSections.map((sec, idx) => {
             const sectionIndex = idx + 2;
             const wideTargetIdx = caseStudy.wideImage?.afterSection ?? 2;
             return (
-              <div key={sec.title} className="space-y-12 sm:space-y-14">
+              <div key={sec.title} className="space-y-14 sm:space-y-16">
                 <CaseSection
                   section={sec}
                   sectionIndex={sectionIndex}
@@ -759,11 +752,8 @@ export function ProjectCaseStudyContent({ slug }: { slug: string }) {
 
                 {sectionIndex === wideTargetIdx && caseStudy.wideImage && (
                   <figure className="space-y-3">
-                    <div
-                      style={{ backgroundColor: project.ground }}
-                      className="overflow-hidden rounded-[14px] border border-line p-3 sm:p-6"
-                    >
-                      <div className="overflow-hidden rounded-xl border border-white/14">
+                    <div className="overflow-hidden rounded-sm border border-line bg-white p-4 sm:p-8">
+                      <div className="overflow-hidden rounded-sm border border-line">
                         <Image
                           src={caseStudy.wideImage.src}
                           alt={caseStudy.wideImage.alt}
@@ -774,7 +764,7 @@ export function ProjectCaseStudyContent({ slug }: { slug: string }) {
                         />
                       </div>
                     </div>
-                    <figcaption className="px-1 text-xs leading-relaxed text-ink-soft">
+                    <figcaption className="text-xs leading-relaxed text-ink-muted">
                       {caseStudy.wideImage.caption}
                     </figcaption>
                   </figure>
@@ -787,36 +777,36 @@ export function ProjectCaseStudyContent({ slug }: { slug: string }) {
 
       <nav
         aria-label={t.moreProjects}
-        className="mt-16 grid gap-4 border-t border-line pt-10 sm:mt-20 sm:grid-cols-2"
+        className="mt-20 grid gap-5 border-t border-line pt-12 sm:mt-24 sm:grid-cols-2"
       >
         <Link
           href={`/prosjekter/${prevProject.slug}`}
-          className="surface-card group flex flex-col justify-between rounded-xl p-5 transition-colors hover:border-ink/30"
+          className="surface-card group flex flex-col justify-between rounded-sm p-6 transition-colors hover:border-ink/40"
         >
-          <span className="inline-flex items-center gap-1 font-mono text-xs text-ink-soft">
+          <span className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.08em] text-ink-muted">
             <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
             <span>{t.prevProject}</span>
           </span>
-          <span className="mt-2 font-display text-lg font-medium text-ink">
+          <span className="mt-3 font-display text-xl font-normal tracking-[-0.02em] text-ink">
             {prevProject.title}
           </span>
-          <span className="mt-0.5 text-xs text-ink-soft line-clamp-1">
+          <span className="mt-1 text-xs text-ink-soft line-clamp-1">
             {prevProject.subtitle}
           </span>
         </Link>
 
         <Link
           href={`/prosjekter/${nextProject.slug}`}
-          className="surface-card group flex flex-col justify-between rounded-xl p-5 text-left transition-colors hover:border-ink/30 sm:items-end sm:text-right"
+          className="surface-card group flex flex-col justify-between rounded-sm p-6 text-left transition-colors hover:border-ink/40 sm:items-end sm:text-right"
         >
-          <span className="inline-flex items-center gap-1 font-mono text-xs text-ink-soft">
+          <span className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.08em] text-ink-muted">
             <span>{t.nextProject}</span>
             <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
           </span>
-          <span className="mt-2 font-display text-lg font-medium text-ink">
+          <span className="mt-3 font-display text-xl font-normal tracking-[-0.02em] text-ink">
             {nextProject.title}
           </span>
-          <span className="mt-0.5 text-xs text-ink-soft line-clamp-1">
+          <span className="mt-1 text-xs text-ink-soft line-clamp-1">
             {nextProject.subtitle}
           </span>
         </Link>

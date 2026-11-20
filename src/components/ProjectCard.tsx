@@ -29,6 +29,11 @@ export const ProjectCard = memo(function ProjectCard({
   const panelId = `work-${item.slug}`;
   const caseHref = `/prosjekter/${item.slug}`;
 
+  const stackLabel = item.tags
+    .filter((tag) => tag !== item.year)
+    .slice(0, 3)
+    .join(" · ");
+
   return (
     <article
       data-project-slug={item.slug}
@@ -38,18 +43,18 @@ export const ProjectCard = memo(function ProjectCard({
     >
       <ProjectMedia item={item} priority={priority} />
 
-      <div className="mt-3.5 space-y-1 px-0.5">
+      <div className="mt-4 space-y-1.5">
         <div className="flex items-baseline justify-between gap-3">
-          <h3 className="font-display text-lg font-medium tracking-[-0.015em] text-ink">
+          <h3 className="font-display text-xl font-normal tracking-[-0.02em] text-ink">
             <Link
               href={caseHref}
-              className="transition-opacity hover:opacity-75"
+              className="transition-opacity hover:opacity-65"
             >
               {item.title}
             </Link>
           </h3>
 
-          <div className="flex shrink-0 items-center gap-3 text-xs font-medium text-ink-soft">
+          <div className="flex shrink-0 items-center gap-3.5 text-xs text-ink-muted">
             {item.liveUrl && (
               <a
                 href={item.liveUrl}
@@ -58,17 +63,6 @@ export const ProjectCard = memo(function ProjectCard({
                 className="inline-flex items-center gap-0.5 transition-colors hover:text-ink"
               >
                 <span>{t.live}</span>
-                <ArrowUpRight className="h-3 w-3" />
-              </a>
-            )}
-            {item.repoUrl && (
-              <a
-                href={item.repoUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-0.5 transition-colors hover:text-ink"
-              >
-                <span>{t.source}</span>
                 <ArrowUpRight className="h-3 w-3" />
               </a>
             )}
@@ -95,20 +89,25 @@ export const ProjectCard = memo(function ProjectCard({
         >
           {item.subtitle}
         </Link>
+
+        <div className="flex items-baseline justify-between gap-4 border-t border-line pt-2.5 font-mono text-[11px] uppercase tracking-[0.06em] text-ink-muted">
+          <span>{item.year}</span>
+          <span className="truncate text-right">{stackLabel}</span>
+        </div>
       </div>
 
       <div
         id={panelId}
         className={`grid transition-[grid-template-rows,margin] duration-200 ease-out ${
           open
-            ? "mt-3.5 grid-rows-[1fr]"
+            ? "mt-4 grid-rows-[1fr]"
             : "mt-0 grid-rows-[0fr] pointer-events-none"
         }`}
       >
         <div className="overflow-hidden">
           <div
-            className={`space-y-3 rounded-xl border bg-paper-raised p-4 text-sm transition-colors duration-200 ${
-              spotlit ? "border-trail/65" : "border-line"
+            className={`space-y-3 rounded-sm border bg-paper-raised p-5 text-sm transition-colors duration-200 ${
+              spotlit ? "border-ink" : "border-line"
             }`}
           >
             <p className="leading-relaxed text-ink">{item.summary}</p>
@@ -138,18 +137,20 @@ export const ProjectCard = memo(function ProjectCard({
                 {item.repoNote}
               </p>
             )}
-            <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
-              <div className="flex flex-wrap gap-1.5">
-                {item.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="rounded-md bg-paper-subtle px-2 py-0.5 font-mono text-[11px] text-ink-soft"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
+            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line pt-3">
               <div className="flex items-center gap-4">
+                {item.repoUrl && (
+                  <a
+                    href={item.repoUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    tabIndex={open ? undefined : -1}
+                    className="inline-flex items-center gap-0.5 text-xs font-medium text-ink-soft underline underline-offset-4 transition-colors hover:text-ink"
+                  >
+                    <span>{t.source}</span>
+                    <ArrowUpRight className="h-3 w-3" />
+                  </a>
+                )}
                 <button
                   type="button"
                   tabIndex={open ? undefined : -1}
@@ -158,14 +159,14 @@ export const ProjectCard = memo(function ProjectCard({
                 >
                   {t.askAbout}
                 </button>
-                <Link
-                  href={caseHref}
-                  tabIndex={open ? undefined : -1}
-                  className="text-xs font-medium text-ink underline underline-offset-4 hover:opacity-75"
-                >
-                  {t.readCaseStudy} →
-                </Link>
               </div>
+              <Link
+                href={caseHref}
+                tabIndex={open ? undefined : -1}
+                className="text-xs font-medium text-ink underline underline-offset-4 hover:opacity-75"
+              >
+                {t.readCaseStudy} →
+              </Link>
             </div>
           </div>
         </div>

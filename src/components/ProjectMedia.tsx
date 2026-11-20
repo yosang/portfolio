@@ -120,7 +120,7 @@ export function ProjectMedia({
       {linkToCase && (
         <span
           aria-hidden="true"
-          className="work-stage__pill pointer-events-none absolute right-3 bottom-3 z-10 inline-flex items-center gap-1 rounded-full border border-white/15 bg-[#181514]/88 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm"
+          className="work-stage__pill pointer-events-none absolute right-3 bottom-3 z-10 inline-flex items-center gap-1.5 rounded-sm bg-[#1a1a1a]/92 px-3 py-1.5 text-xs font-medium text-white"
         >
           <span>{t.openCase}</span>
           <ArrowRight className="h-3.5 w-3.5" />
@@ -137,7 +137,7 @@ export function ProjectMedia({
     <Link
       href={`/prosjekter/${item.slug}`}
       aria-label={`${t.openCase}: ${item.title}`}
-      className="block rounded-[14px]"
+      className="block rounded-[4px]"
     >
       {stageContent}
     </Link>

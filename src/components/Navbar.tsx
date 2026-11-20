@@ -3,13 +3,10 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Moon, Sun } from "lucide-react";
-import { useTheme } from "@/components/ThemeProvider";
 import { useLocalizedData } from "@/lib/i18n";
 
 export function Navbar() {
   const pathname = usePathname();
-  const { theme, toggleTheme } = useTheme();
   const { locale, toggleLocale, ui: UI } = useLocalizedData();
   const [projectsActive, setProjectsActive] = useState(false);
 
@@ -73,10 +70,10 @@ export function Navbar() {
   ];
 
   return (
-    <header className="sticky top-3 sm:top-4 z-40 mx-auto w-full max-w-5xl px-3 sm:px-6 pointer-events-none">
-      <div className="glass-capsule pointer-events-auto mx-auto flex w-fit items-center justify-center gap-1.5 rounded-full px-2.5 py-1.5 sm:gap-2 sm:px-3.5 sm:py-2">
-        <nav className="flex items-center gap-0.5 sm:gap-1.5">
-          <ul className="flex items-center gap-0.5 sm:gap-1">
+    <header className="sticky top-0 z-40 border-b border-line bg-white/92 backdrop-blur-md">
+      <div className="mx-auto flex h-16 max-w-5xl items-center justify-center px-5 sm:h-[72px] sm:px-8">
+        <nav className="flex items-center gap-4 sm:gap-7">
+          <ul className="flex items-center gap-4 sm:gap-7">
             {links.map((link) => (
               <li key={link.href}>
                 <Link
@@ -95,10 +92,10 @@ export function Navbar() {
                       document.getElementById("prosjekter")?.scrollIntoView({ behavior: "smooth" });
                     }
                   }}
-                  className={`inline-block whitespace-nowrap rounded-full px-2 py-1 text-[13px] font-medium transition-colors sm:px-3 sm:text-sm ${
+                  className={`relative inline-block whitespace-nowrap py-1 text-[13px] transition-colors sm:text-sm ${
                     link.active
-                      ? "bg-ink text-paper"
-                      : "text-ink-soft hover:text-ink"
+                      ? "font-medium text-ink after:absolute after:inset-x-0 after:-bottom-0.5 after:h-px after:bg-ink"
+                      : "font-normal text-ink-soft hover:text-ink"
                   }`}
                 >
                   {link.label}
@@ -107,26 +104,16 @@ export function Navbar() {
             ))}
           </ul>
 
-          <span className="mx-0.5 h-3.5 w-px shrink-0 bg-line sm:mx-1" />
+          <span className="h-3.5 w-px shrink-0 bg-line" />
 
           <button
             type="button"
             onClick={toggleLocale}
             aria-label={UI.langLabel}
             title={UI.langLabel}
-            className="shrink-0 rounded-full px-2 py-1 font-mono text-[11px] font-semibold tracking-wider text-ink-soft transition-colors hover:text-ink cursor-pointer"
+            className="shrink-0 font-mono text-[11px] font-semibold tracking-[0.08em] text-ink-soft transition-colors hover:text-ink cursor-pointer"
           >
             {locale === "no" ? "EN" : "NO"}
-          </button>
-
-          <button
-            type="button"
-            onClick={toggleTheme}
-            aria-label={UI.themeLabel}
-            title={UI.themeLabel}
-            className="shrink-0 rounded-full p-1.5 text-ink-soft transition-colors hover:text-ink cursor-pointer"
-          >
-            {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </button>
         </nav>
       </div>

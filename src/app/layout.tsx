@@ -141,7 +141,6 @@ export default function RootLayout({
   return (
     <html
       lang="nb"
-      data-theme="light"
       suppressHydrationWarning
       className={`${geistSans.variable} ${hostGrotesk.variable} ${geistMono.variable} antialiased`}
     >
@@ -158,7 +157,7 @@ export default function RootLayout({
         />
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{var t=localStorage.getItem("portfolio-theme");if(t==="dark"){document.documentElement.dataset.theme="dark"}var l=localStorage.getItem("portfolio-locale");if(!l&&typeof navigator!=="undefined"){var ls=navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||"nb"];if(!ls.some(function(x){return/^(nb|nn|no|da|sv)\\b/i.test(String(x).trim())})){l="en"}}if(l==="en"){document.documentElement.lang="en"}if("scrollRestoration"in history){history.scrollRestoration="manual"}if(location.hash!=="#prosjekter"){window.scrollTo(0,0)}}catch(e){}`,
+            __html: `try{var l=localStorage.getItem("portfolio-locale");if(!l&&typeof navigator!=="undefined"){var ls=navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||"nb"];if(!ls.some(function(x){return/^(nb|nn|no|da|sv)\\b/i.test(String(x).trim())})){l="en"}}if(l==="en"){document.documentElement.lang="en"}if("scrollRestoration"in history){history.scrollRestoration="manual"}if(location.hash!=="#prosjekter"){window.scrollTo(0,0)}}catch(e){}`,
           }}
         />
       </head>

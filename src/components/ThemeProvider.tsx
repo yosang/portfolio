@@ -8,19 +8,15 @@ import React, {
   useSyncExternalStore,
 } from "react";
 
-type Theme = "dark" | "light";
 export type Locale = "no" | "en";
 
-interface ThemeContextValue {
-  theme: Theme;
-  toggleTheme: () => void;
+interface LocaleContextValue {
   locale: Locale;
   setLocale: (next: Locale) => void;
   toggleLocale: () => void;
 }
 
 const listeners = new Set<() => void>();
-let cachedTheme: Theme | null = null;
 let cachedLocale: Locale | null = null;
 
 function emitChange() {
@@ -32,18 +28,6 @@ function subscribe(listener: () => void) {
   return () => {
     listeners.delete(listener);
   };
-}
-
-function getThemeSnapshot(): Theme {
-  if (cachedTheme === null) {
-    cachedTheme =
-      localStorage.getItem("portfolio-theme") === "dark" ? "dark" : "light";
-  }
-  return cachedTheme;
-}
-
-function getServerThemeSnapshot(): Theme {
-  return "light";
 }
 
 function getLocaleSnapshot(): Locale {
@@ -68,20 +52,13 @@ function getServerLocaleSnapshot(): Locale {
   return "no";
 }
 
-const ThemeContext = createContext<ThemeContextValue>({
-  theme: "light",
-  toggleTheme: () => {},
+const LocaleContext = createContext<LocaleContextValue>({
   locale: "no",
   setLocale: () => {},
   toggleLocale: () => {},
 });
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const theme = useSyncExternalStore(
-    subscribe,
-    getThemeSnapshot,
-    getServerThemeSnapshot
-  );
   const locale = useSyncExternalStore(
     subscribe,
     getLocaleSnapshot,
@@ -89,20 +66,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   );
 
   useEffect(() => {
-    document.documentElement.dataset.theme = theme;
-  }, [theme]);
-
-  useEffect(() => {
     document.documentElement.lang = locale === "en" ? "en" : "nb";
   }, [locale]);
-
-  const toggleTheme = useCallback(() => {
-    const next: Theme = getThemeSnapshot() === "dark" ? "light" : "dark";
-    cachedTheme = next;
-    localStorage.setItem("portfolio-theme", next);
-    document.documentElement.dataset.theme = next;
-    emitChange();
-  }, []);
 
   const setLocale = useCallback((next: Locale) => {
     cachedLocale = next;
@@ -120,19 +85,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <ThemeContext.Provider
-      value={{ theme, toggleTheme, locale, setLocale, toggleLocale }}
-    >
+    <LocaleContext.Provider value={{ locale, setLocale, toggleLocale }}>
       {children}
-    </ThemeContext.Provider>
+    </LocaleContext.Provider>
   );
 }
 
-export function useTheme() {
-  return useContext(ThemeContext);
-}
-
 export function useLocale() {
-  const { locale, setLocale, toggleLocale } = useContext(ThemeContext);
-  return { locale, setLocale, toggleLocale };
+  return useContext(LocaleContext);
 }
