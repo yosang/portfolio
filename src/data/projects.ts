@@ -207,14 +207,9 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
         {
           title: "Resultater etter tre dager i kantina",
           paragraphs: [
-            "På de tre første skoledagene gikk aktiviteten fra 4 kamper mandag til 26 tirsdag og 66 onsdag, med 96 fullførte kamper og 14 timer aktiv bevegelse blant elevene. Mellom kl. 11 og 13 på onsdag var bordet i spill 55 av 60 minutter hver time (93 prosent av tiden), med bare 13 sekunders pause mellom parene.",
-            "Målet var et opplegg som samler skolen på tvers og styrer seg selv i hverdagen uten dommer eller ekstraarbeid for ansatte. Uten beskjed fra voksne la elevene selv om fra tre sett til ett sett til 21 poeng på onsdag for å få unna køen.",
-          ],
-          bullets: [
-            "Ett felles miljø på tvers: Alle 27 aktive spillere (8 av 10 registrerte elever) henger sammen i ett nettverk på 48 ulike par uten lukkede klikker, inkludert kamper mot lærere i kantina.",
-            "Spilleglede utover poengkvoten: Mellom 60 og 80 prosent kom tilbake dagen etter, og elevene spilte 12 ekstra kamper rent for moro skyld etter at dagens kvote for poeng var fylt opp.",
-            "96 prosent selvstyrt ved bordet: Begge bekrefter stillingen på mobilen på 4 sekunder før rekkerten går videre, og i nær 3 av 10 kamper er det den som tapte som legger inn resultatet.",
-            "Veien videre i kantina: Vi har lagt inn timeplanstyring og enkel moderering av kallenavn. Neste steg er et bord nummer 2 i lunsjen, faste ukesrunder der elevene stemmer frem format, og lagkamp mellom klasser.",
+            "På de tre første skoledagene gikk aktiviteten fra 4 kamper mandag til 26 tirsdag og 66 onsdag, med 96 fullførte kamper og 14 timer aktiv bevegelse blant elevene. Mellom kl. 11 og 13 på onsdag var bordet i spill 55 av 60 minutter hver time (93 prosent av tiden), med bare 13 sekunders pause mellom parene. Uten beskjed fra voksne la elevene selv om fra tre sett til ett sett til 21 poeng på onsdag for å få unna køen.",
+            "Alle de 27 aktive spillerne (8 av 10 registrerte elever) spilte på tvers av hverandre i 48 ulike par, inkludert kamper mot lærere i kantina. Mellom 60 og 80 prosent kom tilbake dagen etter, og elevene spilte 12 ekstra kamper rent for moro skyld etter at dagens poengkvote var fylt opp.",
+            "Nesten alt styrte seg selv ved bordet uten dommer (96 prosent av kampene). Begge bekrefter stillingen på mobilen på rundt 4 sekunder før rekkerten går videre, og i nær 3 av 10 kamper var det den som tapte som la inn resultatet. Etter første uke la vi inn timeplanstyring og enkel moderering av kallenavn, og neste steg er et bord nummer to i lunsjen, faste ukesrunder der elevene stemmer frem format, og lagkamp mellom klassene.",
           ],
           tour: {
             audioSrc: "/audio/cases/vgs-bordtennis/5.mp3",
