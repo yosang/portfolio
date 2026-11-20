@@ -550,7 +550,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
           title: "De tre modulene",
           paragraphs: [
             "Repoet er delt inn i tre moduler slik at hver oppgave kun laster inn de reglene som faktisk trengs.",
-            "Modulen ui-craft bygger på Matt D. Smiths 3P rammeverk (Purpose, Principles, Personality) og 60-30-10 fargeregelen. Den kutter ut tilfeldige glødeeffekter og overdimensjonerte kort til fordel for matte flater, rolige farger, flytende typografi (Utopia.fyi) med maks 62 tegn per linje, et 8pt avstandssystem og medier som pauser utenfor synsfeltet.",
+            "Modulen ui-craft bygger på Matt D. Smiths 3P rammeverk (Purpose, Principles, Personality) og galleriprinsippet der grensesnittet er fargeløst og produktene står på rene hvite flater med bevisste mørke avbrekksbånd. Den kutter ut glødeeffekter, kortskygger, glasspiller og trege sideoverganger til fordel for stramme 2px til 6px hjørner, lette overskrifter, flytende typografi (Utopia.fyi) med maks 62 tegn per linje og medier som pauser utenfor synsfeltet.",
             "Modulen lean-architecture holder konteksten kort og krever at datamodell og plattformkrav låses på papir og i AGENTS.md før kode. Den bygger på Dan Norths Spike and Stabilize, en felles kilde for delte data, små og trygge commits uten å blande refaktorering og ny funksjonalitet, tidlig opprydding i code smells og dokumentasjon av tause produksjonsfeller i README.md.",
             "Modulen natural-copy fjerner typiske KI uvaner i både norsk og engelsk tekst, som tankestreker, midtprikker, unødvendige bindestreker, punktliste maler, tomme klisjeer og stive oversettelser. Den krever også at prosjekttekster og søknader starter med den menneskelige motivasjonen før tekniske detaljer.",
           ],
