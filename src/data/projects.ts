@@ -148,13 +148,8 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
           title: "Lavterskel gjestespill og rask kampflyt ved bordet",
           paragraphs: [
             "Hele poenget med løsningen er at elevene skal spille bordtennis fremfor å stå og trykke på en skjerm. Derfor er flyten rundt selve bordet lagt opp slik at telefonen kun brukes i noen få sekunder før og etter kampen.",
-            "Når to spillere skanner QR koden ved samme bord innen 45 sekunder, kobles de sammen og kampen starter automatisk. Telefonen legges i lomma mens settene spilles, og etterpå trykker den ene på ferdige hurtigknapper for resultatet (1-0, 2-0 eller 2-1) mens motstanderen bekrefter med ett trykk.",
-          ],
-          bullets: [
-            "Gjestespill med poeng på vent: Elever uten konto kommer rett i kamp som gjest og kan samle opptil 3 seire på vent, som flyttes automatisk over når de oppretter profil etterpå.",
-            "Raskt bytte ved bordet: Bordet frigjøres straks sluttstillingen sendes inn og husker vinneren i 20 minutter, slik at neste utfordrer kan skanne og trykke Spill mot vinneren direkte.",
-            "Sesjonsbro mellom kamera og hjemskjerm (PWA): Siden iOS skiller lagring mellom Safari og apper på hjemskjermen, synkroniseres økten via manifestet når elevene skanner QR koden med kameraet.",
-            "Sperrer mot juks og Boss i kantina: Daglige kvoter per spillerpar og automatisk varsel ved unaturlig raske kamper hindrer poengjuks, mens lærere deltar som Boss uten å ta plasser på elevtabellen.",
+            "Når to spillere skanner QR koden ved samme bord innen 45 sekunder, kobles de sammen og kampen starter automatisk. Telefonen legges i lomma mens settene spilles, og etterpå trykker den ene på ferdige hurtigknapper for resultatet (1-0, 2-0 eller 2-1) mens motstanderen bekrefter med ett trykk. Bordet frigjøres med en gang og husker vinneren i 20 minutter, så neste utfordrer kan skanne og trykke Spill mot vinneren direkte.",
+            "Elever uten konto kommer rett i kamp som gjest og kan samle opptil 3 seire på vent, som flyttes automatisk over når de oppretter profil etterpå. Siden iOS skiller lagring mellom Safari og apper på hjemskjermen (PWA), synkroniseres økten via manifestet når elevene skanner med kameraet. Daglige kvoter per spillerpar og varsel ved unaturlig raske kamper stopper poengjuks, mens lærere deltar som Boss uten å ta plasser på elevtabellen.",
           ],
           tour: {
             audioSrc: "/audio/cases/vgs-bordtennis/1.mp3",
@@ -179,11 +174,8 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
           paragraphs: [
             "En av de mest lærerike tekniske utfordringene dukket opp da poengtavlen (/kiosk) skulle kjøre hele skoledagen gjennom Infoskjermen.no på eldre TV skjermer fra Samsung og LG. På vanlig mobil og PC fungerte alt på første forsøk, men inne i låste TV nettlesere oppførte visningen seg helt annerledes.",
             "I slike TV nettlesere krever systemet et fysisk brukerklikk før en <video> får spille. Kaller man video.play() i en iframe uten klikk, kaster ikke nettleseren en feilmelding, men lar bare promiset bli stående uavklart for alltid slik at videoen fryser på første bilde. I tillegg struper Chromium timere i kryssdomene iframes til hele minuttgrenser, slik at vanlig sekundbasert polling hoppes over.",
-          ],
-          bullets: [
-            "24 fps animert WebP fremfor <video>: Alle animasjoner på storskjermen lages med ffmpeg som 24 fps animert WebP i et <picture> element med GIF som reserve.",
-            "Tre synkroniserte visningslag og TV testing: Storskjermen leveres først som ferdig HTML fra serveren (SSR), oppgraderes til sanntids Socket.IO i moderne nettlesere, og har en egen klient i ren ES5 (med 3 sekunders polling og måling av faktisk medgått tid) for eldre TV skjermer. Reservevisningene kan testes direkte i vanlig nettleser med ?mode=es5 og ?mode=ssr.",
-            "Diagnosestempel og tidsstyrt dvale: Nederst til høyre viser skjermen aktiv modus (LIVE, POLL, ES5 eller SSR) og laster seg selv inn på nytt automatisk når en ny versjon rulles ut. Utenfor skolens åpningstid går storskjermen i dvale og våkner igjen ved skolestart neste morgen.",
+            "Løsningen ble å lage alle animasjoner på storskjermen med ffmpeg som 24 fps animert WebP i et <picture> element med GIF som reserve. Selve visningen leveres først som ferdig HTML fra serveren (SSR), oppgraderes til sanntids Socket.IO i moderne nettlesere, og har en egen klient i ren ES5 (med 3 sekunders polling og måling av faktisk medgått tid) for eldre TV skjermer. Reservevisningene kan testes direkte i vanlig nettleser med ?mode=es5 og ?mode=ssr.",
+            "Nederst til høyre viser skjermen aktiv modus (LIVE, POLL, ES5 eller SSR) og laster seg selv inn på nytt automatisk når en ny versjon rulles ut. Utenfor skolens åpningstid går storskjermen i dvale og våkner igjen ved skolestart neste morgen.",
           ],
           tour: {
             audioSrc: "/audio/cases/vgs-bordtennis/3.mp3",
@@ -274,11 +266,8 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
           title: "Målgruppe og innsikt i hvem vi bygger for",
           paragraphs: [
             "Da Kim og jeg skulle forme merkevaren og budskapet for Ember Booking, startet arbeidet med å definere hvem den ideelle kunden vår er, og like viktig hvem vi venter med i første omgang. Målgruppen vår er travle eiere av små og mellomstore bedrifter som har mange baller i luften, og som vil bruke minst mulig tid på administrasjon og mest mulig tid på kundene sine, kampanjer og drift.",
-            "To konkrete kundeprofiler og smertepunkter la føringene for både posisjonering, tekst og struktur på nettsiden:",
-          ],
-          bullets: [
-            "Ronny (Honndalen Gym og Sauna): Driver treningsstudio, gruppetimer og badstue. Før Ember gikk det med opptil en hel arbeidsdag i måneden på å hente ut rapporter, kryssjekke Vipps betalinger i Excel og føre bilag manuelt inn i Tripletex.",
-            "Deving (ATV utleie og naturopplevelser på Vestlandet): Frustrert over etablerte utleiesystemer (som Periode.no, Gibbs og Sharefox) som markedsfører seg som enkle, men som i praksis krever lang opplæring og er fulle av funksjoner bedriften ikke trenger.",
+            "To konkrete kunder la føringene for både posisjonering, tekst og struktur på nettsiden. Ronny på Honndalen Gym og Sauna driver treningsstudio, gruppetimer og badstue, og brukte tidligere opptil en hel arbeidsdag i måneden på å hente ut rapporter, kryssjekke Vipps betalinger i Excel og føre bilag manuelt inn i Tripletex.",
+            "Deving innen ATV utleie og naturopplevelser på Vestlandet var på sin side lei av etablerte utleiesystemer (som Periode.no, Gibbs og Sharefox) som markedsfører seg som enkle, men som i praksis krever lang opplæring og er fulle av funksjoner bedriften ikke trenger.",
           ],
           tour: {
             audioSrc: "/audio/cases/ember-booking/0.mp3",
@@ -289,12 +278,8 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
         {
           title: "Posisjonering og tre konkrete løfter",
           paragraphs: [
-            "Innsikten fra bedriftseierne gjorde det enkelt å skrelle bort vag markedsføringssjargong. Når noen spør hva som skiller Ember Booking fra eldre systemer, koker posisjoneringen og copyen på nettsiden ned til tre konkrete løfter:",
-          ],
-          bullets: [
-            "Vipps registrering på sekunder uten lange skjemaer: Mange systemer tvinger gjesten til å fylle ut lange skjemaer og opprette passord bare for å bestille en time. Med Vipps eller kort (Stripe og PayPal) er kunden registrert og ferdig betalt på sekunder.",
-            "Ferdig avstemt regnskap: Alle transaksjoner avstemmes automatisk mot Tripletex og Fiken, og systemet sender ut SMS og epost ved hver reservasjon. Bedriftseieren trenger kun å se over tallene i stedet for å føre manuelt.",
-            "Klar til bruk på en dag uten opplæringskurs: Systemet inneholder kun funksjonaliteten utleiebedrifter faktisk bruker i hverdagen, uten overflødige moduler som gjør oppsettet tungvint.",
+            "Innsikten fra bedriftseierne gjorde det enkelt å skrelle bort vag markedsføringssjargong. Der eldre systemer ofte tvinger gjesten gjennom lange skjemaer og passordopprettelse bare for å bestille en time, lar Ember kunden registrere seg og betale på sekunder med Vipps eller kort (Stripe og PayPal).",
+            "Samtidig avstemmes alle transaksjoner automatisk mot Tripletex og Fiken mens SMS og epost går ut ved hver reservasjon, slik at bedriftseieren bare trenger å se over tallene. Hele systemet er strippet ned til funksjonene utleiebedrifter faktisk bruker i hverdagen, og er klart til bruk på en dag uten opplæringskurs.",
           ],
           tour: {
             audioSrc: "/audio/cases/ember-booking/1.mp3",
@@ -305,14 +290,8 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
         {
           title: "Informasjonsarkitektur og tillitsreisen på emberbooking.no",
           paragraphs: [
-            "Selve oppbyggingen av emberbooking.no (bygget i Next.js 16) er strukturert for å svare på spørsmålene og tvilen en bedriftseier sitter med før de tar steget og bytter system:",
-          ],
-          bullets: [
-            "Over folden (Hero): Tydelig verdiforslag ('Ett bookingsystem for alle dine ressurser'), kort forklaring av hvordan booking, betaling og regnskap henger sammen, primær handlingsknapp og lav terskel ('Ingen bindingstid').",
-            "Hvorfor Ember (3 raske kort under Hero): Viser forskjellen fra tunge konkurrenter ved første øyekast med hurtig Vipps utsjekk, spisset funksjonalitet og automatisert arbeidshverdag.",
-            "Fra smertepunkt til løsning: Setter først ord på frustrasjonen med Excel ark, manuell eksport og import og tungvinte systemer, før løsningen presenteres med automatisk regnskap, rask betaling og ressursstyring.",
-            "Bruksområder og sosial tillit (Social Proof): Bransjekort (som badstue med planlagt styring av ovn og belysning, treningssenter og utleie av ATV og bil) og kundehistorier fra reelle pilotkunder som sparer 5 til 7 timer i måneden er spredt naturlig nedover siden.",
-            "Åpne priser og FAQ: Tydelige pakker uten skjulte kostnader og svar på de vanligste spørsmålene om regnskapsintegrasjon, oppsett og bindingstid før avsluttende handlingsknapp.",
+            "Selve oppbyggingen av emberbooking.no (bygget i Next.js 16) er lagt opp for å svare på spørsmålene og tvilen en bedriftseier sitter med før de bytter system. Øverst møter besøkende budskapet Ett bookingsystem for alle dine ressurser, en kort forklaring av hvordan booking, betaling og regnskap henger sammen, en tydelig handlingsknapp og lav terskel uten bindingstid.",
+            "Rett under viser tre enkle kort forskjellen fra tyngre konkurrenter, før siden setter ord på frustrasjonen med Excel ark og manuell eksport og presenterer den automatiserte løsningen. Nedover siden ligger bransjekort (som badstue med planlagt styring av ovn og belysning, treningssenter og utleie av ATV og bil) sammen med kundehistorier fra pilotkunder som sparer 5 til 7 timer i måneden, før åpne priser og vanlige spørsmål runder av før siste handlingsknapp.",
           ],
           tour: {
             audioSrc: "/audio/cases/ember-booking/2.mp3",
@@ -377,11 +356,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
           paragraphs: [
             "Før jeg skrev en eneste linje C#, brukte jeg de første dagene på å gå gjennom kravspesifikasjonen, repetere normalisering og tegne ut ER diagrammet i tredje normalform (3NF). Blant annet skilte jeg ut byer (City), kategorier og statuser (Status) som egne tabeller knyttet til klinikker og timeavtaler.",
             "Da modellene og relasjonene var satt opp i Entity Framework Core, ville jeg være helt sikker på at koden i C# ga den databasestrukturen jeg hadde planlagt. Jeg kjørte derfor mysqldump fra MySQL og importerte skjemaet tilbake i dbdiagram.io for å kontrollere at tabeller, fremmednøkler og unike indekser stemte overens med ER diagrammet.",
-          ],
-          bullets: [
-            "GlobalExceptionHandler: Satte opp sentral feilhåndtering tidlig i uke 1 slik at tjenestelaget slapp gjentakende try/catch i hver metode.",
-            "Swagger med XML dokumentasjon: Konfigurerte Swagger på /doc med XML kommentarer, eksempeldata og responskoder for hvert endepunkt.",
-            "GitHub Actions CI: La inn automatisk byggesjekk ved hver push helt fra starten, slik at ingen commit kunne brekke byggeprosessen i det stille.",
+            "Tidlig i uke 1 satte jeg også opp en sentral GlobalExceptionHandler så tjenestelaget slapp gjentakende try/catch i hver metode, konfigurerte Swagger på /doc med XML kommentarer, eksempeldata og responskoder, og la inn GitHub Actions CI så ingen push kunne brekke bygget i det stille.",
           ],
           tour: {
             audioSrc: "/audio/cases/medcare-clinical/0.mp3",
@@ -407,10 +382,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
           paragraphs: [
             "For å hindre dobbeltbooking la jeg først inn sammensatte unike indekser i databasen på DoctorId + AppointmentDate og PatientId + AppointmentDate. Under testing oppdaget jeg at indeksen kun stoppet to timer som startet på nøyaktig samme minutt, men ikke hindret en ny bestilling klokken 10:15 hvis legen allerede hadde en time på 30 minutter fra 10:00 til 10:30.",
             "Jeg måtte sette meg ned med penn og papir og tegne opp tidsaksene for å være 100 prosent sikker på at datokontrollen fanget alle varianter av overlapp, både ved ny bestilling og når en registrert pasient endrer en eksisterende avtale.",
-          ],
-          bullets: [
-            "Gjenbruk av pasientprofil ved gjestebooking: Pasienter uten konto kan bestille time med navn, fødselsdato, telefon og epost. Hvis samme person bestiller igjen senere eller oppretter full brukerkonto, gjenbruker og oppgraderer backenden den eksisterende pasientraden i stedet for å lage duplikater.",
-            "Soft delete ved avbestilling: Avbestilte timer beholdes med status i databasen for historikk, uten å blokkere tidspunktet for nye pasienter.",
+            "Pasienter uten konto kan bestille time med navn, fødselsdato, telefon og epost. Hvis samme person bestiller igjen senere eller oppretter full brukerkonto, gjenbruker og oppgraderer backenden den eksisterende pasientraden i stedet for å lage duplikater. Avbestilte timer bruker soft delete slik at historikken blir liggende i databasen uten å blokkere tidspunktet for nye pasienter.",
           ],
           tour: {
             audioSrc: "/audio/cases/medcare-clinical/2.mp3",
@@ -422,11 +394,8 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
           title: "Fra Zustand til TanStack Query, minnebasert JWT og RBAC",
           paragraphs: [
             "I starten av arbeidet med frontenden brukte jeg Zustand til alt, inkludert å hente lister med leger og timeavtaler. Det ga mye gjentakende kode og unødvendige kall til useEffect. Selv om jeg lå etter skjema etter en runde med influensa midt i prosjektet, valgte jeg å skrive om datahentingen til TanStack Query (useQuery, useMutation og useInfiniteQuery med paginering i backend), mens Zustand kun beholdt ren klientstate som aktivt token og tema.",
-          ],
-          bullets: [
-            "Kortlivet Access Token i minnet + httpOnly Refresh Cookie: Access token (1 til 15 minutter) holdes kun i minnet. Når et beskyttet endepunkt svarer med 401, kaller klienten automatisk POST /api/Auth/refresh med en httpOnly cookie (7 dager) og fornyer tilgangen uten at brukeren merker det.",
-            "Rollebasert tilgangskontroll (RBAC): For at vanlige innloggede pasienter ikke skulle kunne endre oppslagstabeller som klinikker, byer og spesialiteter, la jeg til en egen Role tabell (Patient og Admin) og låste skriveendepunktene med [Authorize(Roles = \"Admin\")].",
-            "Innspurt og optimalisering: Brukte react-scan for å rydde bort unødvendige oppdateringer av visningen, samlet duplisert JWT oppsett i JWTTokenValidationParameters, flyttet CORS innstillinger ut i appsettings.json, og flyttet all sortering og filtrering av timeavtaler fra tabellen i frontend over til backend.",
+            "Innloggingen bruker kortlivede access tokens (1 til 15 minutter) som kun holdes i minnet. Når et beskyttet endepunkt svarer med 401, kaller klienten automatisk POST /api/Auth/refresh med en 7 dagers httpOnly cookie og fornyer tilgangen uten at brukeren merker det. For at vanlige pasienter ikke skulle kunne endre klinikker, byer og spesialiteter, la jeg til en egen Role tabell (Patient og Admin) og låste skriveendepunktene med [Authorize(Roles = \"Admin\")].",
+            "I innspurten brukte jeg react-scan for å rydde bort unødvendige oppdateringer i visningen, samlet duplisert JWT oppsett i JWTTokenValidationParameters, flyttet CORS innstillinger ut i appsettings.json, og flyttet all sortering og filtrering av timeavtaler fra frontend over til backend.",
           ],
           tour: {
             audioSrc: "/audio/cases/medcare-clinical/3.mp3",
@@ -502,10 +471,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
           title: "Synkronisert stemmekloning og tale til tekst",
           paragraphs: [
             "Stemmen er klonet fra et 17 sekunders lydopptak og strømmes i sanntid over SSE fra /api/chat. Når lyden er på, venter chatboblen med å vises til første lydpakke faktisk starter avspilling i Web Audio API, slik at tekst, stemme og leppebevegelser treffer likt.",
-          ],
-          bullets: [
-            "Tale til tekst (/api/transcribe): Besøkende kan snakke direkte inn via mikrofonen i chatten, med en egen ordliste for prosjektnavn og faguttrykk.",
-            "Kun godkjente fakta: Systemprompten bygges dynamisk fra samme datakilde som selve nettsiden (projects.ts og portfolio.ts), med klare grenser for hva modellen skal svare på og når den skal henvise videre på epost.",
+            "Besøkende kan også snakke direkte inn via mikrofonen i chatten gjennom /api/transcribe, som har en egen ordliste for prosjektnavn og faguttrykk. Systemprompten bygges dynamisk fra samme datakilde som resten av nettsiden (projects.ts og portfolio.ts), med klare grenser for hva modellen skal svare på og når den skal henvise videre på epost.",
           ],
           tour: {
             audioSrc: "/audio/cases/interaktiv-portefolje/2.mp3",
@@ -516,14 +482,9 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
         {
           title: "Sikring mot prompt injection i praksis",
           paragraphs: [
-            "Når en språkmodell får styre hva som skjer på siden og i tillegg svarer med min egen klonede stemme, kan man ikke stole blindt på det som kommer inn fra nettleseren. Oppsettet følger derfor prinsippet i Simon Willisons The Lethal Trifecta. Siden chatten er åpen for meldinger utenfra, har modellen verken tilgang til private data eller mulighet til å sende data videre ut på nettet.",
-            "Siden en språkmodell alltid kan bli forsøkt lurt, ligger disse sjekkene i vanlig TypeScript kode rundt modellen.",
-          ],
-          bullets: [
-            "Kun åpne data og låst nettleser: Modellen har ingen database, ingen verktøykall og ser kun de offentlige tekstene på siden. Boblene vises som ren tekst i React uten eksterne bilder, og nettleseren er låst til å kun hente og sende data på eget domene.",
-            "Skille regler og brukerinput: Systemprompten settes kun sammen av faste filer på serveren. Meldinger fra chatten renses før de sendes inn, og serveren sjekker at tidligere svar i tråden faktisk er ekte slik at ingen kan forfalske samtalen.",
-            "Fast liste over lovlige handlinger og vern av stemmen: Tagger som bytter side eller scroller til prosjekter sjekkes mot en fast liste av gyldige sider på både server og klient, og CV slippes kun gjennom når du faktisk ber om den. Før et svar sendes til stemmekloning, sjekker koden lengden og stopper forsøk på å få stemmen til å lese opp uønsket tekst.",
-            "Ingen lagring og faste kvoter: Alle kall for chat, stemme og tale til tekst kjører med lagring slått av hos Gemini, sammen med sjekk av at kallet kommer fra min egen side og faste grenser per minutt og per dag i minnet.",
+            "Når en språkmodell får styre hva som skjer på siden og i tillegg svarer med min egen klonede stemme, kan man ikke stole blindt på det som kommer inn fra nettleseren. Oppsettet følger derfor prinsippet i Simon Willisons The Lethal Trifecta. Siden chatten er åpen for meldinger utenfra, har modellen verken tilgang til private data eller mulighet til å sende data videre ut på nettet, og selve sjekkene ligger i vanlig TypeScript kode rundt modellen.",
+            "Modellen har ingen database eller verktøykall og ser kun de offentlige tekstene på siden. Boblene vises som ren tekst i React uten eksterne bilder, og nettleseren er låst til å kun hente og sende data på eget domene. Systemprompten settes kun sammen av faste filer på serveren, meldinger fra chatten renses før de sendes inn, og serveren sjekker at tidligere svar i tråden faktisk er ekte så ingen kan forfalske samtalen.",
+            "Alle tagger som bytter side eller scroller til prosjekter sjekkes mot en fast liste av gyldige sider på både server og klient, og CV slippes kun gjennom når du faktisk ber om den. Før et svar sendes til stemmekloning, sjekker koden lengden og stopper forsøk på å få stemmen til å lese opp uønsket tekst. Alle kall for chat, stemme og tale til tekst kjører med lagring slått av hos Gemini, sammen med sjekk av opprinnelse og faste kvoter per minutt og per dag i minnet.",
           ],
           tour: {
             audioSrc: "/audio/cases/interaktiv-portefolje/3.mp3",
@@ -588,12 +549,10 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
         {
           title: "De tre modulene",
           paragraphs: [
-            "Repoet er delt inn i tre moduler slik at hver oppgave kun laster inn de reglene som faktisk trengs:",
-          ],
-          bullets: [
-            "ui-craft: Bygger på Matt D. Smiths 3P rammeverk (Purpose, Principles, Personality) og 60-30-10 fargeregelen. Kutter ut tilfeldige glødeeffekter og overdimensjonerte kort til fordel for matte flater, rolige OKLCH farger, flytende typografi (Utopia.fyi) med maks 62 tegn per linje, et 8pt avstandssystem og medier som pauser utenfor synsfeltet.",
-            "lean-architecture: Holder konteksten kort og krever at datamodell og plattformkrav låses på papir og i AGENTS.md før kode. Fokuserer på Dan Norths Spike and Stabilize, en felles kilde for delte data, små og trygge commits uten å blande refaktorering og ny funksjonalitet, tidlig opprydding i logiske og strukturelle code smells, og dokumentasjon av tause produksjonsfeller i README.md.",
-            "natural-copy: Fjerner typiske KI uvaner i både norsk og engelsk tekst, som tankestreker, unødvendige bindestreker mellom faguttrykk og norske ord, tomme klisjeer og stive oversettelser. Krever også at prosjekttekster og søknader starter med den menneskelige motivasjonen før tekniske detaljer.",
+            "Repoet er delt inn i tre moduler slik at hver oppgave kun laster inn de reglene som faktisk trengs.",
+            "Modulen ui-craft bygger på Matt D. Smiths 3P rammeverk (Purpose, Principles, Personality) og 60-30-10 fargeregelen. Den kutter ut tilfeldige glødeeffekter og overdimensjonerte kort til fordel for matte flater, rolige farger, flytende typografi (Utopia.fyi) med maks 62 tegn per linje, et 8pt avstandssystem og medier som pauser utenfor synsfeltet.",
+            "Modulen lean-architecture holder konteksten kort og krever at datamodell og plattformkrav låses på papir og i AGENTS.md før kode. Den bygger på Dan Norths Spike and Stabilize, en felles kilde for delte data, små og trygge commits uten å blande refaktorering og ny funksjonalitet, tidlig opprydding i code smells og dokumentasjon av tause produksjonsfeller i README.md.",
+            "Modulen natural-copy fjerner typiske KI uvaner i både norsk og engelsk tekst, som tankestreker, midtprikker, unødvendige bindestreker, punktliste maler, tomme klisjeer og stive oversettelser. Den krever også at prosjekttekster og søknader starter med den menneskelige motivasjonen før tekniske detaljer.",
           ],
           tour: {
             audioSrc: "/audio/cases/skills/1.mp3",
@@ -657,10 +616,7 @@ const PROJECT_DEFINITIONS: ProjectItem[] = [
           title: "Server Actions, klientstate og automatiske tester",
           paragraphs: [
             "Innlogging, utlån og endringer i filmkatalogen kjører gjennom Next.js Server Actions med skjemavalidering på serversiden. I nettleseren holdes Zustand kun til ren UI state som aktive søkefiltre, utlånsstatus og bytte mellom lys og mørk visning.",
-          ],
-          bullets: [
-            "Komponenttester med Jest og React Testing Library: Tester at søk, filtrering, skjemainnsending og feilmeldinger oppfører seg riktig ved brukerinteraksjon.",
-            "Accessibility i skjemaflyt og kort: Sjekkes automatisk med eslint-plugin-jsx-a11y for å sikre semantiske skjemaelementer, tydelige fokusmarkeringer og full tastaturnavigasjon.",
+            "Søk, filtrering, skjemainnsending og feilmeldinger er dekket med komponenttester i Jest og React Testing Library, mens eslint-plugin-jsx-a11y sjekker semantiske skjemaelementer, tydelige fokusmarkeringer og tastaturnavigasjon automatisk.",
           ],
           tour: {
             audioSrc: "/audio/cases/cinemorra/1.mp3",
